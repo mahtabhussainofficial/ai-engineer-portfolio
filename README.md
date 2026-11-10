@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Engineer Portfolio
+
+A modern portfolio website for an AI engineer and backend developer, built with Next.js, TypeScript, and Tailwind CSS. The site presents services, skills, project highlights, and contact information in a polished one-page experience with dedicated sections.
+
+## Overview
+
+This project is designed to showcase:
+
+- AI engineering and backend development expertise
+- Service offerings such as agentic AI, RAG systems, and workflow automation
+- Key skills and delivery capabilities
+- Portfolio case studies and project previews
+- Contact and inquiry information for potential clients
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS
+- App Router
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```text
+app/
+  about/
+  components/
+  contact/
+  projects/
+  services/
+  skills/
+  globals.css
+  layout.tsx
+  page.tsx
+public/
+README.md
+package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Customize the Site
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The main content is organized inside the `app/` directory. Common edits include:
 
-## Deploy on Vercel
+- updating personal details and headline in `app/page.tsx`
+- changing site metadata in `app/layout.tsx`
+- editing service, project, and skill data in `app/page.tsx`
+- styling the visual theme in `app/globals.css`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This app is ready to deploy to platforms like Vercel. For a production deployment, connect the repository to Vercel and use the default Next.js build settings.
+
+## Notes
+
+The project includes a custom portfolio layout and reusable shell components for a complete marketing-style personal site focused on AI consulting and product delivery.
