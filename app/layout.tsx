@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Engineer Portfolio",
+  title: "Shabnum H. | AI Engineer & Backend Developer",
   description:
-    "A modern portfolio showcasing AI engineering projects, technical expertise, and applied solutions.",
+    "Shabnum H. builds practical AI applications, workflow automation, and reliable backend systems for growing businesses.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
