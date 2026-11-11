@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import portraitImage from "../public/shabnum-portrait.jpg";
 import { Eyebrow, SiteFooter, SiteHeader } from "./components/site-shell";
 
 const heroSpecializations = [
@@ -334,15 +335,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Clean non-overlapping dummy portrait card */}
+            {/* Clean non-overlapping portrait card */}
             <div className="mx-auto w-full max-w-[24rem] lg:justify-self-end">
               <div className="rounded-xl border border-[#233044] bg-[#0b0f16] p-3">
                 <Image
-                  src="/portrait-placeholder.svg"
-                  alt="Portrait placeholder for Shabnum H."
-                  width={720}
-                  height={780}
-                  className="aspect-[12/13] w-full rounded-lg object-cover"
+                  src={portraitImage}
+                  alt="Portrait of Shabnum H., AI Engineer and Backend Developer"
+                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 384px, 92vw"
+                  placeholder="blur"
+                  className="aspect-square w-full rounded-lg object-cover object-top"
                   priority
                 />
                 <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
