@@ -1,99 +1,586 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { Eyebrow, SiteFooter, SiteHeader } from "./components/site-shell";
 
-const services = [
-  ["01", "Agentic AI & Workflow Automation", "Multi-agent systems, tool calling, and approval flows that reduce repetitive business work."],
-  ["02", "Voice AI & Conversational Agents", "Real-time voice agents for customer support, sales, and natural conversations."],
-  ["03", "RAG Systems & Knowledge AI", "Grounded AI assistants that turn business documents and databases into useful answers."],
-  ["04", "Document Intelligence & ERP Integration", "OCR, PDF extraction, and document workflows connected to existing ERP systems."],
-  ["05", "LLM Integration & Prompt Engineering", "Model selection, structured outputs, function calling, and cost-conscious LLM applications."],
-  ["06", "Observability & LLM Evaluation", "Prompt testing, tracing, evaluation, and feedback loops for reliable AI behavior."],
-  ["07", "Full-Stack AI Applications & Backend", "Production-minded AI web apps and APIs built with Python, FastAPI, and modern tooling."],
-  ["08", "Data, Databases & Integrations", "PostgreSQL, MongoDB, Redis, ETL, and business integrations that keep systems connected."],
-] as const;
-const skills = [
-  ["Artificial Intelligence", "Machine Learning / Generative AI / AI Chatbot / AI Agent Development"],
-  ["LLM Engineering", "Prompt Engineering / RAG / Large Language Models / LangChain / OpenAI API / Claude API"],
-  ["Automation", "Business Process Automation / CrewAI / OpenClaw / Workflow Design"],
-  ["Backend & Product", "Python / FastAPI / Full-Stack Development / Chatbot Development"],
-  ["Delivery", "DevOps Engineering / Docker / APIs / Integrations"],
-];
-const feedback = [
-  ["Senior AI Agent & LLM Developer", "5.0", "Upwork profile feedback"],
-  ["AI Consultant Needed to Build a Simple AI Agent", "5.0", "Upwork profile feedback"],
-  ["Client feedback", "5 reviews", "Verified profile feedback"],
-];
-const projectPreviews = [
-  ["01", "Knowledge Assistant", "A RAG-based assistant concept for answering questions from trusted business documents.", "RAG / Knowledge AI", ["Python", "FastAPI", "Vector Search"]],
-  ["02", "Workflow Automation", "An editable case-study placeholder for agentic workflows connected to business tools and approval steps.", "Agentic AI / Automation", ["AI Agents", "APIs", "Human Review"]],
-  ["03", "AI Backend Platform", "A practical application concept combining an AI feature, structured data, and a dependable backend foundation.", "Full-Stack AI", ["Python", "PostgreSQL", "Docker"]],
-] as const;
-const experienceEntries = [
-  ["01", "AI Engineer", "Sample AI Studio", "2022 — Present", "Editable placeholder for production AI systems, agentic workflows, and knowledge assistants.", ["AI Agents", "RAG", "LLM Applications"]],
-  ["02", "Backend Developer", "Independent Projects", "2020 — 2022", "Editable placeholder for Python APIs, integrations, data workflows, and dependable backend foundations.", ["Python", "FastAPI", "PostgreSQL"]],
-  ["03", "Automation Consultant", "Selected Client Work", "2019 — 2020", "Editable placeholder for workflow automation, chatbot experiences, and practical process improvements.", ["Automation", "Chatbots", "APIs"]],
+const heroSpecializations = [
+  "Agentic AI",
+  "RAG Systems",
+  "Python & FastAPI",
+  "Workflow Automation",
 ] as const;
 
+const highlights = [
+  {
+    index: "01 / EXPERIENCE",
+    value: "5+",
+    label: "Years building production AI systems",
+  },
+  {
+    index: "02 / PROJECTS",
+    value: "7",
+    label: "Completed freelance jobs",
+  },
+  {
+    index: "03 / DELIVERY",
+    value: "63",
+    label: "Tracked hours of client work",
+  },
+  {
+    index: "04 / RATING",
+    value: "5.0",
+    suffix: "★",
+    label: "Client rating shown on profile",
+  },
+] as const;
+
+interface PreviewCardItem {
+  readonly number: string;
+  readonly category: string;
+  readonly title: string;
+  readonly description: string;
+  readonly tags: readonly string[];
+  readonly href: string;
+  readonly linkLabel: string;
+}
+
+const featuredServices: readonly PreviewCardItem[] = [
+  {
+    number: "01",
+    category: "AUTOMATION",
+    title: "Agentic AI & Workflow Automation",
+    description:
+      "Multi-agent systems, tool calling, and approval flows that reduce repetitive business work.",
+    tags: ["LangChain", "LangGraph", "CrewAI"],
+    href: "/services",
+    linkLabel: "Explore services",
+  },
+  {
+    number: "02",
+    category: "KNOWLEDGE AI",
+    title: "RAG Systems & Knowledge AI",
+    description:
+      "Grounded AI assistants that turn business documents and databases into useful answers.",
+    tags: ["Pinecone", "Weaviate", "Hybrid Search"],
+    href: "/services",
+    linkLabel: "Explore services",
+  },
+  {
+    number: "03",
+    category: "BACKEND",
+    title: "Full-Stack AI & Backend Systems",
+    description:
+      "Production-minded AI web apps and APIs built with Python, FastAPI, and modern tooling.",
+    tags: ["Python", "FastAPI", "Docker"],
+    href: "/services",
+    linkLabel: "Explore services",
+  },
+];
+
+const featuredProjects: readonly PreviewCardItem[] = [
+  {
+    number: "01",
+    category: "RAG / KNOWLEDGE AI",
+    title: "Knowledge Assistant",
+    description:
+      "A RAG-based assistant architecture for answering questions from trusted business documents.",
+    tags: ["Python", "FastAPI", "Vector Search"],
+    href: "/projects/knowledge-assistant",
+    linkLabel: "Open project brief",
+  },
+  {
+    number: "02",
+    category: "AGENTIC AI",
+    title: "Workflow Automation",
+    description:
+      "Agentic workflow architecture connected to business tools, APIs, and human approval steps.",
+    tags: ["AI Agents", "APIs", "Human Review"],
+    href: "/projects/workflow-automation",
+    linkLabel: "Open project brief",
+  },
+  {
+    number: "03",
+    category: "FULL-STACK AI",
+    title: "AI Backend Platform",
+    description:
+      "A practical application combining AI capabilities, structured data, and a dependable backend foundation.",
+    tags: ["Python", "PostgreSQL", "Docker"],
+    href: "/projects/ai-backend-platform",
+    linkLabel: "Open project brief",
+  },
+];
+
+const featuredSkills: readonly PreviewCardItem[] = [
+  {
+    number: "01",
+    category: "AI & LLMS",
+    title: "AI & LLM Engineering",
+    description:
+      "Prompt architecture, retrieval-augmented generation, and model integration for grounded AI features.",
+    tags: ["RAG", "LangChain", "OpenAI / Claude"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+  {
+    number: "02",
+    category: "AUTOMATION",
+    title: "Automation & AI Agents",
+    description:
+      "Tool-using agents, workflow orchestration, and conversational automation tailored to operations.",
+    tags: ["CrewAI", "OpenClaw", "Workflows"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+  {
+    number: "03",
+    category: "SYSTEMS",
+    title: "Backend & Cloud Delivery",
+    description:
+      "Dependable Python services, structured persistence, and containerized environments ready for production.",
+    tags: ["Python", "FastAPI", "PostgreSQL", "Docker"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+];
+
+const processSteps = [
+  {
+    number: "01",
+    title: "Understand the problem",
+    description:
+      "Clarify goals, users, constraints, and data before choosing a direction.",
+  },
+  {
+    number: "02",
+    title: "Plan the solution",
+    description:
+      "Shape system boundaries and delivery around the actual problem.",
+  },
+  {
+    number: "03",
+    title: "Build and integrate",
+    description:
+      "Implement the experience and connect the APIs, data, and systems it needs.",
+  },
+  {
+    number: "04",
+    title: "Test and improve",
+    description:
+      "Evaluate behavior, strengthen reliability, and use feedback to guide iteration.",
+  },
+] as const;
+
+const feedback = [
+  {
+    title: "Senior AI Agent & LLM Developer",
+    rating: "5.0",
+    source: "Upwork profile feedback",
+  },
+  {
+    title: "AI Consultant Needed to Build a Simple AI Agent",
+    rating: "5.0",
+    source: "Upwork profile feedback",
+  },
+  {
+    title: "Client feedback",
+    rating: "5 reviews",
+    source: "Verified profile feedback",
+  },
+] as const;
+
+const sectionButtonClass =
+  "inline-flex shrink-0 items-center gap-2 self-start rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent lg:self-auto";
+
+const tagClass =
+  "rounded-md border border-[#273549] bg-[#0b0f16]/85 px-2.5 py-1 font-mono text-[11px] text-muted";
+
+function PreviewSection({
+  id,
+  eyebrow,
+  title,
+  description,
+  ctaLabel,
+  ctaHref,
+  items,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  ctaHref: string;
+  items: readonly PreviewCardItem[];
+}) {
+  return (
+    <section
+      id={id}
+      className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12"
+    >
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-2xl">
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
+            {title}
+          </h2>
+          <p className="mt-3 text-base leading-7 text-muted">{description}</p>
+        </div>
+        <Link href={ctaHref} className={sectionButtonClass}>
+          <span>{ctaLabel}</span>
+          <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+
+      <div className="mt-8 grid gap-5 md:grid-cols-3">
+        {items.map((item) => (
+          <article
+            key={item.number}
+            className="surface-card surface-hover flex flex-col rounded-xl p-6"
+          >
+            <div className="flex items-center justify-between gap-4 border-b border-[#233044] pb-4">
+              <span className="font-mono text-xs text-accent">
+                {item.number}
+              </span>
+              <span className="font-mono text-[11px] tracking-[0.08em] text-subtle">
+                {item.category}
+              </span>
+            </div>
+
+            <h3 className="mt-6 text-xl font-semibold leading-snug text-foreground">
+              {item.title}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              {item.description}
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-2">
+              {item.tags.map((tag) => (
+                <span key={tag} className={tagClass}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-auto border-t border-[#233044] pt-4">
+              <Link
+                href={item.href}
+                className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground"
+              >
+                <span>{item.linkLabel}</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
-  return <div className="min-h-screen overflow-x-clip bg-background text-foreground"><SiteHeader /><main>
-    <section id="home" className="border-b border-[#293547]">
-      <div className="mx-auto grid max-w-7xl gap-16 px-5 py-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.82fr)] lg:items-center lg:gap-20 lg:px-8 lg:py-32">
-        <div>
-          <p className="mb-6 font-mono text-xs tracking-[0.18em] text-accent">HELLO, I&apos;M SHABNUM H.</p>
-          <h1 className="max-w-4xl text-[clamp(3rem,7vw,6.8rem)] font-semibold leading-[0.95] tracking-[-0.06em]">AI Engineer &amp;<br /><span className="text-muted">Backend Developer.</span></h1>
-          <p className="mt-8 max-w-2xl text-lg leading-8 text-muted">I build AI systems that automate workflows, analyze business data, and turn complex ideas into reliable products that create measurable value.</p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <a href="#projects" className="rounded-md bg-primary px-6 py-3.5 text-center text-sm font-semibold text-white transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">View projects <span className="ml-2">↗</span></a>
-            <Link href="/contact" className="rounded-md border border-[#344258] px-6 py-3.5 text-center text-sm font-semibold transition-colors hover:border-accent hover:text-accent">Contact me</Link>
+  return (
+    <div className="bg-grid-canvas min-h-screen overflow-x-clip text-foreground">
+      <SiteHeader active="Home" />
+
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pt-4 pb-8 sm:gap-10 sm:px-6 sm:pt-6 lg:px-8">
+        {/* HERO SECTION */}
+        <section
+          id="home"
+          className="section-frame rounded-2xl p-6 sm:p-10 lg:p-14"
+        >
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14">
+            <div>
+              <p className="font-mono text-xs tracking-[0.18em] text-accent">
+                HELLO, I&apos;M SHABNUM H.
+              </p>
+
+              <h1 className="mt-5 max-w-3xl text-[clamp(2.5rem,5.1vw,4.35rem)] font-semibold leading-[1.03] tracking-[-0.04em] text-foreground">
+                AI Engineer &amp;
+                <br />
+                <span className="text-muted">Backend Developer.</span>
+              </h1>
+
+              <p className="mt-6 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                I build AI systems that automate workflows, analyze business data,
+                and turn complex ideas into reliable products that create
+                measurable value.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href="#projects"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  <span>View Projects</span>
+                  <span aria-hidden="true">↗</span>
+                </a>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-6 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                >
+                  Contact Me
+                </Link>
+              </div>
+
+              <div className="mt-10 border-t border-[#1e293b] pt-5">
+                <p className="mb-3 font-mono text-[10px] tracking-[0.16em] text-subtle">
+                  SPECIALIZATIONS
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {heroSpecializations.map((item) => (
+                    <span key={item} className={tagClass}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Clean non-overlapping dummy portrait card */}
+            <div className="mx-auto w-full max-w-[24rem] lg:justify-self-end">
+              <div className="rounded-xl border border-[#233044] bg-[#0b0f16] p-3">
+                <Image
+                  src="/portrait-placeholder.svg"
+                  alt="Portrait placeholder for Shabnum H."
+                  width={720}
+                  height={780}
+                  className="aspect-[12/13] w-full rounded-lg object-cover"
+                  priority
+                />
+                <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  <div className="rounded-lg border border-[#1e293b] bg-[#111823] px-3.5 py-2.5">
+                    <p className="font-mono text-[10px] tracking-[0.14em] text-accent">
+                      AI ENGINEERING
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-foreground">
+                      Agentic Workflows &amp; RAG
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-[#1e293b] bg-[#111823] px-3.5 py-2.5">
+                    <p className="font-mono text-[10px] tracking-[0.14em] text-accent">
+                      BACKEND CORE
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium text-foreground">
+                      Python · FastAPI · SQL
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="relative mx-auto w-full max-w-[28rem] lg:justify-self-end">
-          <div className="mx-auto w-full max-w-[22rem] rounded-full border border-accent/50 bg-[#111823] p-2 shadow-[0_24px_70px_rgba(59,130,246,0.16)]">
-            <Image src="/portrait-placeholder.svg" alt="Portrait placeholder for Shabnum H." width={720} height={880} className="aspect-square w-full rounded-full object-cover" priority />
+        </section>
+
+        {/* 01 / ABOUT PREVIEW + AT A GLANCE */}
+        <section
+          id="about"
+          className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12"
+        >
+          <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-12">
+            <div className="flex flex-col justify-between gap-6">
+              <div>
+                <Eyebrow>01 / ABOUT SHABNUM</Eyebrow>
+                <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
+                  AI Engineer ready to transform business operations through
+                  thoughtful automation.
+                </p>
+              </div>
+              <div>
+                <Link href="/about" className={sectionButtonClass}>
+                  <span>Read more about me</span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
+
+            <div className="border-t border-[#1e293b] pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
+              <h2 className="text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
+                I build systems that move businesses forward.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                With 5+ years of experience in production AI systems, I help teams
+                automate workflows, unlock insights, and deliver AI applications
+                that are useful beyond the demo.
+              </p>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-    <section id="about" className="border-b border-[#293547] bg-surface"><div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20 lg:px-8"><div><Eyebrow>01 / ABOUT SHABNUM</Eyebrow><p className="mt-4 max-w-xs text-sm leading-6 text-muted">AI Engineer ready to transform business operations through thoughtful automation.</p></div><div className="max-w-3xl"><h2 className="text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">I build systems that move businesses forward.</h2><p className="mt-6 text-lg leading-8 text-muted">With 5+ years of experience in production AI systems, I help teams automate workflows, unlock insights, and deliver AI applications that are useful beyond the demo.</p><Link href="/about" className="mt-8 inline-flex text-sm font-medium text-accent hover:underline">Read more about me →</Link></div></div></section>
-    <section className="border-b border-[#293547]">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <Eyebrow>AT A GLANCE</Eyebrow>
-            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">Built for practical progress.</h2>
+
+          <div className="mt-10 border-t border-[#1e293b] pt-8">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <Eyebrow>AT A GLANCE</Eyebrow>
+                <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-foreground sm:text-xl">
+                  Built for practical progress.
+                </h3>
+              </div>
+              <p className="max-w-sm text-xs leading-5 text-subtle sm:text-right">
+                A few profile highlights from Shabnum&apos;s current professional
+                record.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {highlights.map((item) => (
+                <div
+                  key={item.index}
+                  className="surface-card surface-hover rounded-xl p-5"
+                >
+                  <span className="font-mono text-[10px] tracking-[0.16em] text-accent">
+                    {item.index}
+                  </span>
+                  <strong className="mt-5 block text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+                    {item.value}
+                    {"suffix" in item && item.suffix ? (
+                      <span className="ml-1 text-lg text-accent">
+                        {item.suffix}
+                      </span>
+                    ) : null}
+                  </strong>
+                  <span className="mt-2 block text-sm leading-5 text-muted">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="max-w-sm text-sm leading-6 text-muted">A few profile highlights from Shabnum&apos;s current professional record.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="stat-item glass-panel glass-hover rounded-xl p-5 sm:p-6">
-            <span className="font-mono text-[10px] tracking-[0.16em] text-accent">01 / EXPERIENCE</span>
-            <strong className="mt-7 block text-4xl font-semibold tracking-[-0.05em]">5+</strong>
-            <span className="mt-2 block text-sm text-muted">Years building production AI systems</span>
+        </section>
+
+        <PreviewSection
+          id="services"
+          eyebrow="02 / SERVICES"
+          title="Capabilities for useful products."
+          description="Core areas of AI engineering and backend architecture. Explore all eight capabilities on the Services page."
+          ctaLabel="View all services"
+          ctaHref="/services"
+          items={featuredServices}
+        />
+
+        <PreviewSection
+          id="projects"
+          eyebrow="03 / PROJECTS"
+          title="Selected work directions."
+          description="Representative AI and backend architectures showing the types of systems this portfolio presents."
+          ctaLabel="View all projects"
+          ctaHref="/projects"
+          items={featuredProjects}
+        />
+
+        <PreviewSection
+          id="skills"
+          eyebrow="04 / SKILLS"
+          title="The tools behind the work."
+          description="A concise preview of core technologies. Visit the Skills page for the complete seven-group capability map."
+          ctaLabel="Explore all skills"
+          ctaHref="/skills"
+          items={featuredSkills}
+        />
+
+        {/* 05 / HOW I WORK (ENGINEERING PROCESS) */}
+        <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <Eyebrow>05 / PROCESS</Eyebrow>
+              <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
+                A clear path from question to system.
+              </h2>
+            </div>
+            <p className="text-sm text-subtle">
+              Structured engineering from discovery to iteration.
+            </p>
           </div>
-          <div className="stat-item glass-panel glass-hover rounded-xl p-5 sm:p-6">
-            <span className="font-mono text-[10px] tracking-[0.16em] text-accent">02 / PROJECTS</span>
-            <strong className="mt-7 block text-4xl font-semibold tracking-[-0.05em]">7</strong>
-            <span className="mt-2 block text-sm text-muted">Completed freelance jobs</span>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {processSteps.map((step) => (
+              <div
+                key={step.number}
+                className="surface-card rounded-xl p-5 sm:p-6"
+              >
+                <span className="font-mono text-xs text-accent">
+                  {step.number}
+                </span>
+                <h3 className="mt-5 text-base font-semibold text-foreground">
+                  {step.title}
+                </h3>
+                <p className="mt-2.5 text-sm leading-6 text-muted">
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
-          <div className="stat-item glass-panel glass-hover rounded-xl p-5 sm:p-6">
-            <span className="font-mono text-[10px] tracking-[0.16em] text-accent">03 / DELIVERY</span>
-            <strong className="mt-7 block text-4xl font-semibold tracking-[-0.05em]">63</strong>
-            <span className="mt-2 block text-sm text-muted">Tracked hours of client work</span>
+        </section>
+
+        {/* 06 / CLIENT FEEDBACK */}
+        <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <Eyebrow>06 / CLIENT FEEDBACK</Eyebrow>
+              <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
+                Trusted for thoughtful delivery.
+              </h2>
+            </div>
+            <p className="text-sm text-subtle">
+              Feedback shown from the supplied Upwork profile.
+            </p>
           </div>
-          <div className="stat-item glass-panel glass-hover rounded-xl p-5 sm:p-6">
-            <span className="font-mono text-[10px] tracking-[0.16em] text-accent">04 / RATING</span>
-            <strong className="mt-7 block text-4xl font-semibold tracking-[-0.05em]">5.0<span className="ml-1 text-lg text-accent">★</span></strong>
-            <span className="mt-2 block text-sm text-muted">Client rating shown on profile</span>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {feedback.map((item) => (
+              <article
+                key={item.title}
+                className="surface-card surface-hover flex flex-col justify-between rounded-xl p-6"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-xs tracking-wider text-accent">
+                    ★★★★★
+                  </span>
+                  <span className={tagClass}>{item.rating}</span>
+                </div>
+                <div className="mt-7">
+                  <h3 className="text-base font-medium leading-snug text-foreground sm:text-lg">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm text-subtle">{item.source}</p>
+                </div>
+              </article>
+            ))}
           </div>
-        </div>
-      </div>
-    </section>
-    <section id="services" className="border-b border-[#293547] bg-surface"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8"><div className="max-w-3xl"><Eyebrow>02 / SERVICES</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">Capabilities for useful products.</h2><p className="mt-5 text-lg leading-7 text-muted">A clear set of services for intelligent applications, automation, and dependable technical foundations.</p></div><div className="mt-12 grid gap-4 sm:grid-cols-2">{services.map(([number,title,description]) => <article key={number} className="glass-panel glass-hover rounded-xl p-6 sm:p-7"><span className="font-mono text-xs text-accent">{number}</span><h3 className="mt-8 text-lg font-medium">{title}</h3><p className="mt-3 text-sm leading-6 text-muted">{description}</p></article>)}</div><Link href="/services" className="mt-10 inline-flex text-sm font-medium text-accent hover:underline">View all services →</Link></div></section>
-    <section id="projects" className="border-b border-[#293547]"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8"><div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-3xl"><Eyebrow>03 / PROJECTS</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">Selected work directions.</h2><p className="mt-5 text-lg leading-7 text-muted">Editable project concepts showing the kind of AI and backend work this portfolio is prepared to present.</p></div><Link href="/projects" className="text-sm font-medium text-accent hover:underline">View project index →</Link></div><div className="mt-12 grid gap-4 md:grid-cols-3">{projectPreviews.map(([number,title,description,category,tags]) => <article key={number} className="glass-panel glass-hover flex min-h-[20rem] flex-col rounded-xl p-6 sm:p-7"><div className="flex items-start justify-between gap-4"><span className="font-mono text-xs text-accent">{number}</span><span className="text-right font-mono text-[10px] tracking-widest text-muted">{category}</span></div><h3 className="mt-12 text-2xl font-medium leading-tight">{title}</h3><p className="mt-3 text-sm leading-6 text-muted">{description}</p><div className="mt-auto flex flex-wrap gap-2 border-t border-[#293547] pt-5">{tags.map((tag) => <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 text-xs text-accent">{tag}</span>)}</div></article>)}</div></div></section>
-    <section id="skills" className="border-b border-[#293547] bg-surface"><div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20 lg:px-8"><div><Eyebrow>04 / SKILLS</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">The tools behind the work.</h2><p className="mt-5 max-w-md leading-7 text-muted">A short preview of the stack. Visit the dedicated Skills page for the complete capability map.</p><Link href="/skills" className="mt-8 inline-flex text-sm font-medium text-accent hover:underline">Explore all skills →</Link></div><div className="divide-y divide-[#293547] border-y border-[#293547]">{skills.slice(0, 3).map(([name,items],index) => <div key={name} className="grid gap-3 py-6 sm:grid-cols-[3rem_12rem_minmax(0,1fr)]"><span className="font-mono text-xs text-accent">0{index+1}</span><h3 className="font-medium">{name}</h3><p className="text-sm leading-6 text-muted">{items}</p></div>)}</div></div></section>
-    <section className="border-b border-[#293547]"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div className="max-w-2xl"><Eyebrow>05 / EXPERIENCE</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">A sample path through AI engineering.</h2><p className="mt-6 text-lg leading-8 text-muted">Editable sample entries for the roles, systems, and responsibilities that will be replaced with verified details.</p></div><span className="rounded-full border border-accent/30 px-3 py-1.5 font-mono text-[10px] tracking-[0.14em] text-accent">SAMPLE CONTENT</span></div><div className="mt-12 grid gap-4 md:grid-cols-3">{experienceEntries.map(([number,role,company,period,description,tags]) => <article key={number} className="glass-panel glass-hover flex min-h-[22rem] flex-col rounded-xl p-6 sm:p-7"><div className="flex items-start justify-between gap-4"><span className="font-mono text-xs text-accent">{number}</span><span className="font-mono text-[10px] tracking-widest text-muted">{period}</span></div><h3 className="mt-10 text-2xl font-medium">{role}</h3><p className="mt-2 text-sm text-accent">{company}</p><p className="mt-5 text-sm leading-6 text-muted">{description}</p><div className="mt-auto flex flex-wrap gap-2 border-t border-[#293547] pt-5">{tags.map((tag) => <span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 text-xs text-accent">{tag}</span>)}</div></article>)}</div></div></section>
-    <section className="border-b border-[#293547] bg-surface overflow-hidden"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><Eyebrow>06 / CLIENT FEEDBACK</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.045em]">Trusted for thoughtful delivery.</h2></div><p className="text-sm text-muted">Feedback shown from the supplied Upwork profile.</p></div><div className="feedback-track mt-12 flex w-max gap-4 lg:grid lg:w-full lg:grid-cols-4">{[...feedback, ...feedback].map(([title,rating,source], index) => <article key={`${title}-${index}`} className="feedback-card glass-panel w-[min(20rem,80vw)] rounded-xl p-6 lg:w-full"><div className="flex items-center justify-between gap-4"><span className="text-sm text-accent">★★★★★</span><span className="font-mono text-xs text-muted">{rating}</span></div><h3 className="mt-8 text-lg font-medium leading-snug">{title}</h3><p className="mt-3 text-sm text-muted">{source}</p></article>)}</div></div></section>
-    <section id="contact"><div className="mx-auto grid max-w-7xl gap-10 px-5 py-28 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-20 lg:px-8"><div><Eyebrow>07 / CONTACT</Eyebrow><h2 className="mt-5 max-w-4xl text-[clamp(2.6rem,6vw,5.8rem)] font-semibold leading-[0.98] tracking-[-0.06em]">Let&apos;s build something useful<span className="text-accent">.</span></h2><p className="mt-6 max-w-xl text-lg leading-8 text-muted">Free consultation before starting. Share the problem, and let&apos;s find a practical path forward.</p></div><Link href="/contact" className="rounded-md bg-primary px-6 py-3.5 text-center text-sm font-semibold text-white hover:bg-accent">Start a conversation <span className="ml-2">↗</span></Link></div></section>
-  </main><SiteFooter /></div>;
+        </section>
+
+        {/* 07 / CONTACT CTA */}
+        <section
+          id="contact"
+          className="section-frame rounded-2xl border-[#2b3c54] p-7 sm:p-10 lg:p-14"
+        >
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-14">
+            <div>
+              <Eyebrow>07 / CONTACT</Eyebrow>
+              <h2 className="mt-3 max-w-3xl text-[clamp(2rem,4.5vw,3.6rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
+                Let&apos;s build something useful
+                <span className="text-accent">.</span>
+              </h2>
+              <p className="mt-4 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                Free consultation before starting. Share the problem, and
+                let&apos;s find a practical path forward.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              >
+                <span>Start a conversation</span>
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-5 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent"
+              >
+                View services
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
 }

@@ -1,8 +1,45 @@
-<svg width="720" height="880" viewBox="0 0 720 880" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="720" height="880" fill="#111823"/>
-  <rect x="28" y="28" width="664" height="824" rx="18" stroke="#3B82F6" stroke-opacity=".35" stroke-width="2"/>
-  <circle cx="360" cy="320" r="118" fill="#172130" stroke="#60A5FA" stroke-opacity=".7" stroke-width="3"/>
-  <path d="M170 690C185 554 257 500 360 500C463 500 535 554 550 690" fill="#172130" stroke="#60A5FA" stroke-opacity=".7" stroke-width="3"/>
-  <path d="M250 320H470M360 248V392" stroke="#60A5FA" stroke-opacity=".45" stroke-width="2"/>
-  <text x="360" y="770" fill="#A1ACBA" font-family="monospace" font-size="18" letter-spacing="3" text-anchor="middle">PORTRAIT PLACEHOLDER</text>
+<svg width="720" height="780" viewBox="0 0 720 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="backdrop" x1="360" y1="0" x2="360" y2="780" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#172130" />
+      <stop offset="100%" stop-color="#0E141F" />
+    </linearGradient>
+    <linearGradient id="bust" x1="360" y1="165" x2="360" y2="720" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#273549" />
+      <stop offset="100%" stop-color="#172130" />
+    </linearGradient>
+    <linearGradient id="collar" x1="360" y1="430" x2="360" y2="720" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#222F42" />
+      <stop offset="100%" stop-color="#131B28" />
+    </linearGradient>
+  </defs>
+
+  <rect width="720" height="780" rx="16" fill="url(#backdrop)" />
+  <rect x="20" y="20" width="680" height="740" rx="12" stroke="#263448" stroke-width="1.5" />
+
+  <!-- Subtle top studio arc -->
+  <circle cx="360" cy="310" r="220" fill="#1B2738" fill-opacity="0.32" />
+
+  <!-- Editorial dummy portrait bust -->
+  <ellipse cx="360" cy="285" rx="92" ry="108" fill="url(#bust)" stroke="#3B4E68" stroke-width="2" />
+  <path
+    d="M150 760C160 560 238 452 360 452C482 452 560 560 570 760H150Z"
+    fill="url(#collar)"
+    stroke="#3B4E68"
+    stroke-width="2"
+  />
+  <!-- Clean shirt / blazer V-line -->
+  <path
+    d="M286 462L360 568L434 462"
+    stroke="#60A5FA"
+    stroke-opacity="0.45"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Unobtrusive dummy label pill at bottom -->
+  <rect x="234" y="676" width="252" height="44" rx="8" fill="#0B0F16" fill-opacity="0.82" stroke="#29384E" />
+  <text x="360" y="697" fill="#E2E8F0" font-family="monospace" font-size="12" font-weight="600" letter-spacing="2.2" text-anchor="middle">SHABNUM H.</text>
+  <text x="360" y="712" fill="#788596" font-family="monospace" font-size="10" letter-spacing="1.6" text-anchor="middle">PORTRAIT PLACEHOLDER</text>
 </svg>
