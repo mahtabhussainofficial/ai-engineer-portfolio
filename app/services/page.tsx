@@ -1,7 +1,126 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Eyebrow, PageIntro, SiteFooter } from "../components/site-shell";
+import {
+  SERVICE_CATEGORIES,
+  getProcessSteps,
+  getServices,
+} from "../../lib/services-data";
+import {
+  ContactCtaSection,
+  Eyebrow,
+  SiteFooter,
+  SiteHeader,
+} from "../components/site-shell";
+import { ServicesBrowser } from "./services-browser";
 
-const services = [["01","Agentic AI & Workflow Automation","Multi-agent systems and business workflows that connect tools, APIs, databases, and human approvals.",["LangChain","LangGraph","CrewAI","n8n"]],["02","Voice AI & Conversational Agents","Real-time voice and chat experiences for support, sales, and natural customer conversations.",["Retell AI","OpenAI Realtime","ElevenLabs","Whisper"]],["03","RAG Systems & Knowledge AI","Accurate assistants grounded in documents, databases, and business knowledge.",["Pinecone","Weaviate","ChromaDB","Hybrid Search"]],["04","Document Intelligence & ERP Integration","OCR, PDF extraction, and document workflows connected to ERP and business systems.",["OCR","PDF Parsing","NetSuite","Oracle"]],["05","LLM Integration, Fine-Tuning & Prompt Engineering","Model selection, structured outputs, function calling, and prompt architecture for focused use cases.",["OpenAI","Claude","Gemini","LoRA / QLoRA"]],["06","Observability & LLM Evaluation","Tracing, prompt testing, evaluation, and monitoring that make AI behavior easier to improve.",["LangSmith","Logfire","Arize Phoenix","DeepEval"]],["07","Full-Stack AI Applications & Backend","Production-minded AI applications and APIs built with Python, FastAPI, and modern web tooling.",["Python","FastAPI","Django","Docker"]],["08","Data, Databases & Integrations","Data pipelines, persistence, and integrations that keep products connected to the systems they depend on.",["PostgreSQL","MongoDB","Redis","REST / GraphQL"]]] as const;
-const steps=[["01","Understand the problem","Clarify goals, users, constraints, and data before choosing a direction."],["02","Plan the solution","Shape system boundaries and delivery around the actual problem."],["03","Build and integrate","Implement the experience and connect the APIs, data, and systems it needs."],["04","Test and improve","Evaluate behavior, strengthen reliability, and use feedback to guide iteration."]];
+export const metadata: Metadata = {
+  title: "Services",
+  description:
+    "AI engineering services including agentic workflows, voice AI, RAG knowledge systems, LLM integration, and Python backend development.",
+};
 
-export default function ServicesPage(){return <div className="min-h-screen overflow-x-clip bg-background text-foreground"><PageIntro active="Services" label="SERVICES / AI ENGINEERING" title={<>AI engineering <span className="text-accent">services</span></>} description="Building AI-powered applications, intelligent automation, and reliable backend systems around real product needs."/><main><section className="border-b border-[#293547] bg-surface"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8 lg:py-28"><div className="grid gap-4 sm:grid-cols-2">{services.map(([num,title,description,details])=><article key={num} className="glass-panel glass-hover rounded-xl p-6 sm:p-8"><div className="flex justify-between"><span className="font-mono text-xs text-accent">{num}</span><span className="font-mono text-[10px] tracking-widest text-muted">CAPABILITY</span></div><h2 className="mt-12 text-2xl font-medium leading-tight">{title}</h2><p className="mt-4 leading-7 text-muted">{description}</p><div className="mt-8 flex flex-wrap gap-4 border-t border-[#293547] pt-4 text-xs text-accent">{details.map((d)=><span key={d}>{d}</span>)}</div></article>)}</div></div></section><section className="border-b border-[#293547] bg-background"><div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20 lg:px-8"><div><Eyebrow>HOW WE WORK</Eyebrow><h2 className="mt-4 text-[clamp(2rem,4vw,3.8rem)] font-semibold leading-[1.05]">A clear path from question to system.</h2></div><div className="divide-y divide-[#293547] border-y border-[#293547]">{steps.map(([num,title,description])=><div key={num} className="grid gap-4 py-6 sm:grid-cols-[3rem_12rem_minmax(0,1fr)]"><span className="font-mono text-xs text-accent">{num}</span><h3 className="font-medium">{title}</h3><p className="text-sm leading-6 text-muted">{description}</p></div>)}</div></div></section><section className="bg-surface"><div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-16 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8"><div><Eyebrow>START A PROJECT</Eyebrow><h2 className="mt-3 text-3xl font-semibold">Have a useful problem in mind?</h2></div><Link href="/contact" className="rounded-md bg-primary px-6 py-3.5 text-center text-sm font-semibold text-white">Discuss a project ↗</Link></div></section></main><SiteFooter/></div>}
+export default function ServicesPage() {
+  const services = getServices();
+  const processSteps = getProcessSteps();
+
+  return (
+    <div className="bg-grid-canvas min-h-screen overflow-x-clip text-foreground">
+      <SiteHeader active="Services" />
+
+      <main
+        id="main-content"
+        className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pt-4 pb-8 sm:gap-10 sm:px-6 sm:pt-6 lg:px-8"
+      >
+        {/* OPEN EDITORIAL HEADER */}
+        <section className="px-1 pt-4 pb-1 sm:pt-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center rounded-full border border-[#2b3a50] bg-[#172130]/90 px-3.5 py-1 font-mono text-[11px] tracking-[0.16em] text-accent">
+                SERVICES / AI ENGINEERING
+              </span>
+              <h1 className="mt-5 text-[clamp(2rem,4.7vw,3.9rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
+                AI engineering{" "}
+                <span className="text-muted">services.</span>
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                Building AI-powered applications, intelligent workflow
+                automation, and dependable backend systems around clear product
+                needs.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              >
+                <span>Discuss a project</span>
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                href="/projects"
+                className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#111823] px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent"
+              >
+                View projects
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* 01 / FILTERABLE CAPABILITIES */}
+        <ServicesBrowser
+          services={services}
+          categories={SERVICE_CATEGORIES}
+        />
+
+        {/* 02 / HOW WE WORK */}
+        <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
+          <div className="grid gap-10 lg:grid-cols-[0.76fr_1.24fr] lg:gap-12">
+            <div>
+              <Eyebrow>02 / HOW WE WORK</Eyebrow>
+              <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
+                A clear path from question to system.
+              </h2>
+              <p className="mt-4 max-w-md text-base leading-7 text-muted">
+                Every engagement starts by defining the real workflow problem
+                before selecting models, APIs, or infrastructure.
+              </p>
+            </div>
+
+            <div className="divide-y divide-[#1e293b] rounded-xl border border-[#233044] bg-[#172130]/45">
+              {processSteps.map((step) => (
+                <div
+                  key={step.number}
+                  className="grid gap-3 p-5 md:grid-cols-[3rem_12.5rem_minmax(0,1fr)] md:items-baseline md:gap-4 md:p-6"
+                >
+                  <span className="font-mono text-xs text-accent">
+                    {step.number}
+                  </span>
+                  <h3 className="text-base font-semibold text-foreground">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm leading-6 text-muted">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 03 / CONTACT CTA */}
+        <ContactCtaSection
+          eyebrow="03 / START A PROJECT"
+          title="Have a useful problem in mind"
+          description="Free consultation before starting. Share what you need to build or automate, and let's find a practical path forward."
+          primaryLabel="Discuss a project"
+          primaryHref="/contact"
+          secondaryLabel="Explore projects"
+          secondaryHref="/projects"
+        />
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
+}

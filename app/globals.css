@@ -44,65 +44,47 @@ select option {
   color: #f1f5f9;
 }
 
-/* Subtle architectural grid without radial glow washes */
-.bg-grid-canvas {
-  background-color: #0b0f16;
-  background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
+@layer components {
+  /* Subtle architectural grid without radial glow washes */
+  .bg-grid-canvas {
+    background-color: #0b0f16;
+    background-image:
+      linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
 
-.nav-glass {
-  border: 1px solid #233044;
-  background: rgba(11, 15, 22, 0.85);
-  box-shadow: 0 10px 28px rgba(2, 6, 15, 0.36);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+  .nav-glass {
+    border: 1px solid #233044;
+    background: rgba(11, 15, 22, 0.85);
+    box-shadow: 0 10px 28px rgba(2, 6, 15, 0.36);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 
-.section-frame {
-  border: 1px solid var(--border-frame);
-  background: rgba(17, 24, 35, 0.84);
-  box-shadow: 0 12px 32px rgba(2, 6, 15, 0.24);
-}
+  .section-frame {
+    border: 1px solid var(--border-frame);
+    background: rgba(17, 24, 35, 0.84);
+    box-shadow: 0 12px 32px rgba(2, 6, 15, 0.24);
+  }
 
-.surface-card {
-  border: 1px solid var(--border-card);
-  background: rgba(23, 33, 48, 0.56);
-}
+  .surface-card {
+    border: 1px solid var(--border-card);
+    background: rgba(23, 33, 48, 0.56);
+  }
 
-.surface-hover {
-  transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    background-color 220ms ease;
-}
+  .surface-hover {
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      background-color 220ms ease;
+  }
 
-.surface-hover:hover {
-  border-color: rgba(96, 165, 250, 0.4);
-  background: rgba(23, 33, 48, 0.86);
-  transform: translateY(-2px);
-}
-
-/* Preserved utility classes for existing secondary pages */
-.glass-panel {
-  border: 1px solid var(--border-card);
-  background: rgba(23, 33, 48, 0.56);
-  box-shadow: 0 8px 24px rgba(2, 6, 15, 0.2);
-}
-
-.glass-hover {
-  transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    background-color 220ms ease;
-}
-
-.glass-hover:hover {
-  border-color: rgba(96, 165, 250, 0.4);
-  background: rgba(23, 33, 48, 0.84);
-  transform: translateY(-2px);
+  .surface-hover:hover {
+    border-color: rgba(96, 165, 250, 0.4);
+    background: rgba(23, 33, 48, 0.86);
+    transform: translateY(-2px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -119,8 +101,7 @@ select option {
     transition-duration: 0.01ms !important;
   }
 
-  .surface-hover:hover,
-  .glass-hover:hover {
+  .surface-hover:hover {
     transform: none;
   }
 }

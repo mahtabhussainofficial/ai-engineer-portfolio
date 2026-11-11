@@ -77,7 +77,8 @@ export function SiteNavbar({
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 12);
+      const next = window.scrollY > 12;
+      setScrolled((prev) => (prev === next ? prev : next));
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -115,6 +116,13 @@ export function SiteNavbar({
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 sm:px-6 lg:px-8">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-lg focus:bg-[#3b82f6] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none"
+      >
+        Skip to content
+      </a>
+
       <Suspense fallback={null}>
         <PathnameWatcher onNavigate={closeMenu} />
         {!active ? <PathnameActiveBridge onResolve={setClientActive} /> : null}

@@ -1,12 +1,84 @@
-"use client";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useState } from "react";
-import { Eyebrow, PageIntro, SiteFooter } from "../components/site-shell";
-type Category="All Projects"|"AI & Machine Learning"|"Agentic AI & Automation"|"Backend & API Development"|"Full-Stack Applications";
-const categories:Category[]=["All Projects","AI & Machine Learning","Agentic AI & Automation","Backend & API Development","Full-Stack Applications"];
-const projects:{slug:string;title:string;description:string;category:Exclude<Category,"All Projects">;tags:string[]}[]=[
-  {slug:"knowledge-assistant",title:"Knowledge Assistant",description:"An editable project concept for a grounded assistant that answers questions from trusted business documents.",category:"AI & Machine Learning",tags:["RAG","Python","FastAPI"]},
-  {slug:"workflow-automation",title:"Workflow Automation",description:"An editable project concept for agentic workflows connected to business tools, APIs, and approval steps.",category:"Agentic AI & Automation",tags:["AI Agents","APIs","Automation"]},
-  {slug:"ai-backend-platform",title:"AI Backend Platform",description:"An editable project concept combining an AI feature, structured data, and a dependable backend foundation.",category:"Backend & API Development",tags:["PostgreSQL","Docker","REST APIs"]},
-];
-export default function ProjectsPage(){const[selected,setSelected]=useState<Category>("All Projects");const filtered=selected==="All Projects"?projects:projects.filter(p=>p.category===selected);return <div className="min-h-screen overflow-x-clip bg-background text-foreground"><PageIntro active="Projects" label="PROJECTS / CASE STUDIES" title={<>Projects &amp; <span className="text-accent">case studies</span></>} description="A growing collection of AI-powered applications, intelligent automation systems, backend solutions, and practical engineering work."/><main><section className="border-b border-[#293547] bg-surface"><div className="mx-auto max-w-7xl px-5 py-24 sm:px-6 lg:px-8 lg:py-28"><div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between"><div><Eyebrow>WORK INDEX</Eyebrow><h2 className="mt-4 text-3xl font-semibold">Explore the work</h2></div><p className="max-w-md leading-7 text-muted">These editable concepts demonstrate the kind of work this portfolio is prepared to document.</p></div><div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter projects by category">{categories.map(c=><button key={c} type="button" aria-pressed={selected===c} onClick={()=>setSelected(c)} className={`rounded-md border px-4 py-2.5 text-sm ${selected===c?"border-primary bg-primary text-white":"border-[#344258] text-muted hover:border-accent hover:text-foreground"}`}>{c}</button>)}</div><div className="mt-10 grid gap-5 md:grid-cols-2">{filtered.map(p=><article key={p.slug} className="glass-panel glass-hover flex min-h-[22rem] flex-col rounded-xl p-7"><div className="flex items-start justify-between gap-4"><Eyebrow>{p.category}</Eyebrow><span className="font-mono text-[10px] text-muted">EDITABLE CONCEPT</span></div><h3 className="mt-8 text-2xl font-medium">{p.title}</h3><p className="mt-3 leading-7 text-muted">{p.description}</p><div className="mt-auto flex flex-wrap gap-2 border-t border-[#293547] pt-5">{p.tags.map(tag=><span key={tag} className="rounded-full border border-white/10 px-2.5 py-1 text-xs text-accent">{tag}</span>)}</div><Link href={`/projects/${p.slug}`} className="mt-6 inline-flex text-sm text-accent">Open project brief →</Link></article>)}</div></div></section><section className="border-t border-[#293547] bg-background"><div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-16 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8"><div><Eyebrow>CONTINUE THE CONVERSATION</Eyebrow><h2 className="mt-3 text-3xl font-semibold">Have a project in mind?</h2></div><Link href="/contact" className="rounded-md bg-primary px-6 py-3.5 text-center text-sm font-semibold text-white">Discuss a project ↗</Link></div></section></main><SiteFooter/></div>}
+import { PROJECT_CATEGORIES, getProjects } from "../../lib/projects-data";
+import {
+  ContactCtaSection,
+  SiteFooter,
+  SiteHeader,
+} from "../components/site-shell";
+import { ProjectsBrowser } from "./projects-browser";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description:
+    "Explore AI engineering, workflow automation, RAG, and Python backend project briefs by Shabnum H.",
+};
+
+export default function ProjectsPage() {
+  const projects = getProjects();
+
+  return (
+    <div className="bg-grid-canvas min-h-screen overflow-x-clip text-foreground">
+      <SiteHeader active="Projects" />
+
+      <main
+        id="main-content"
+        className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pt-4 pb-8 sm:gap-10 sm:px-6 sm:pt-6 lg:px-8"
+      >
+        {/* OPEN EDITORIAL SHOWCASE HEADER */}
+        <section className="px-1 pt-4 pb-1 sm:pt-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center rounded-full border border-[#2b3a50] bg-[#172130]/90 px-3.5 py-1 font-mono text-[11px] tracking-[0.16em] text-accent">
+                PROJECTS / WORK INDEX
+              </span>
+              <h1 className="mt-5 text-[clamp(2rem,4.7vw,3.9rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
+                Projects &amp;{" "}
+                <span className="text-muted">case studies.</span>
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                A curated index of AI-powered applications, agentic workflow
+                automations, and dependable backend architectures.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+              >
+                <span>Discuss a project</span>
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#111823] px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent"
+              >
+                View services
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* FILTERABLE PROJECT INDEX */}
+        <ProjectsBrowser
+          projects={projects}
+          categories={PROJECT_CATEGORIES}
+        />
+
+        {/* CONTACT CTA */}
+        <ContactCtaSection
+          eyebrow="NEXT STEP"
+          title="Have a project in mind"
+          description="Free consultation before starting. Share what you want to build, and let's shape a practical technical direction."
+          primaryLabel="Discuss a project"
+          primaryHref="/contact"
+          secondaryLabel="View services"
+          secondaryHref="/services"
+        />
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
+}
