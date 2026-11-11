@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Eyebrow, tagClass } from "@/app/components/site-shell";
 import type {
   ProjectFilterCategory,
   ProjectRecord,
-} from "../../lib/projects-data";
-import { Eyebrow, tagClass } from "../components/site-shell";
+} from "@/lib/projects-data";
 
 export function ProjectsBrowser({
   projects,
@@ -56,7 +56,7 @@ export function ProjectsBrowser({
               onClick={() => setSelected(category)}
               className={`rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-4 sm:text-sm ${
                 isSelected
-                  ? "border-primary bg-primary text-white"
+                  ? "border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover"
                   : "border-[#2b3a50] bg-[#172130]/60 text-muted hover:border-accent/50 hover:text-foreground"
               }`}
             >
@@ -74,7 +74,7 @@ export function ProjectsBrowser({
           <button
             type="button"
             onClick={() => setSelected("All Projects")}
-            className="mt-4 inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-4 py-2 text-sm font-medium text-accent transition-colors duration-200 hover:border-accent/60 hover:text-foreground"
+            className="mt-4 inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-4 py-2 text-sm font-medium text-accent transition-colors duration-200 hover:border-accent/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Show all projects
           </button>
@@ -119,7 +119,7 @@ export function ProjectsBrowser({
                 <div className="border-t border-[#233044] pt-4">
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                   >
                     <span>Open project brief</span>
                     <span aria-hidden="true">→</span>

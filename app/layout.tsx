@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getSiteProfile } from "@/lib/site-config";
 import "./globals.css";
+
+const siteProfile = getSiteProfile();
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +24,12 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Shabnum H. | AI Engineer & Backend Developer",
-    template: "%s | Shabnum H.",
+    default: siteProfile.metaTitleDefault,
+    template: siteProfile.metaTitleTemplate,
   },
-  description:
-    "Shabnum H. builds practical AI applications, workflow automation, and reliable backend systems for growing businesses.",
+  description: siteProfile.metaDescription,
   openGraph: {
-    title: "Shabnum H. | AI Engineer & Backend Developer",
+    title: siteProfile.metaTitleDefault,
     description:
       "Practical AI engineering, RAG systems, workflow automation, and dependable Python backend architectures.",
     type: "website",
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Shabnum H. | AI Engineer & Backend Developer",
+    title: siteProfile.metaTitleDefault,
     description:
       "Practical AI engineering, RAG systems, workflow automation, and dependable Python backend architectures.",
   },

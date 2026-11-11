@@ -38,38 +38,181 @@ function resolveActiveFromPath(pathname: string | null): string | undefined {
   return undefined;
 }
 
-function PathnameActiveBridge({
-  onResolve,
+function DesktopNavLinks({
+  primaryItems,
+  contactItem,
+  currentActive,
 }: {
-  onResolve: (label: string | undefined) => void;
+  primaryItems: readonly NavItem[];
+  contactItem: NavItem;
+  currentActive?: string;
+}) {
+  return (
+    <>
+      <div className="hidden items-center gap-1.5 md:flex">
+        {primaryItems.map((item) => {
+          const isActive = currentActive === item.label;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className={`rounded-lg px-3.5 py-1.5 text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                isActive
+                  ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
+                  : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="hidden items-center md:flex">
+        <Link
+          href={contactItem.href}
+          aria-current={
+            currentActive === contactItem.label ? "page" : undefined
+          }
+          className={`inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
+            currentActive === contactItem.label
+              ? "border-[#60a5fa] bg-[#172130] text-[#f1f5f9]"
+              : "border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover"
+          }`}
+        >
+          <span>{contactItem.label}</span>
+          <span aria-hidden="true" className="text-xs">
+            ↗
+          </span>
+        </Link>
+      </div>
+    </>
+  );
+}
+
+function DesktopNavLinksResolved({
+  primaryItems,
+  contactItem,
+  active,
+}: {
+  primaryItems: readonly NavItem[];
+  contactItem: NavItem;
+  active?: string;
 }) {
   const pathname = usePathname();
+  const currentActive = active ?? resolveActiveFromPath(pathname);
 
-  useEffect(() => {
-    onResolve(resolveActiveFromPath(pathname));
-  }, [pathname, onResolve]);
+  return (
+    <DesktopNavLinks
+      primaryItems={primaryItems}
+      contactItem={contactItem}
+      currentActive={currentActive}
+    />
+  );
+}
 
-  return null;
+function MobileNavLinks({
+  primaryItems,
+  contactItem,
+  currentActive,
+  onSelect,
+}: {
+  primaryItems: readonly NavItem[];
+  contactItem: NavItem;
+  currentActive?: string;
+  onSelect: () => void;
+}) {
+  return (
+    <div
+      id="mobile-nav-menu"
+      className="nav-glass mt-2 rounded-2xl p-3 md:hidden"
+    >
+      <div className="flex flex-col gap-1">
+        {primaryItems.map((item) => {
+          const isActive = currentActive === item.label;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onSelect}
+              aria-current={isActive ? "page" : undefined}
+              className={`rounded-lg px-3.5 py-2.5 text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                isActive
+                  ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
+                  : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+      <div className="mt-2.5 border-t border-[#1e293b] pt-2.5">
+        <Link
+          href={contactItem.href}
+          onClick={onSelect}
+          aria-current={
+            currentActive === contactItem.label ? "page" : undefined
+          }
+          className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+            currentActive === contactItem.label
+              ? "border-[#60a5fa] bg-[#172130] text-[#f1f5f9]"
+              : "border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover"
+          }`}
+        >
+          <span>{contactItem.label}</span>
+          <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function MobileNavLinksResolved({
+  primaryItems,
+  contactItem,
+  active,
+  onSelect,
+}: {
+  primaryItems: readonly NavItem[];
+  contactItem: NavItem;
+  active?: string;
+  onSelect: () => void;
+}) {
+  const pathname = usePathname();
+  const currentActive = active ?? resolveActiveFromPath(pathname);
+
+  return (
+    <MobileNavLinks
+      primaryItems={primaryItems}
+      contactItem={contactItem}
+      currentActive={currentActive}
+      onSelect={onSelect}
+    />
+  );
 }
 
 export function SiteNavbar({
   items,
+  brandName = "SHABNUM H.",
   active,
 }: {
   items: readonly NavItem[];
+  brandName?: string;
   active?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [clientActive, setClientActive] = useState<string | undefined>(active);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentActive = active ?? clientActive;
   const primaryItems = items.filter((item) => item.href !== "/contact");
   const contactItem = items.find((item) => item.href === "/contact") ?? {
     label: "Contact",
     href: "/contact",
   };
+  const brandPrefix = brandName.replace(/\.$/, "");
+  const hasTrailingDot = brandName.endsWith(".");
 
   const closeMenu = useCallback(() => {
     setOpen(false);
@@ -118,14 +261,13 @@ export function SiteNavbar({
     <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 sm:px-6 lg:px-8">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-lg focus:bg-[#3b82f6] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-2 focus:outline-offset-2 focus:outline-accent"
       >
         Skip to content
       </a>
 
       <Suspense fallback={null}>
         <PathnameWatcher onNavigate={closeMenu} />
-        {!active ? <PathnameActiveBridge onResolve={setClientActive} /> : null}
       </Suspense>
 
       <div ref={containerRef} className="mx-auto max-w-7xl">
@@ -140,45 +282,25 @@ export function SiteNavbar({
             onClick={closeMenu}
             className="shrink-0 font-mono text-sm font-semibold tracking-[0.14em] text-[#f1f5f9] transition-colors duration-200 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]"
           >
-            SHABNUM H<span className="text-[#60a5fa]">.</span>
+            {brandPrefix}
+            {hasTrailingDot ? <span className="text-[#60a5fa]">.</span> : null}
           </Link>
 
-          <div className="hidden items-center gap-1.5 md:flex">
-            {primaryItems.map((item) => {
-              const isActive = currentActive === item.label;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`rounded-lg px-3.5 py-1.5 text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa] ${
-                    isActive
-                      ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
-                      : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="hidden items-center md:flex">
-            <Link
-              href={contactItem.href}
-              aria-current={currentActive === contactItem.label ? "page" : undefined}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa] ${
-                currentActive === contactItem.label
-                  ? "border-[#60a5fa] bg-[#172130] text-[#f1f5f9]"
-                  : "border-[#3b82f6] bg-[#3b82f6] text-white hover:border-[#60a5fa] hover:bg-[#60a5fa]"
-              }`}
-            >
-              <span>{contactItem.label}</span>
-              <span aria-hidden="true" className="text-xs">
-                ↗
-              </span>
-            </Link>
-          </div>
+          <Suspense
+            fallback={
+              <DesktopNavLinks
+                primaryItems={primaryItems}
+                contactItem={contactItem}
+                currentActive={active}
+              />
+            }
+          >
+            <DesktopNavLinksResolved
+              primaryItems={primaryItems}
+              contactItem={contactItem}
+              active={active}
+            />
+          </Suspense>
 
           <button
             type="button"
@@ -217,42 +339,23 @@ export function SiteNavbar({
         </nav>
 
         {open ? (
-          <div
-            id="mobile-nav-menu"
-            className="nav-glass mt-2 rounded-2xl p-3 md:hidden"
+          <Suspense
+            fallback={
+              <MobileNavLinks
+                primaryItems={primaryItems}
+                contactItem={contactItem}
+                currentActive={active}
+                onSelect={closeMenu}
+              />
+            }
           >
-            <div className="flex flex-col gap-1">
-              {primaryItems.map((item) => {
-                const isActive = currentActive === item.label;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={closeMenu}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`rounded-lg px-3.5 py-2.5 text-sm transition-colors duration-200 ${
-                      isActive
-                        ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
-                        : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="mt-2.5 border-t border-[#1e293b] pt-2.5">
-              <Link
-                href={contactItem.href}
-                onClick={closeMenu}
-                aria-current={currentActive === contactItem.label ? "page" : undefined}
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#60a5fa]"
-              >
-                <span>{contactItem.label}</span>
-                <span aria-hidden="true">↗</span>
-              </Link>
-            </div>
-          </div>
+            <MobileNavLinksResolved
+              primaryItems={primaryItems}
+              contactItem={contactItem}
+              active={active}
+              onSelect={closeMenu}
+            />
+          </Suspense>
         ) : null}
       </div>
     </header>

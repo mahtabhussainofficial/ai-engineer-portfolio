@@ -5,11 +5,12 @@
   --background: #0b0f16;
   --surface: #111823;
   --elevated: #172130;
-  --primary: #3b82f6;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
   --accent: #60a5fa;
   --foreground: #f1f5f9;
   --muted: #a1acba;
-  --subtle: #788596;
+  --subtle: #8896a8;
   --border-frame: #1e293b;
   --border-card: #233044;
   --border-control: #2b3a50;
@@ -20,6 +21,7 @@
   --color-surface: var(--surface);
   --color-elevated: var(--elevated);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-accent: var(--accent);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -42,6 +44,18 @@ body {
 select option {
   background: #172130;
   color: #f1f5f9;
+}
+
+@layer base {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {

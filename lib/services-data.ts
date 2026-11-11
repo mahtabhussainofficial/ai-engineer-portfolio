@@ -22,6 +22,11 @@ export interface ServiceRecord {
   readonly title: string;
   readonly description: string;
   readonly tools: readonly string[];
+  readonly featured?: boolean;
+  readonly homeCategoryLabel?: string;
+  readonly homeTitle?: string;
+  readonly homeDescription?: string;
+  readonly homeTags?: readonly string[];
 }
 
 export interface ProcessStepRecord {
@@ -32,7 +37,8 @@ export interface ProcessStepRecord {
 
 /**
  * Initial services catalog structured for future management from a portfolio dashboard/CMS.
- * Swap `getServices` and `getProcessSteps` to query your database without editing UI components.
+ * Swap `getServices`, `getFeaturedServices`, and `getProcessSteps` to query your database
+ * without editing UI components.
  */
 export const SERVICES: readonly ServiceRecord[] = [
   {
@@ -44,6 +50,11 @@ export const SERVICES: readonly ServiceRecord[] = [
     description:
       "Multi-agent systems and business workflows that connect tools, APIs, databases, and human approvals.",
     tools: ["LangChain", "LangGraph", "CrewAI", "n8n"],
+    featured: true,
+    homeCategoryLabel: "AUTOMATION",
+    homeDescription:
+      "Multi-agent systems, tool calling, and approval flows that reduce repetitive business work.",
+    homeTags: ["LangChain", "LangGraph", "CrewAI"],
   },
   {
     id: "svc-voice-ai",
@@ -64,6 +75,11 @@ export const SERVICES: readonly ServiceRecord[] = [
     description:
       "Accurate assistants grounded in documents, databases, and business knowledge.",
     tools: ["Pinecone", "Weaviate", "ChromaDB", "Hybrid Search"],
+    featured: true,
+    homeCategoryLabel: "KNOWLEDGE AI",
+    homeDescription:
+      "Grounded AI assistants that turn business documents and databases into useful answers.",
+    homeTags: ["Pinecone", "Weaviate", "Hybrid Search"],
   },
   {
     id: "svc-doc-intelligence",
@@ -104,6 +120,12 @@ export const SERVICES: readonly ServiceRecord[] = [
     description:
       "Production-minded AI applications and APIs built with Python, FastAPI, and modern web tooling.",
     tools: ["Python", "FastAPI", "Django", "Docker"],
+    featured: true,
+    homeCategoryLabel: "BACKEND",
+    homeTitle: "Full-Stack AI & Backend Systems",
+    homeDescription:
+      "Production-minded AI web apps and APIs built with Python, FastAPI, and modern tooling.",
+    homeTags: ["Python", "FastAPI", "Docker"],
   },
   {
     id: "svc-data-integrations",
@@ -146,6 +168,10 @@ export const PROCESS_STEPS: readonly ProcessStepRecord[] = [
 
 export function getServices(): readonly ServiceRecord[] {
   return SERVICES;
+}
+
+export function getFeaturedServices(): readonly ServiceRecord[] {
+  return SERVICES.filter((service) => service.featured);
 }
 
 export function getProcessSteps(): readonly ProcessStepRecord[] {

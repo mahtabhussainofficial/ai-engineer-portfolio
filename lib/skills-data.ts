@@ -17,6 +17,17 @@ export interface SkillLayerMeta {
   readonly description: string;
 }
 
+export interface FeaturedSkillRecord {
+  readonly id: string;
+  readonly number: string;
+  readonly category: string;
+  readonly title: string;
+  readonly description: string;
+  readonly tags: readonly string[];
+  readonly href: string;
+  readonly linkLabel: string;
+}
+
 export const SKILL_LAYERS: readonly SkillLayerMeta[] = [
   {
     id: "ai",
@@ -41,9 +52,45 @@ export const SKILL_LAYERS: readonly SkillLayerMeta[] = [
   },
 ];
 
+export const FEATURED_SKILLS: readonly FeaturedSkillRecord[] = [
+  {
+    id: "featured-skill-ai-llm",
+    number: "01",
+    category: "AI & LLMS",
+    title: "AI & LLM Engineering",
+    description:
+      "Prompt architecture, retrieval-augmented generation, and model integration for grounded AI features.",
+    tags: ["RAG", "LangChain", "OpenAI / Claude"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+  {
+    id: "featured-skill-automation",
+    number: "02",
+    category: "AUTOMATION",
+    title: "Automation & AI Agents",
+    description:
+      "Tool-using agents, workflow orchestration, and conversational automation tailored to operations.",
+    tags: ["CrewAI", "OpenClaw", "Workflows"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+  {
+    id: "featured-skill-systems",
+    number: "03",
+    category: "SYSTEMS",
+    title: "Backend & Cloud Delivery",
+    description:
+      "Dependable Python services, structured persistence, and containerized environments ready for production.",
+    tags: ["Python", "FastAPI", "Docker"],
+    href: "/skills",
+    linkLabel: "View full skill stack",
+  },
+];
+
 /**
  * Initial skill groups structured for future management from a portfolio dashboard/CMS.
- * Swap `getSkillGroups` to query your database without modifying page components.
+ * Swap `getSkillGroups` and `getFeaturedSkills` to query your database without modifying page components.
  */
 export const SKILL_GROUPS: readonly SkillGroupRecord[] = [
   {
@@ -159,6 +206,10 @@ export function getSkillGroups(): readonly SkillGroupRecord[] {
 
 export function getSkillLayers(): readonly SkillLayerMeta[] {
   return SKILL_LAYERS;
+}
+
+export function getFeaturedSkills(): readonly FeaturedSkillRecord[] {
+  return FEATURED_SKILLS;
 }
 
 export function getTotalSkillCount(): number {

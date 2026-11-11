@@ -1,9 +1,11 @@
 import Link from "next/link";
 import {
-  CONNECT_CHANNELS,
-  SITE_PROFILE,
+  PROFILE_HIGHLIGHTS_META,
+  getConnectChannels,
+  getProfileHighlights,
+  getSiteProfile,
   type SocialIconName,
-} from "../../lib/site-config";
+} from "@/lib/site-config";
 import { SiteNavbar } from "./site-navbar";
 
 export const navigation = [
@@ -18,6 +20,9 @@ export const navigation = [
 export const mutedLink =
   "text-sm text-[#a1acba] transition-colors duration-200 hover:text-[#f1f5f9] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]";
 
+export const primaryButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
+
 export const sectionButtonClass =
   "inline-flex shrink-0 items-center gap-2 self-start rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent lg:self-auto";
 
@@ -25,7 +30,15 @@ export const tagClass =
   "max-w-full break-words rounded-md border border-[#273549] bg-[#0b0f16]/85 px-2.5 py-1 font-mono text-[11px] text-muted";
 
 export function SiteHeader({ active }: { active?: string }) {
-  return <SiteNavbar items={navigation} active={active} />;
+  const siteProfile = getSiteProfile();
+
+  return (
+    <SiteNavbar
+      items={navigation}
+      brandName={siteProfile.brandName}
+      active={active}
+    />
+  );
 }
 
 export function ConnectIcon({
@@ -105,9 +118,14 @@ export function ConnectIcon({
   );
 }
 
-export function SiteFooter({ dark = false }: { dark?: boolean }) {
+export function SiteFooter() {
+  const siteProfile = getSiteProfile();
+  const connectChannels = getConnectChannels();
+  const brandPrefix = siteProfile.brandName.replace(/\.$/, "");
+  const hasTrailingDot = siteProfile.brandName.endsWith(".");
+
   return (
-    <footer className={`px-4 pt-2 pb-8 sm:px-6 lg:px-8 ${dark ? "bg-[#0b0f16]" : ""}`}>
+    <footer className="px-4 pt-2 pb-8 sm:px-6 lg:px-8">
       <div className="section-frame mx-auto max-w-7xl rounded-2xl px-6 py-10 sm:px-10 sm:py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.75fr_1.15fr] lg:gap-12">
           {/* Column 1: Brand & Bio */}
@@ -117,14 +135,17 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
               className="inline-flex items-center gap-3 font-mono text-sm font-semibold tracking-[0.14em] text-[#f1f5f9] transition-colors duration-200 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130] text-xs text-[#60a5fa]">
-                {SITE_PROFILE.initials}
+                {siteProfile.initials}
               </span>
               <span>
-                SHABNUM H<span className="text-[#60a5fa]">.</span>
+                {brandPrefix}
+                {hasTrailingDot ? (
+                  <span className="text-[#60a5fa]">.</span>
+                ) : null}
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-6 text-[#a1acba]">
-              {SITE_PROFILE.tagline}
+              {siteProfile.tagline}
             </p>
           </div>
 
@@ -133,9 +154,16 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
             <h2 className="text-sm font-semibold text-[#f1f5f9]">
               Quick Links
             </h2>
-            <nav aria-label="Footer navigation" className="mt-4 flex flex-col gap-2.5">
+            <nav
+              aria-label="Footer navigation"
+              className="mt-4 flex flex-col gap-2.5"
+            >
               {navigation.map((item) => (
-                <Link key={item.href} href={item.href} className={`${mutedLink} w-fit`}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${mutedLink} w-fit`}
+                >
                   {item.label}
                 </Link>
               ))}
@@ -146,17 +174,17 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
           <div>
             <h2 className="text-sm font-semibold text-[#f1f5f9]">Connect</h2>
             <div className="mt-4 flex flex-wrap gap-2.5">
-              {CONNECT_CHANNELS.map((channel) => {
+              {connectChannels.map((channel) => {
                 if (!channel.href) {
                   return (
                     <span
                       key={channel.id}
-                      className="inline-flex items-center gap-2 rounded-lg border border-[#1e293b] bg-[#0b0f16]/65 px-3.5 py-2 text-xs font-medium text-[#788596]"
+                      className="inline-flex items-center gap-2 rounded-lg border border-[#1e293b] bg-[#0b0f16]/65 px-3.5 py-2 text-xs font-medium text-subtle"
                     >
                       <ConnectIcon name={channel.icon} />
                       <span>{channel.label}</span>
                       {channel.status ? (
-                        <span className="font-mono text-[10px] text-[#788596]/80">
+                        <span className="font-mono text-[10px] text-subtle">
                           {channel.status}
                         </span>
                       ) : null}
@@ -192,19 +220,19 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
               })}
             </div>
 
-            <p className="mt-5 text-xs text-[#788596]">
+            <p className="mt-5 text-xs text-subtle">
               Direct:{" "}
-              {SITE_PROFILE.directEmail ? (
+              {siteProfile.directEmail ? (
                 <a
-                  href={`mailto:${SITE_PROFILE.directEmail}`}
-                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa]"
+                  href={`mailto:${siteProfile.directEmail}`}
+                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
                 >
-                  {SITE_PROFILE.directEmail}
+                  {siteProfile.directEmail}
                 </a>
               ) : (
                 <Link
                   href="/contact"
-                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa]"
+                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
                 >
                   Start an inquiry via Contact →
                 </Link>
@@ -213,13 +241,13 @@ export function SiteFooter({ dark = false }: { dark?: boolean }) {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-[#1e293b] pt-6 text-xs text-[#788596] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 border-t border-[#1e293b] pt-6 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between">
           <span>
-            © 2026 {SITE_PROFILE.ownerName} Built with Next.js &amp; Tailwind
-            CSS.
+            © {siteProfile.copyrightYear} {siteProfile.ownerName}{" "}
+            {siteProfile.copyrightNote}
           </span>
-          <span className="font-mono tracking-[0.14em] text-[#a1acba]/80">
-            {SITE_PROFILE.techNote}
+          <span className="font-mono tracking-[0.14em] text-[#a1acba]">
+            {siteProfile.techNote}
           </span>
         </div>
       </div>
@@ -286,9 +314,11 @@ export function PreviewSection({
       <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
           <article
-            key={item.number}
+            key={`${item.number}-${item.title}`}
             className={`surface-card surface-hover flex min-w-0 flex-col rounded-xl p-5 xl:p-6 ${
-              index === 2 ? "md:col-span-2 lg:col-span-1" : ""
+              items.length === 3 && index === 2
+                ? "md:col-span-2 lg:col-span-1"
+                : ""
             }`}
           >
             <div className="flex items-center justify-between gap-4 border-b border-[#233044] pb-4">
@@ -308,7 +338,7 @@ export function PreviewSection({
             </p>
 
             <div className="mt-auto flex flex-col gap-5 pt-6">
-              <div className="flex flex-wrap content-start gap-2 lg:min-h-[3.75rem] xl:min-h-0">
+              <div className="flex flex-wrap content-start gap-2 md:min-h-[3.75rem]">
                 {item.tags.map((tag) => (
                   <span key={tag} className={tagClass}>
                     {tag}
@@ -319,7 +349,7 @@ export function PreviewSection({
               <div className="border-t border-[#233044] pt-4">
                 <Link
                   href={item.href}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                 >
                   <span>{item.linkLabel}</span>
                   <span aria-hidden="true">→</span>
@@ -333,42 +363,20 @@ export function PreviewSection({
   );
 }
 
-const profileHighlightItems = [
-  {
-    index: "01 / EXPERIENCE",
-    value: "5+",
-    label: "Years building production AI systems",
-  },
-  {
-    index: "02 / PROJECTS",
-    value: "7",
-    label: "Completed freelance jobs",
-  },
-  {
-    index: "03 / DELIVERY",
-    value: "63",
-    label: "Tracked hours of client work",
-  },
-  {
-    index: "04 / RATING",
-    value: "5.0",
-    suffix: "★",
-    label: "Client rating shown on profile",
-  },
-] as const;
-
 export function ProfileHighlights({
-  title = "Built for practical progress.",
-  note = "A few profile highlights from Shabnum's current professional record.",
+  title = PROFILE_HIGHLIGHTS_META.title,
+  note = PROFILE_HIGHLIGHTS_META.note,
 }: {
   title?: string;
   note?: string;
 }) {
+  const highlights = getProfileHighlights();
+
   return (
     <div className="mt-10 border-t border-[#1e293b] pt-8">
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Eyebrow>AT A GLANCE</Eyebrow>
+          <Eyebrow>{PROFILE_HIGHLIGHTS_META.eyebrow}</Eyebrow>
           <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-foreground sm:text-xl">
             {title}
           </h3>
@@ -379,20 +387,20 @@ export function ProfileHighlights({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {profileHighlightItems.map((item) => (
+        {highlights.map((item) => (
           <div
-            key={item.index}
+            key={item.id}
             className="surface-card surface-hover rounded-xl p-5"
           >
             <span className="font-mono text-[10px] tracking-[0.16em] text-accent">
               {item.index}
             </span>
-            <strong className="mt-5 block text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+            <span className="mt-5 block text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
               {item.value}
-              {"suffix" in item && item.suffix ? (
+              {item.suffix ? (
                 <span className="ml-1 text-lg text-accent">{item.suffix}</span>
               ) : null}
-            </strong>
+            </span>
             <span className="mt-2 block text-sm leading-5 text-muted">
               {item.label}
             </span>
@@ -438,16 +446,13 @@ export function ContactCtaSection({
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-          <Link
-            href={primaryHref}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-          >
+          <Link href={primaryHref} className={primaryButtonClass}>
             <span>{primaryLabel}</span>
             <span aria-hidden="true">↗</span>
           </Link>
           <Link
             href={secondaryHref}
-            className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-5 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent"
+            className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-5 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
             {secondaryLabel}
           </Link>

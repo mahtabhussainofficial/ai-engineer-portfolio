@@ -3,6 +3,7 @@ import {
   Eyebrow,
   SiteFooter,
   SiteHeader,
+  primaryButtonClass,
   sectionButtonClass,
 } from "./components/site-shell";
 
@@ -25,10 +26,7 @@ export default function NotFound() {
             homepage or browse projects and services directly.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
+            <Link href="/" className={primaryButtonClass}>
               Back to home
             </Link>
             <Link href="/projects" className={sectionButtonClass}>
