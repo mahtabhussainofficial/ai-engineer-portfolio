@@ -335,35 +335,17 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Clean non-overlapping portrait card */}
-            <div className="mx-auto w-full max-w-[24rem] lg:justify-self-end">
-              <div className="rounded-xl border border-[#233044] bg-[#0b0f16] p-3">
+            {/* Clean portrait frame */}
+            <div className="mx-auto w-full max-w-[25rem] lg:justify-self-end">
+              <div className="rounded-xl border border-[#233044] bg-[#0b0f16] p-2.5">
                 <Image
                   src={portraitImage}
                   alt="Portrait of Shabnum H., AI Engineer and Backend Developer"
-                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 384px, 92vw"
+                  sizes="(min-width: 1024px) 380px, (min-width: 640px) 400px, 92vw"
                   placeholder="blur"
                   className="aspect-square w-full rounded-lg object-cover object-top"
                   priority
                 />
-                <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                  <div className="rounded-lg border border-[#1e293b] bg-[#111823] px-3.5 py-2.5">
-                    <p className="font-mono text-[10px] tracking-[0.14em] text-accent">
-                      AI ENGINEERING
-                    </p>
-                    <p className="mt-0.5 text-xs font-medium text-foreground">
-                      Agentic Workflows &amp; RAG
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-[#1e293b] bg-[#111823] px-3.5 py-2.5">
-                    <p className="font-mono text-[10px] tracking-[0.14em] text-accent">
-                      BACKEND CORE
-                    </p>
-                    <p className="mt-0.5 text-xs font-medium text-foreground">
-                      Python · FastAPI · SQL
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
