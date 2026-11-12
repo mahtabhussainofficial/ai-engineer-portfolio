@@ -11,7 +11,7 @@ from app.models.admin import AdminUser
 from app.models.contact import ContactMessage
 from app.models.enums import ContactInquiryMode, ContactMessageStatus
 from app.schemas.contact import ContactMessageUpdate
-from app.services.admin_common import (
+from app.services.common import (
     commit_or_conflict,
     ensure_non_null_patch_fields,
     get_record_or_404,

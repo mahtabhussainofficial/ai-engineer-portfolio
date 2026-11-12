@@ -22,6 +22,7 @@ from app.schemas.career import (
     ExperienceCreate,
     ExperienceRead,
     ExperienceUpdate,
+    PublicBackgroundResponse,
 )
 from app.schemas.common import (
     AppBaseSchema,
@@ -133,6 +134,7 @@ __all__ = [
     "ProjectRead",
     "ProjectSummary",
     "ProjectUpdate",
+    "PublicBackgroundResponse",
     "PublicSiteSettingsPayload",
     "SafeAssetUrl",
     "SafeLinkHref",

@@ -141,6 +141,170 @@ def test_media_asset_crud_and_safe_deletion_protection(
     assert deleted.json()["id"] == media_id
 
     assert client.get(f"/api/v1/admin/media/{media_id}", headers=headers).status_code == 404
+    missing_media_id = str(uuid.uuid4())
+    assert client.get(f"/api/v1/admin/media/{missing_media_id}", headers=headers).status_code == 404
+    assert (
+        client.patch(
+            f"/api/v1/admin/media/{missing_media_id}",
+            headers=headers,
+            json={"caption": "Missing"},
+        ).status_code
+        == 404
+    )
+    assert client.delete(f"/api/v1/admin/media/{missing_media_id}", headers=headers).status_code == 404
+
+
+def test_media_deletion_blocked_across_all_five_references(
+    authenticated_admin_client: tuple[TestClient, sessionmaker[Session], dict[str, str]],
+) -> None:
+    client, _session_factory, headers = authenticated_admin_client
+
+    def _make_media(name: str) -> str:
+        res = client.post(
+            "/api/v1/admin/media",
+            headers=headers,
+            json={
+                "title": name,
+                "file_name": f"{name}.png",
+                "url": f"/images/{name}.png",
+                "mime_type": "image/png",
+            },
+        )
+        assert res.status_code == 201
+        return str(res.json()["id"])
+
+    m_project = _make_media("project-cover")
+    m_cert = _make_media("cert-badge")
+    m_testimonial = _make_media("testimonial-avatar")
+    m_portrait = _make_media("settings-portrait")
+    m_logo = _make_media("site-logo")
+
+    # 1. Project.cover_media_id
+    proj = client.post(
+        "/api/v1/admin/projects",
+        headers=headers,
+        json={
+            "slug": "ref-check-project",
+            "title": "Ref Check Project",
+            "category": "AI",
+            "summary": "Project referencing media asset.",
+            "problem": "Ensure referenced media cannot be deleted.",
+            "solution": "Check all five reference locations.",
+            "cover_media_id": m_project,
+        },
+    )
+    assert proj.status_code == 201
+    proj_id = proj.json()["id"]
+    assert client.delete(f"/api/v1/admin/media/{m_project}", headers=headers).status_code == 409
+
+    # 2. Certification.badge_media_id
+    cert = client.post(
+        "/api/v1/admin/certifications",
+        headers=headers,
+        json={
+            "year": "2026",
+            "title": "Ref Check Cert",
+            "issuer": "Institute",
+            "badge_media_id": m_cert,
+        },
+    )
+    assert cert.status_code == 201
+    cert_id = cert.json()["id"]
+    assert client.delete(f"/api/v1/admin/media/{m_cert}", headers=headers).status_code == 409
+
+    # 3. Testimonial.avatar_media_id
+    testimonial = client.post(
+        "/api/v1/admin/testimonials",
+        headers=headers,
+        json={
+            "title": "Ref Check Testimonial",
+            "author_name": "Jordan R.",
+            "quote": "Reliable AI systems delivery on schedule.",
+            "rating_label": "5.0",
+            "stars": 5,
+            "source": "Direct",
+            "avatar_media_id": m_testimonial,
+        },
+    )
+    assert testimonial.status_code == 201
+    testimonial_id = testimonial.json()["id"]
+    assert client.delete(f"/api/v1/admin/media/{m_testimonial}", headers=headers).status_code == 409
+
+    # 4 & 5. SiteSetting.portrait_media_id and site_general.value.logo_media_id
+    setting_value = {
+        "initials": "MS",
+        "owner_name": "Mahtab Hussain",
+        "professional_title": "AI Systems Engineer",
+        "brand_name": "Mahtab AI",
+        "tagline": "Reliable production AI workflows.",
+        "logo_media_id": m_logo,
+        "tech_note": "FastAPI + Next.js",
+        "copyright_year": 2026,
+        "copyright_note": "All rights reserved.",
+        "meta_title_default": "Mahtab Hussain",
+        "meta_title_template": "%s | Mahtab Hussain",
+        "meta_description": "Portfolio of production AI engineering.",
+        "connect_channels": [],
+    }
+    setting = client.post(
+        "/api/v1/admin/settings",
+        headers=headers,
+        json={
+            "key": "site_general",
+            "label": "Site General",
+            "category": "general",
+            "value": setting_value,
+            "portrait_media_id": m_portrait,
+            "is_public": False,
+        },
+    )
+    assert setting.status_code == 201
+    assert client.delete(f"/api/v1/admin/media/{m_portrait}", headers=headers).status_code == 409
+    assert client.delete(f"/api/v1/admin/media/{m_logo}", headers=headers).status_code == 409
+
+    # Unlink each reference and confirm deletion succeeds cleanly
+    assert (
+        client.patch(
+            f"/api/v1/admin/projects/{proj_id}",
+            headers=headers,
+            json={"cover_media_id": None},
+        ).status_code
+        == 200
+    )
+    assert client.delete(f"/api/v1/admin/media/{m_project}", headers=headers).status_code == 200
+
+    assert (
+        client.patch(
+            f"/api/v1/admin/certifications/{cert_id}",
+            headers=headers,
+            json={"badge_media_id": None},
+        ).status_code
+        == 200
+    )
+    assert client.delete(f"/api/v1/admin/media/{m_cert}", headers=headers).status_code == 200
+
+    assert (
+        client.patch(
+            f"/api/v1/admin/testimonials/{testimonial_id}",
+            headers=headers,
+            json={"avatar_media_id": None},
+        ).status_code
+        == 200
+    )
+    assert client.delete(f"/api/v1/admin/media/{m_testimonial}", headers=headers).status_code == 200
+
+    cleared_value = dict(setting_value)
+    cleared_value["logo_media_id"] = None
+    assert (
+        client.patch(
+            "/api/v1/admin/settings/site_general",
+            headers=headers,
+            json={"portrait_media_id": None, "value": cleared_value},
+        ).status_code
+        == 200
+    )
+    assert client.delete(f"/api/v1/admin/media/{m_portrait}", headers=headers).status_code == 200
+    assert client.delete(f"/api/v1/admin/media/{m_logo}", headers=headers).status_code == 200
 
 
 def test_contact_messages_triage_and_privacy(
@@ -251,7 +415,20 @@ def test_contact_messages_triage_and_privacy(
     assert unread_res.json()["read_at"] is None
     assert unread_res.json()["archived_at"] is None
 
-    # Delete message
+    # Delete message & 404 coverage
     del_res = client.delete(f"/api/v1/admin/messages/{msg1_id}", headers=headers)
     assert del_res.status_code == 200
     assert client.get(f"/api/v1/admin/messages/{msg1_id}", headers=headers).status_code == 404
+    missing_msg = str(uuid.uuid4())
+    assert (
+        client.patch(
+            f"/api/v1/admin/messages/{missing_msg}",
+            headers=headers,
+            json={"status": "read"},
+        ).status_code
+        == 404
+    )
+    assert client.delete(f"/api/v1/admin/messages/{missing_msg}", headers=headers).status_code == 404
+    adv = client.get("/api/v1/admin/messages?inquiry_mode=advisory", headers=headers)
+    assert adv.status_code == 200
+    assert adv.json()["total"] == 1

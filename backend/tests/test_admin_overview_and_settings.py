@@ -346,3 +346,179 @@ def test_site_settings_crud_validation_and_visibility_protection(
     get_res = client.get("/api/v1/admin/settings/skills_page", headers=headers)
     assert get_res.status_code == 200
     assert get_res.json()["portrait_media"]["id"] == media_id
+
+    # Unpublish back to draft & missing-key 404s
+    unpublish_ok = client.patch(
+        "/api/v1/admin/settings/skills_page/visibility",
+        headers=headers,
+        json={"is_public": False},
+    )
+    assert unpublish_ok.status_code == 200
+    assert unpublish_ok.json()["is_public"] is False
+
+    assert client.get("/api/v1/admin/settings/does_not_exist", headers=headers).status_code == 404
+    assert (
+        client.patch(
+            "/api/v1/admin/settings/does_not_exist",
+            headers=headers,
+            json={"label": "Nope"},
+        ).status_code
+        == 404
+    )
+    assert (
+        client.patch(
+            "/api/v1/admin/settings/does_not_exist/visibility",
+            headers=headers,
+            json={"is_public": False},
+        ).status_code
+        == 404
+    )
+
+
+def _sample_site_general_value(logo_media_id: str | None = None) -> dict[str, object]:
+    return {
+        "initials": "MS",
+        "owner_name": "Mahtab Hussain",
+        "professional_title": "AI Systems Engineer",
+        "brand_name": "Mahtab AI",
+        "tagline": "Building reliable AI and backend systems.",
+        "logo_media_id": logo_media_id,
+        "logo_url": None,
+        "direct_email": "hello@example.com",
+        "tech_note": "FastAPI + Next.js",
+        "copyright_year": 2026,
+        "copyright_note": "All rights reserved.",
+        "meta_title_default": "Mahtab Hussain | AI Engineer",
+        "meta_title_template": "%s | Mahtab Hussain",
+        "meta_description": "Portfolio of production AI and backend engineering work.",
+        "connect_channels": [],
+    }
+
+
+def test_site_general_media_validation_and_relationship_swaps(
+    authenticated_admin_client: tuple[TestClient, sessionmaker[Session], dict[str, str]],
+) -> None:
+    client, session_factory, headers = authenticated_admin_client
+
+    with session_factory() as db:
+        logo1 = MediaAsset(
+            title="Logo 1",
+            file_name="logo1.png",
+            url="/images/logo1.png",
+            mime_type="image/png",
+        )
+        portrait1 = MediaAsset(
+            title="Portrait 1",
+            file_name="portrait1.jpg",
+            url="/images/portrait1.jpg",
+            mime_type="image/jpeg",
+        )
+        portrait2 = MediaAsset(
+            title="Portrait 2",
+            file_name="portrait2.jpg",
+            url="/images/portrait2.jpg",
+            mime_type="image/jpeg",
+        )
+        db.add_all([logo1, portrait1, portrait2])
+        db.commit()
+        logo1_id = str(logo1.id)
+        portrait1_id = str(portrait1.id)
+        portrait2_id = str(portrait2.id)
+
+    # Create fails if logo_media_id does not exist
+    missing_id = str(uuid.uuid4())
+    bad_create = client.post(
+        "/api/v1/admin/settings",
+        headers=headers,
+        json={
+            "key": "site_general",
+            "label": "General Settings",
+            "category": "general",
+            "value": _sample_site_general_value(logo_media_id=missing_id),
+            "is_public": False,
+        },
+    )
+    assert bad_create.status_code == 422
+
+    # Valid create with both logo_media_id and portrait_media_id
+    created = client.post(
+        "/api/v1/admin/settings",
+        headers=headers,
+        json={
+            "key": "site_general",
+            "label": "General Settings",
+            "category": "general",
+            "value": _sample_site_general_value(logo_media_id=logo1_id),
+            "portrait_media_id": portrait1_id,
+            "is_public": False,
+        },
+    )
+    assert created.status_code == 201
+    assert created.json()["portrait_media"]["id"] == portrait1_id
+    assert created.json()["value"]["logo_media_id"] == logo1_id
+
+    # Update rejects nonexistent portrait_media_id or nonexistent logo_media_id
+    assert (
+        client.patch(
+            "/api/v1/admin/settings/site_general",
+            headers=headers,
+            json={"portrait_media_id": str(uuid.uuid4())},
+        ).status_code
+        == 422
+    )
+    assert (
+        client.patch(
+            "/api/v1/admin/settings/site_general",
+            headers=headers,
+            json={"value": _sample_site_general_value(logo_media_id=str(uuid.uuid4()))},
+        ).status_code
+        == 422
+    )
+
+    # Swap portrait_media_id to portrait2 and confirm serialized media updates cleanly
+    swapped = client.patch(
+        "/api/v1/admin/settings/site_general",
+        headers=headers,
+        json={"portrait_media_id": portrait2_id},
+    )
+    assert swapped.status_code == 200
+    assert swapped.json()["portrait_media"]["id"] == portrait2_id
+
+    # Unlink portrait_media_id -> null portrait_media
+    unlinked = client.patch(
+        "/api/v1/admin/settings/site_general",
+        headers=headers,
+        json={"portrait_media_id": None},
+    )
+    assert unlinked.status_code == 200
+    assert unlinked.json()["portrait_media"] is None
+
+    # Visibility publish fails if DB value has a missing logo_media_id
+    with session_factory() as db:
+        row = db.query(SiteSetting).filter(SiteSetting.key == "site_general").one()
+        broken = dict(row.value)
+        broken["logo_media_id"] = str(uuid.uuid4())
+        row.value = broken
+        db.commit()
+
+    bad_vis = client.patch(
+        "/api/v1/admin/settings/site_general/visibility",
+        headers=headers,
+        json={"is_public": True},
+    )
+    assert bad_vis.status_code == 422
+
+    # Repair logo_media_id and publish cleanly
+    repaired = client.patch(
+        "/api/v1/admin/settings/site_general",
+        headers=headers,
+        json={"value": _sample_site_general_value(logo_media_id=logo1_id)},
+    )
+    assert repaired.status_code == 200
+    ok_vis = client.patch(
+        "/api/v1/admin/settings/site_general/visibility",
+        headers=headers,
+        json={"is_public": True},
+    )
+    assert ok_vis.status_code == 200
+    assert ok_vis.json()["is_public"] is True

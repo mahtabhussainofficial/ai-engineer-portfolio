@@ -118,3 +118,11 @@ class CertificationRead(UUIDTimestampSchema, CertificationBase):
     """Read schema for a certification entry."""
 
     badge_media: MediaAssetSummary | None = None
+
+
+class PublicBackgroundResponse(AppBaseSchema):
+    """Aggregated published career experience, education, and certifications payload."""
+
+    experience: list[ExperienceRead]
+    education: list[EducationRead]
+    certifications: list[CertificationRead]

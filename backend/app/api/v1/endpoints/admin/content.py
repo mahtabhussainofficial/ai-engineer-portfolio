@@ -181,10 +181,7 @@ def delete_admin_project(project_id: uuid.UUID, db: Session = Depends(get_db)) -
     "/projects/{project_id}/publish",
     response_model=ProjectRead,
     tags=["Admin Projects"],
-    responses={
-        status.HTTP_401_UNAUTHORIZED: {"model": ErrorResponse},
-        status.HTTP_404_NOT_FOUND: {"model": ErrorResponse},
-    },
+    responses=_CRUD_RESPONSES,
     summary="Publish portfolio project",
 )
 def publish_admin_project(project_id: uuid.UUID, db: Session = Depends(get_db)) -> ProjectRead:
@@ -759,7 +756,7 @@ def delete_admin_testimonial(
     "/testimonials/{testimonial_id}/publish",
     response_model=TestimonialRead,
     tags=["Admin Testimonials"],
-    responses={**_AUTH_401, status.HTTP_404_NOT_FOUND: {"model": ErrorResponse}},
+    responses=_CRUD_RESPONSES,
     summary="Publish testimonial",
 )
 def publish_admin_testimonial(

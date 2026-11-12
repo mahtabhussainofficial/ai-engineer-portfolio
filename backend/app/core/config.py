@@ -75,6 +75,8 @@ class Settings(BaseSettings):
 
     auth_login_rate_limit_max_attempts: int = Field(default=5, ge=1, le=100)
     auth_login_rate_limit_window_seconds: int = Field(default=300, ge=10, le=86400)
+    contact_rate_limit_max_requests: int = Field(default=5, ge=1, le=100)
+    contact_rate_limit_window_seconds: int = Field(default=300, ge=10, le=86400)
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -120,6 +122,31 @@ class Settings(BaseSettings):
                 "SECRET_KEY must be configured with at least 32 random characters."
             )
         return self.secret_key
+
+    def validate_production_readiness(self) -> None:
+        """Fail fast on unsafe settings when running in the production environment."""
+        if self.environment != "production":
+            return
+
+        self.require_secret_key()
+        if self.debug:
+            raise RuntimeError("DEBUG must be false when ENVIRONMENT is set to 'production'.")
+        if not self.sqlalchemy_database_url:
+            raise RuntimeError(
+                "A PostgreSQL database configuration is required when ENVIRONMENT is 'production'."
+            )
+        if self.cookie_secure is False:
+            raise RuntimeError(
+                "COOKIE_SECURE cannot be forced to false in 'production'."
+            )
+        if self.cookie_samesite == "none" and not self.effective_cookie_secure:
+            raise RuntimeError(
+                "COOKIE_SAMESITE='none' requires Secure cookies."
+            )
+        if self.cors_allow_credentials and "*" in self.cors_origins:
+            raise RuntimeError(
+                "CORS_ORIGINS cannot contain '*' when CORS_ALLOW_CREDENTIALS is enabled."
+            )
 
     @property
     def sqlalchemy_database_url(self) -> str | None:

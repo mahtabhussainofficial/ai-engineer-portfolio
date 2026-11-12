@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Callable
 from typing import Any, TypeVar
 
+from fastapi import status
 from sqlalchemy import select
 from sqlalchemy.orm import InstrumentedAttribute, Session
 
-from app.core.exceptions import ConflictError
+from app.core.exceptions import AppError, ConflictError
 from app.models.career import Certification, Education, Experience
 from app.models.enums import PublishStatus, SkillLayer
 from app.models.project import Project
@@ -27,7 +29,7 @@ from app.schemas.project import ProjectCreate, ProjectUpdate
 from app.schemas.service import ServiceCreate, ServiceUpdate
 from app.schemas.skill import SkillCreate, SkillUpdate
 from app.schemas.testimonial import TestimonialCreate, TestimonialUpdate
-from app.services.admin_common import (
+from app.services.common import (
     apply_publish_fields_on_create,
     apply_publish_fields_on_patch,
     commit_or_conflict,
@@ -36,6 +38,8 @@ from app.services.admin_common import (
     get_record_or_404,
     paginate_query,
     set_publish_state,
+    validate_project_for_publish,
+    validate_testimonial_for_publish,
 )
 
 ModelT = TypeVar("ModelT")
@@ -106,6 +110,7 @@ def _toggle_publish_record(
     publish: bool,
     not_found_message: str,
     media_relation: InstrumentedAttribute[Any] | None = None,
+    publish_validator: Callable[[Session, ModelT], None] | None = None,
 ) -> ModelT:
     record = get_record_or_404(
         db,
@@ -114,8 +119,11 @@ def _toggle_publish_record(
         not_found_message=not_found_message,
         media_relation=media_relation,
     )
+    if publish and publish_validator is not None:
+        publish_validator(db, record)
     set_publish_state(record, publish)
     commit_or_conflict(db, "Failed to update publish state.")
+    db.expire(record)
     return get_record_or_404(
         db,
         model_cls,
@@ -198,8 +206,11 @@ def create_project(db: Session, payload: ProjectCreate) -> Project:
         cover_media_id=payload.cover_media_id,
     )
     apply_publish_fields_on_create(project, payload.publish_status, payload.published_at)
+    if project.publish_status == PublishStatus.PUBLISHED.value:
+        validate_project_for_publish(db, project)
     db.add(project)
     commit_or_conflict(db, f"A project with slug '{payload.slug}' already exists.")
+    db.expire(project)
     return get_project(db, project.id)
 
 
@@ -263,8 +274,11 @@ def update_project(db: Session, project_id: uuid.UUID, payload: ProjectUpdate) -
             ensure_media_exists(db, payload.cover_media_id)
         project.cover_media_id = payload.cover_media_id
     apply_publish_fields_on_patch(project, payload)
+    if project.publish_status == PublishStatus.PUBLISHED.value:
+        validate_project_for_publish(db, project)
 
     commit_or_conflict(db, "Project update conflicted with existing data.")
+    db.expire(project)
     return get_project(db, project.id)
 
 
@@ -280,6 +294,7 @@ def set_project_publish_state(db: Session, project_id: uuid.UUID, *, publish: bo
         publish=publish,
         not_found_message="Project was not found.",
         media_relation=Project.cover_media,
+        publish_validator=validate_project_for_publish,
     )
 
 
@@ -721,6 +736,7 @@ def create_certification(db: Session, payload: CertificationCreate) -> Certifica
     apply_publish_fields_on_create(cert, payload.publish_status, payload.published_at)
     db.add(cert)
     commit_or_conflict(db, "Certification creation conflicted with existing data.")
+    db.expire(cert)
     return get_certification(db, cert.id)
 
 
@@ -751,6 +767,7 @@ def update_certification(
     apply_publish_fields_on_patch(cert, payload)
 
     commit_or_conflict(db, "Certification update conflicted with existing data.")
+    db.expire(cert)
     return get_certification(db, cert.id)
 
 
@@ -823,8 +840,11 @@ def create_testimonial(db: Session, payload: TestimonialCreate) -> Testimonial:
         display_order=payload.display_order,
     )
     apply_publish_fields_on_create(item, payload.publish_status, payload.published_at)
+    if item.publish_status == PublishStatus.PUBLISHED.value:
+        validate_testimonial_for_publish(db, item)
     db.add(item)
     commit_or_conflict(db, "Testimonial creation conflicted with existing data.")
+    db.expire(item)
     return get_testimonial(db, item.id)
 
 
@@ -864,8 +884,11 @@ def update_testimonial(
     if "display_order" in payload.model_fields_set and payload.display_order is not None:
         item.display_order = payload.display_order
     apply_publish_fields_on_patch(item, payload)
+    if item.publish_status == PublishStatus.PUBLISHED.value:
+        validate_testimonial_for_publish(db, item)
 
     commit_or_conflict(db, "Testimonial update conflicted with existing data.")
+    db.expire(item)
     return get_testimonial(db, item.id)
 
 
@@ -885,4 +908,5 @@ def set_testimonial_publish_state(
         publish=publish,
         not_found_message="Testimonial was not found.",
         media_relation=Testimonial.avatar_media,
+        publish_validator=validate_testimonial_for_publish,
     )

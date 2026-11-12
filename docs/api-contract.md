@@ -110,22 +110,22 @@ Requires `Authorization: Bearer <access_token>`.
 
 ---
 
-## Planned Public API (Sub-phase 3C — Not Implemented Yet)
+## Public Portfolio & Contact API (Implemented in Sub-phase 3C)
 
-Public endpoints return only records where `publish_status = "published"` (or whitelisted keys where `is_public = true` for `site_settings`), ordered by `display_order ASC`.
+Public endpoints require no authentication and return only records where `publish_status = "published"` (or whitelisted keys where `is_public = true` and `key` is in `PUBLIC_SETTING_KEYS` for `site_settings`). Draft records, private settings, admin/session fields, `admin_notes`, `source_ip`, and `user_agent` are never returned.
 
-| Method | Path | Purpose | Source Frontend Data Module |
-| --- | --- | --- | --- |
-| `GET` | `/api/v1/public/site` | Aggregated whitelisted public `site_settings` (`site_general`, `home_page`, `about_page`, `contact_page`, `skills_page`) with resolved media | `lib/site-config.ts`, `lib/about-data.ts`, `lib/skills-data.ts`, `app/(public)/*.tsx` |
-| `GET` | `/api/v1/public/projects` | Paginated published projects (filterable by `category`, `featured`) | `lib/projects-data.ts` |
-| `GET` | `/api/v1/public/projects/{slug}` | Fetch single published project detail by unique `slug` | `lib/projects-data.ts` |
-| `GET` | `/api/v1/public/services` | List published services (filterable by `category`, `featured`) | `lib/services-data.ts` |
-| `GET` | `/api/v1/public/skills` | List published skill groups (filterable by `layer`, `featured`) | `lib/skills-data.ts` |
-| `GET` | `/api/v1/public/background` | Published `experience`, `education`, and `certifications` records | `lib/experience-data.ts` |
-| `GET` | `/api/v1/public/testimonials` | Paginated published client feedback / testimonials | `lib/site-config.ts` (`CLIENT_FEEDBACK`) |
-| `POST` | `/api/v1/public/contact` | Rate-limited contact inquiry submission (`ContactMessageCreate` -> `ContactMessagePublicResponse`) | `app/(public)/contact/contact-form.tsx` |
+| Method | Path | Response Model | Query / Filter Options | Purpose |
+| --- | --- | --- | --- | --- |
+| `GET` | `/api/v1/public/site` | `PublicSiteSettingsPayload` | — | Aggregated whitelisted public `site_settings` (`site_general`, `home_page`, `about_page`, `contact_page`, `skills_page`) with resolved `portrait_media` and `logo_media` summaries |
+| `GET` | `/api/v1/public/services` | `PaginatedResponse[ServiceRead]` | `category`, `featured`, `page`, `page_size`, `sort_by`, `sort_order` | Paginated published services (`sort_by`: `display_order`, `created_at`, `updated_at`, `title`) |
+| `GET` | `/api/v1/public/skills` | `PaginatedResponse[SkillRead]` | `layer`, `featured`, `page`, `page_size`, `sort_by`, `sort_order` | Paginated published skill groups (`sort_by`: `display_order`, `created_at`, `updated_at`, `title`) |
+| `GET` | `/api/v1/public/projects` | `PaginatedResponse[ProjectSummary]` | `category`, `featured`, `page`, `page_size`, `sort_by`, `sort_order` | Paginated published projects with resolved `cover_media` (`sort_by`: `display_order`, `created_at`, `updated_at`, `title`) |
+| `GET` | `/api/v1/public/projects/{slug}` | `ProjectRead` | Path `slug` | Fetch single published project detail by unique `slug` (returns `404 not_found` for unknown or non-published slugs) |
+| `GET` | `/api/v1/public/background` | `PublicBackgroundResponse` | — | Published `experience`, `education`, and `certifications` (with resolved `badge_media`), ordered by `display_order ASC` |
+| `GET` | `/api/v1/public/testimonials` | `PaginatedResponse[TestimonialRead]` | `featured`, `page`, `page_size`, `sort_by`, `sort_order` | Paginated published testimonials with resolved `avatar_media` (`sort_by`: `display_order`, `created_at`, `updated_at`, `title`) |
+| `POST` | `/api/v1/public/contact` | `ContactMessagePublicResponse` (`201`) | — | Sliding-window rate-limited contact inquiry submission (`CONTACT_RATE_LIMIT_MAX_REQUESTS` per `CONTACT_RATE_LIMIT_WINDOW_SECONDS`, defaults: `5` / `300s`) |
 
-### Planned `POST /api/v1/public/contact` Request Payload
+### `POST /api/v1/public/contact` Request & Response
 ```json
 {
   "inquiry_mode": "project",
@@ -136,8 +136,10 @@ Public endpoints return only records where `publish_status = "published"` (or wh
   "message": "Looking to automate document intake and approval routing."
 }
 ```
-- **201 Created**: Returns minimal `ContactMessagePublicResponse` (`id`, `status: "unread"`, `created_at`).
-- **422 Unprocessable Content**: Returns field-level validation errors matching `ContactMessageCreate`.
+- **201 Created**: Stores `status = "unread"`, server-extracted `source_ip`, and truncated `user_agent` (up to 512 chars), and returns only `ContactMessagePublicResponse` (`id`, `status`, `created_at`).
+- **422 Unprocessable Content**: Returned for field validation errors or unknown extra fields (`extra="forbid"`), plus invalid `sort_by`/`sort_order`/`layer` query params on list endpoints.
+- **429 Too Many Requests**: Returned with `Retry-After` header and `code = "rate_limit_exceeded"` when the sliding window limit is exceeded.
+- **503 Service Unavailable / 500 Internal Server Error**: Returned with `database_unavailable` when DB is unconfigured or `database_error` on unexpected database errors.
 
 ---
 

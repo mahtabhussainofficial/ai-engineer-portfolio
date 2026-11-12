@@ -447,6 +447,10 @@ def test_logout_session_listing_and_revocation(
         headers={"Authorization": f"Bearer {token_2}"},
     )
     assert del_res.status_code == 200
+    assert (
+        client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token_1}"}).status_code
+        == 401
+    )
 
     # Unknown session ID returns 404
     assert (
@@ -457,7 +461,7 @@ def test_logout_session_listing_and_revocation(
         == 404
     )
 
-    # Logout current (second) session clears cookies and revokes session
+    # Logout current (second) session clears cookies, revokes session, and invalidates its JWT
     logout_res = client.post(
         "/api/v1/auth/logout",
         headers={"X-CSRF-Token": csrf_2},
@@ -465,6 +469,10 @@ def test_logout_session_listing_and_revocation(
     assert logout_res.status_code == 200
     assert logout_res.json()["revoked_sessions"] == 1
     assert client.cookies.get(settings.refresh_cookie_name) is None
+    assert (
+        client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token_2}"}).status_code
+        == 401
+    )
 
     # Subsequent refresh attempt using revoked token_1 fails
     client.cookies.clear()
@@ -472,7 +480,7 @@ def test_logout_session_listing_and_revocation(
     client.cookies.set(settings.csrf_cookie_name, csrf_1, path="/api/v1/auth")
     assert client.post("/api/v1/auth/refresh", headers={"X-CSRF-Token": csrf_1}).status_code == 401
 
-    # New logins then logout-all revokes all active sessions at once
+    # New logins then logout-all revokes all active sessions at once and invalidates their JWTs
     client.post("/api/v1/auth/login", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD})
     login_4 = client.post(
         "/api/v1/auth/login",
@@ -486,6 +494,10 @@ def test_logout_session_listing_and_revocation(
     assert logout_all_res.status_code == 200
     assert logout_all_res.json()["revoked_sessions"] == 2
     assert token_1 != token_4
+    assert (
+        client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token_4}"}).status_code
+        == 401
+    )
 
 
 def test_cli_create_admin_interactive_and_single_admin_guard(

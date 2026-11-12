@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import secrets
+from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 from fastapi import Depends, Request
@@ -14,7 +15,7 @@ from app.core.config import Settings, get_settings
 from app.core.exceptions import AuthenticationError, ForbiddenError
 from app.core.security import decode_access_token
 from app.db.session import get_db
-from app.models.admin import AdminUser
+from app.models.admin import AdminSession, AdminUser
 
 _bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -69,12 +70,18 @@ def verify_csrf(
         )
 
 
+def _as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
+
+
 def get_current_admin(
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer_scheme),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> AdminUser:
-    """Authenticate the active portfolio administrator from a Bearer JWT access token."""
+    """Authenticate the active portfolio administrator and verify non-revoked session state."""
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise AuthenticationError(
             "Invalid or expired authentication token.",
@@ -82,8 +89,27 @@ def get_current_admin(
         )
 
     claims = decode_access_token(credentials.credentials, settings)
-    admin = db.scalar(select(AdminUser).where(AdminUser.id == claims.subject))
-    if admin is None or not admin.is_active:
+    row = db.execute(
+        select(AdminUser, AdminSession)
+        .join(AdminSession, AdminSession.admin_user_id == AdminUser.id)
+        .where(
+            AdminUser.id == claims.subject,
+            AdminSession.id == claims.session_id,
+        )
+    ).first()
+    if row is None:
+        raise AuthenticationError(
+            "Invalid or expired authentication token.",
+            code="invalid_token",
+        )
+
+    admin, session = row
+    now = datetime.now(timezone.utc)
+    if (
+        not admin.is_active
+        or session.revoked_at is not None
+        or _as_utc(session.expires_at) <= now
+    ):
         raise AuthenticationError(
             "Invalid or expired authentication token.",
             code="invalid_token",

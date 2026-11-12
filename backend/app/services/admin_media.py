@@ -7,7 +7,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import ConflictError
+from app.core.exceptions import ConflictError, NotFoundError
 from app.models.admin import AdminUser
 from app.models.career import Certification
 from app.models.enums import StorageProvider
@@ -16,11 +16,12 @@ from app.models.project import Project
 from app.models.site_setting import SiteSetting
 from app.models.testimonial import Testimonial
 from app.schemas.media import MediaAssetCreate, MediaAssetUpdate
-from app.services.admin_common import (
+from app.services.common import (
     commit_or_conflict,
     ensure_non_null_patch_fields,
     get_record_or_404,
     paginate_query,
+    supports_row_locks,
 )
 
 _MEDIA_SORT_COLUMNS = {
@@ -136,26 +137,46 @@ def update_media_asset(
 
 
 def _is_media_referenced(db: Session, media_id: uuid.UUID) -> bool:
-    if db.scalar(select(Project.id).where(Project.cover_media_id == media_id)) is not None:
+    if db.scalar(select(Project.id).where(Project.cover_media_id == media_id).limit(1)) is not None:
         return True
-    if db.scalar(select(Certification.id).where(Certification.badge_media_id == media_id)) is not None:
+    if (
+        db.scalar(select(Certification.id).where(Certification.badge_media_id == media_id).limit(1))
+        is not None
+    ):
         return True
-    if db.scalar(select(Testimonial.id).where(Testimonial.avatar_media_id == media_id)) is not None:
+    if (
+        db.scalar(select(Testimonial.id).where(Testimonial.avatar_media_id == media_id).limit(1))
+        is not None
+    ):
         return True
-    if db.scalar(select(SiteSetting.id).where(SiteSetting.portrait_media_id == media_id)) is not None:
+    if (
+        db.scalar(select(SiteSetting.id).where(SiteSetting.portrait_media_id == media_id).limit(1))
+        is not None
+    ):
         return True
 
-    site_general = db.scalar(select(SiteSetting).where(SiteSetting.key == "site_general"))
+    site_general = db.scalar(select(SiteSetting).where(SiteSetting.key == "site_general").limit(1))
     if site_general is not None and isinstance(site_general.value, dict):
         logo_media_id = site_general.value.get("logo_media_id")
-        if logo_media_id is not None and str(logo_media_id) == str(media_id):
-            return True
+        if logo_media_id is not None:
+            try:
+                if uuid.UUID(str(logo_media_id)) == media_id:
+                    return True
+            except ValueError:
+                if str(logo_media_id) == str(media_id):
+                    return True
     return False
 
 
 def delete_media_asset(db: Session, media_id: uuid.UUID) -> None:
-    """Delete a media asset only after confirming no portfolio content references it."""
-    asset = get_media_asset(db, media_id)
+    """Lock the media row and delete only after confirming no portfolio content references it."""
+    stmt = select(MediaAsset).where(MediaAsset.id == media_id)
+    if supports_row_locks(db):
+        stmt = stmt.with_for_update()
+    asset = db.scalar(stmt)
+    if asset is None:
+        raise NotFoundError("Media asset was not found.")
+
     if _is_media_referenced(db, media_id):
         raise ConflictError(
             "Media asset is currently referenced by existing content and cannot be deleted."

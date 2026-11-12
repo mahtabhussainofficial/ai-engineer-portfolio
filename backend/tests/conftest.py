@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import Settings, get_settings
-from app.core.rate_limit import login_rate_limiter
+from app.core.rate_limit import contact_rate_limiter, login_rate_limiter
 from app.db.session import close_db, get_engine, get_session_factory
 from app.main import create_application
 from app.models import Base
@@ -77,10 +77,12 @@ def db_session(sqlite_db_url: str) -> Generator[Session, None, None]:
 def client_without_db(unconfigured_settings: Settings) -> Generator[TestClient, None, None]:
     """FastAPI TestClient running without a configured database."""
     close_db()
+    contact_rate_limiter.clear()
     app = create_application(unconfigured_settings)
     app.dependency_overrides[get_settings] = lambda: unconfigured_settings
     with TestClient(app) as client:
         yield client
+    contact_rate_limiter.clear()
     close_db()
 
 
@@ -102,6 +104,7 @@ def auth_client(
     """TestClient with initialized SQLite schema and reset rate limiter for auth tests."""
     close_db()
     login_rate_limiter.clear()
+    contact_rate_limiter.clear()
     app = create_application(configured_settings)
     app.dependency_overrides[get_settings] = lambda: configured_settings
 
@@ -115,6 +118,7 @@ def auth_client(
         Base.metadata.drop_all(bind=engine)
 
     login_rate_limiter.clear()
+    contact_rate_limiter.clear()
     close_db()
 
 

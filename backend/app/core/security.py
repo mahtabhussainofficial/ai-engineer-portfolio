@@ -34,7 +34,7 @@ class AccessTokenClaims:
     """Validated claims extracted from a JWT access token."""
 
     subject: uuid.UUID
-    session_id: uuid.UUID | None
+    session_id: uuid.UUID
     jti: str
 
 
@@ -116,7 +116,7 @@ def decode_access_token(token: str, settings: Settings) -> AccessTokenClaims:
             signing_key,
             algorithms=[settings.jwt_algorithm],
             issuer=settings.app_name,
-            options={"require": ["exp", "iat", "nbf", "sub", "type", "jti"]},
+            options={"require": ["exp", "iat", "nbf", "sub", "sid", "type", "jti"]},
         )
     except PyJWTError as exc:
         raise AuthenticationError(
@@ -132,8 +132,7 @@ def decode_access_token(token: str, settings: Settings) -> AccessTokenClaims:
 
     try:
         subject = uuid.UUID(str(payload["sub"]))
-        raw_sid = payload.get("sid")
-        session_id = uuid.UUID(str(raw_sid)) if raw_sid is not None else None
+        session_id = uuid.UUID(str(payload["sid"]))
         jti = str(payload["jti"])
     except (ValueError, TypeError) as exc:
         raise AuthenticationError(

@@ -84,9 +84,13 @@ class ForbiddenError(AppError):
 class RateLimitExceededError(AppError):
     """Raised when too many requests occur within the configured window."""
 
-    def __init__(self, retry_after_seconds: int) -> None:
+    def __init__(
+        self,
+        retry_after_seconds: int,
+        message: str = "Too many authentication attempts. Please try again later.",
+    ) -> None:
         super().__init__(
-            "Too many authentication attempts. Please try again later.",
+            message,
             code="rate_limit_exceeded",
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             headers={"Retry-After": str(max(1, retry_after_seconds))},

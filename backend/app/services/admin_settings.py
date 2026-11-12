@@ -20,9 +20,9 @@ from app.schemas.site_setting import (
     ensure_public_setting_allowed,
     validate_site_setting_value,
 )
-from app.services.admin_common import (
+from app.services.common import (
     commit_or_conflict,
-    ensure_media_exists,
+    ensure_media_ids_exist,
     ensure_non_null_patch_fields,
     paginate_query,
     sanitize_pydantic_errors,
@@ -65,8 +65,9 @@ def _validate_setting_media_references(
     value: dict[str, Any] | None,
     portrait_media_id: uuid.UUID | None,
 ) -> None:
+    media_ids: list[uuid.UUID] = []
     if portrait_media_id is not None:
-        ensure_media_exists(db, portrait_media_id)
+        media_ids.append(portrait_media_id)
 
     if key == "site_general" and isinstance(value, dict) and value.get("logo_media_id") is not None:
         try:
@@ -77,7 +78,9 @@ def _validate_setting_media_references(
                 code="invalid_reference",
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             ) from exc
-        ensure_media_exists(db, logo_uuid)
+        media_ids.append(logo_uuid)
+
+    ensure_media_ids_exist(db, media_ids)
 
 
 def _get_setting_with_media(db: Session, key: str) -> SiteSetting:
@@ -157,6 +160,7 @@ def create_site_setting(
     )
     db.add(setting)
     commit_or_conflict(db, f"Site setting '{payload.key}' already exists.")
+    db.expire(setting)
     return _get_setting_with_media(db, setting.key)
 
 
@@ -171,6 +175,20 @@ def update_site_setting(
     setting = _get_setting_with_media(db, key)
     ensure_non_null_patch_fields(payload, ("label", "category", "value"))
 
+    normalized_value: dict[str, Any] | None = None
+    if "value" in payload.model_fields_set and payload.value is not None:
+        normalized_value = _validate_setting_payload(setting.key, payload.value)
+
+    next_portrait_id = (
+        payload.portrait_media_id if "portrait_media_id" in payload.model_fields_set else None
+    )
+    _validate_setting_media_references(
+        db,
+        key=setting.key,
+        value=normalized_value,
+        portrait_media_id=next_portrait_id,
+    )
+
     if "label" in payload.model_fields_set and payload.label is not None:
         setting.label = payload.label
     if "category" in payload.model_fields_set and payload.category is not None:
@@ -178,21 +196,13 @@ def update_site_setting(
     if "description" in payload.model_fields_set:
         setting.description = payload.description
     if "portrait_media_id" in payload.model_fields_set:
-        if payload.portrait_media_id is not None:
-            ensure_media_exists(db, payload.portrait_media_id)
         setting.portrait_media_id = payload.portrait_media_id
-    if "value" in payload.model_fields_set and payload.value is not None:
-        normalized_value = _validate_setting_payload(setting.key, payload.value)
-        _validate_setting_media_references(
-            db,
-            key=setting.key,
-            value=normalized_value,
-            portrait_media_id=None,
-        )
+    if normalized_value is not None:
         setting.value = normalized_value
 
     setting.updated_by_id = admin.id
     commit_or_conflict(db, f"Site setting '{key}' update conflicted with existing data.")
+    db.expire(setting)
     return _get_setting_with_media(db, setting.key)
 
 
@@ -220,4 +230,5 @@ def update_site_setting_visibility(
     setting.is_public = payload.is_public
     setting.updated_by_id = admin.id
     commit_or_conflict(db, f"Site setting '{key}' visibility update conflicted.")
+    db.expire(setting)
     return _get_setting_with_media(db, setting.key)
