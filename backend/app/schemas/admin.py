@@ -7,8 +7,8 @@ from datetime import datetime
 
 from pydantic import EmailStr, Field
 
-from app.models.enums import AdminRole
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.models.enums import AdminRole, ContactInquiryMode, ContactMessageStatus
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
 
 
 class AdminUserBase(AppBaseSchema):
@@ -20,13 +20,13 @@ class AdminUserBase(AppBaseSchema):
     is_active: bool = True
 
 
-class AdminUserCreate(AdminUserBase):
+class AdminUserCreate(AppWriteSchema, AdminUserBase):
     """Schema for creating an admin account (raw password handled in auth service)."""
 
     password: str = Field(min_length=12, max_length=128)
 
 
-class AdminUserUpdate(AppBaseSchema):
+class AdminUserUpdate(AppWriteSchema):
     """Partial update schema for an admin account."""
 
     email: EmailStr | None = None
@@ -53,3 +53,57 @@ class AdminSessionRead(UUIDTimestampSchema):
     ip_address: str | None = None
     expires_at: datetime
     revoked_at: datetime | None = None
+
+
+class ContentCountSummary(AppBaseSchema):
+    """Aggregate total, published, and draft counts for a publishable resource."""
+
+    total: int = Field(ge=0)
+    published: int = Field(ge=0)
+    draft: int = Field(ge=0)
+
+
+class ContactOverviewCounts(AppBaseSchema):
+    """Contact inquiry counts grouped by triage status."""
+
+    total: int = Field(ge=0)
+    unread: int = Field(ge=0)
+    read: int = Field(ge=0)
+    archived: int = Field(ge=0)
+
+
+class ContactMessageOverviewItem(AppBaseSchema):
+    """Recent contact inquiry summary embedded in the admin dashboard overview."""
+
+    id: uuid.UUID
+    inquiry_mode: ContactInquiryMode
+    sender_name: str
+    sender_email: EmailStr
+    subject: str
+    project_type: str
+    status: ContactMessageStatus
+    created_at: datetime
+
+
+class AdminOverviewResponse(AppBaseSchema):
+    """Protected dashboard summary counts and recent contact inquiries."""
+
+    projects: ContentCountSummary
+    services: ContentCountSummary
+    skills: ContentCountSummary
+    experience: ContentCountSummary
+    education: ContentCountSummary
+    certifications: ContentCountSummary
+    testimonials: ContentCountSummary
+    media_assets: int = Field(ge=0)
+    site_settings: int = Field(ge=0)
+    public_site_settings: int = Field(ge=0)
+    messages: ContactOverviewCounts
+    recent_messages: list[ContactMessageOverviewItem]
+
+
+class DeleteResponse(AppBaseSchema):
+    """Confirmation payload returned when an admin record is deleted."""
+
+    message: str
+    id: uuid.UUID

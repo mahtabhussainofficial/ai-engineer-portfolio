@@ -9,7 +9,8 @@ from decimal import Decimal
 from pydantic import Field, HttpUrl
 
 from app.models.enums import PublishStatus
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
+from app.schemas.media import MediaAssetSummary
 
 
 class TestimonialBase(AppBaseSchema):
@@ -31,11 +32,11 @@ class TestimonialBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class TestimonialCreate(TestimonialBase):
+class TestimonialCreate(AppWriteSchema, TestimonialBase):
     """Schema for creating a testimonial record."""
 
 
-class TestimonialUpdate(AppBaseSchema):
+class TestimonialUpdate(AppWriteSchema):
     """Partial update schema for a testimonial record."""
 
     title: str | None = Field(default=None, min_length=2, max_length=200)
@@ -56,3 +57,5 @@ class TestimonialUpdate(AppBaseSchema):
 
 class TestimonialRead(UUIDTimestampSchema, TestimonialBase):
     """Read schema for a testimonial record."""
+
+    avatar_media: MediaAssetSummary | None = None

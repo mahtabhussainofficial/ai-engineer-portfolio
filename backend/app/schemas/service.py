@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import Field
 
 from app.models.enums import PublishStatus
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
 
 
 class ServiceBase(AppBaseSchema):
@@ -29,11 +29,11 @@ class ServiceBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class ServiceCreate(ServiceBase):
+class ServiceCreate(AppWriteSchema, ServiceBase):
     """Schema for creating a service offering."""
 
 
-class ServiceUpdate(AppBaseSchema):
+class ServiceUpdate(AppWriteSchema):
     """Partial update schema for a service offering."""
 
     display_number: str | None = Field(default=None, max_length=16)

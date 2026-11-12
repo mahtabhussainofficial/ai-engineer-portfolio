@@ -116,3 +116,29 @@ def auth_client(
 
     login_rate_limiter.clear()
     close_db()
+
+
+@pytest.fixture
+def authenticated_admin_client(
+    auth_client: tuple[TestClient, sessionmaker[Session], Settings],
+) -> tuple[TestClient, sessionmaker[Session], dict[str, str]]:
+    """Provision the single administrator and return client, session factory, and auth headers."""
+    from app.services.auth import create_initial_admin
+
+    client, session_factory, _settings = auth_client
+    password = "StrongAdminPassword!123"
+    with session_factory() as db:
+        create_initial_admin(
+            db,
+            email="admin@example.com",
+            full_name="Portfolio Admin",
+            password=password,
+        )
+
+    login_res = client.post(
+        "/api/v1/auth/login",
+        json={"email": "admin@example.com", "password": password},
+    )
+    assert login_res.status_code == 200
+    token = login_res.json()["access_token"]
+    return client, session_factory, {"Authorization": f"Bearer {token}"}

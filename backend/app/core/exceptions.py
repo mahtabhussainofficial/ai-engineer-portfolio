@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
@@ -160,7 +161,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             code="validation_error",
             message="Request validation failed.",
-            details=exc.errors(),
+            details=jsonable_encoder(exc.errors()),
         )
 
     @app.exception_handler(StarletteHTTPException)

@@ -8,7 +8,8 @@ from datetime import datetime
 from pydantic import Field, HttpUrl
 
 from app.models.enums import PublishStatus
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
+from app.schemas.media import MediaAssetSummary
 
 
 class ExperienceBase(AppBaseSchema):
@@ -25,11 +26,11 @@ class ExperienceBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class ExperienceCreate(ExperienceBase):
+class ExperienceCreate(AppWriteSchema, ExperienceBase):
     """Schema for creating an experience entry."""
 
 
-class ExperienceUpdate(AppBaseSchema):
+class ExperienceUpdate(AppWriteSchema):
     """Partial update schema for an experience entry."""
 
     period: str | None = Field(default=None, min_length=2, max_length=100)
@@ -60,11 +61,11 @@ class EducationBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class EducationCreate(EducationBase):
+class EducationCreate(AppWriteSchema, EducationBase):
     """Schema for creating an education entry."""
 
 
-class EducationUpdate(AppBaseSchema):
+class EducationUpdate(AppWriteSchema):
     """Partial update schema for an education entry."""
 
     period: str | None = Field(default=None, min_length=2, max_length=100)
@@ -95,11 +96,11 @@ class CertificationBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class CertificationCreate(CertificationBase):
+class CertificationCreate(AppWriteSchema, CertificationBase):
     """Schema for creating a certification entry."""
 
 
-class CertificationUpdate(AppBaseSchema):
+class CertificationUpdate(AppWriteSchema):
     """Partial update schema for a certification entry."""
 
     year: str | None = Field(default=None, min_length=4, max_length=20)
@@ -115,3 +116,5 @@ class CertificationUpdate(AppBaseSchema):
 
 class CertificationRead(UUIDTimestampSchema, CertificationBase):
     """Read schema for a certification entry."""
+
+    badge_media: MediaAssetSummary | None = None

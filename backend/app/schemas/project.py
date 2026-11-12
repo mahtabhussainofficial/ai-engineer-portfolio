@@ -8,7 +8,8 @@ from datetime import datetime
 from pydantic import Field, HttpUrl
 
 from app.models.enums import ProjectType, PublishStatus
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
+from app.schemas.media import MediaAssetSummary
 
 
 class ProjectBase(AppBaseSchema):
@@ -34,11 +35,11 @@ class ProjectBase(AppBaseSchema):
     cover_media_id: uuid.UUID | None = None
 
 
-class ProjectCreate(ProjectBase):
+class ProjectCreate(AppWriteSchema, ProjectBase):
     """Schema for creating a portfolio project."""
 
 
-class ProjectUpdate(AppBaseSchema):
+class ProjectUpdate(AppWriteSchema):
     """Partial update schema for a portfolio project."""
 
     slug: str | None = Field(
@@ -78,7 +79,10 @@ class ProjectSummary(UUIDTimestampSchema):
     summary: str
     tags: list[str]
     cover_media_id: uuid.UUID | None = None
+    cover_media: MediaAssetSummary | None = None
 
 
 class ProjectRead(UUIDTimestampSchema, ProjectBase):
     """Full project read schema."""
+
+    cover_media: MediaAssetSummary | None = None

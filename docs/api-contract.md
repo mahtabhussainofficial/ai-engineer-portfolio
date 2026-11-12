@@ -97,20 +97,33 @@ Requires `Authorization: Bearer <access_token>`.
 
 ---
 
-## Planned Public API (Future Phases — Not Implemented Yet)
+## Schema & Validation Conventions (Implemented in Phase 3A)
 
-Public endpoints return only records where `publish_status = "published"` (or `is_public = true` for `site_settings`), ordered by `display_order ASC`.
+- **Canonical `snake_case` wire contract:** All FastAPI request/response JSON payloads and `site_settings.value` JSONB objects use canonical `snake_case` naming (matching existing Phase 2 auth schemas and `ContactMessageCreate`) without implicit camelCase aliasing. Frontend TypeScript data/UI boundaries adapt `snake_case` payloads <-> `camelCase` props in Sub-phase 3C so compatibility is preserved without silent field renames.
+- **Strict write validation:** Incoming request/write schemas inherit `AppWriteSchema` (`extra="forbid"`) to reject unexpected fields and prevent mass assignment; read/response schemas remain permissive on `AppBaseSchema`.
+- **Safe URLs & links:** Asset URLs (`SafeAssetUrl`) allow only `http://`, `https://`, or single-slash root-relative `/...` paths (rejecting `//...`, `javascript:`, `data:`, and `ftp:`). CTA/social links (`SafeLinkHref`) allow `http(s)://`, `/...`, `#anchor`, and `mailto:`.
+- **Pagination envelope:** Collection responses use `PaginatedResponse[T]` (`items`, `total`, `page`, `page_size`, `total_pages`) paired with `PaginationParams` (`page >= 1`, `1 <= page_size <= 100`).
+- **Resolved media summaries:** Content read schemas (`ProjectSummary`, `ProjectRead`, `CertificationRead`, `TestimonialRead`, `SiteSettingRead`, `PublicSiteSettingsPayload`) embed `MediaAssetSummary` (`id`, `title`, `url`, `mime_type`, `width`, `height`, `alt_text`, `caption`). Sub-phase 3B/3C ORM queries must eager-load media relationships (`selectinload` / `joinedload`) before closing the session.
+- **Typed public `site_settings` & visibility guard:** `PUBLIC_SETTING_KEYS` explicitly whitelists only five public keys (`site_general`, `home_page`, `about_page`, `contact_page`, `skills_page`), each validated by a typed Pydantic v2 schema (`SiteGeneralSettings`, `HomePageSettings`, `AboutPageSettings`, `ContactPageSettings`, `SkillsPageSettings`). Non-whitelisted keys default to `is_public=false` and cannot be created with `is_public=true`.
+- **`SiteSettingUpdate` service validation requirement (Sub-phase 3B):** Because `SiteSettingUpdate` intentionally omits both `key` and `is_public`, whenever an admin update supplies a non-null `value`, the Sub-phase 3B service/endpoint must validate `payload.value` against the persisted row's `key` via `validate_site_setting_value(existing_setting.key, payload.value)` before saving (returning HTTP `422` on invalid structure).
+- **Dedicated protected visibility operation (Sub-phase 3B):** Intentional visibility transitions remain separate from ordinary `SiteSettingUpdate` edits. The planned protected admin endpoint `PATCH /api/v1/admin/settings/{key}/visibility` (requiring `get_current_admin` and `SiteSettingVisibilityUpdate`) must invoke `ensure_public_setting_allowed(existing_setting.key, payload.is_public)` and, before setting `is_public=true`, validate the stored value via `validate_site_setting_value(existing_setting.key, existing_setting.value)`. Public read endpoints independently filter by `is_public = true` **and** `key IN PUBLIC_SETTING_KEYS`.
+
+---
+
+## Planned Public API (Sub-phase 3C — Not Implemented Yet)
+
+Public endpoints return only records where `publish_status = "published"` (or whitelisted keys where `is_public = true` for `site_settings`), ordered by `display_order ASC`.
 
 | Method | Path | Purpose | Source Frontend Data Module |
 | --- | --- | --- | --- |
-| `GET` | `/api/v1/public/site` | Aggregated public `site_settings` (`site_profile`, `home_hero`, `home_about_preview`, `about_profile`, `connect_channels`, `profile_highlights`, `approach_principles`, `process_steps`) | `lib/site-config.ts`, `lib/about-data.ts` |
-| `GET` | `/api/v1/public/projects` | List published projects (filterable by `category`, `featured`) | `lib/projects-data.ts` |
+| `GET` | `/api/v1/public/site` | Aggregated whitelisted public `site_settings` (`site_general`, `home_page`, `about_page`, `contact_page`, `skills_page`) with resolved media | `lib/site-config.ts`, `lib/about-data.ts`, `lib/skills-data.ts`, `app/(public)/*.tsx` |
+| `GET` | `/api/v1/public/projects` | Paginated published projects (filterable by `category`, `featured`) | `lib/projects-data.ts` |
 | `GET` | `/api/v1/public/projects/{slug}` | Fetch single published project detail by unique `slug` | `lib/projects-data.ts` |
 | `GET` | `/api/v1/public/services` | List published services (filterable by `category`, `featured`) | `lib/services-data.ts` |
 | `GET` | `/api/v1/public/skills` | List published skill groups (filterable by `layer`, `featured`) | `lib/skills-data.ts` |
 | `GET` | `/api/v1/public/background` | Published `experience`, `education`, and `certifications` records | `lib/experience-data.ts` |
-| `GET` | `/api/v1/public/testimonials` | List published client feedback / testimonials | `lib/site-config.ts` (`CLIENT_FEEDBACK`) |
-| `POST` | `/api/v1/public/contact` | Submit a new contact inquiry (`inquiry_mode`, `sender_name`, `sender_email`, `subject`, `project_type`, `message`) | `app/(public)/contact/contact-form.tsx` |
+| `GET` | `/api/v1/public/testimonials` | Paginated published client feedback / testimonials | `lib/site-config.ts` (`CLIENT_FEEDBACK`) |
+| `POST` | `/api/v1/public/contact` | Rate-limited contact inquiry submission (`ContactMessageCreate` -> `ContactMessagePublicResponse`) | `app/(public)/contact/contact-form.tsx` |
 
 ### Planned `POST /api/v1/public/contact` Request Payload
 ```json
@@ -123,25 +136,25 @@ Public endpoints return only records where `publish_status = "published"` (or `i
   "message": "Looking to automate document intake and approval routing."
 }
 ```
-- **201 Created**: Returns created message reference (`id`, `status: "unread"`, `created_at`).
+- **201 Created**: Returns minimal `ContactMessagePublicResponse` (`id`, `status: "unread"`, `created_at`).
 - **422 Unprocessable Content**: Returns field-level validation errors matching `ContactMessageCreate`.
 
 ---
 
-## Planned Admin Content & Inbox API (Future Phases — Not Implemented Yet)
+## Admin Content & Inbox API (Implemented in Sub-phase 3B)
 
-All admin endpoints require `Authorization: Bearer <access_token>` (`get_current_admin`).
-All admin list endpoints include both `draft` and `published` items and support `publish_status` filtering and display reordering.
+All admin endpoints require `Authorization: Bearer <access_token>` (`get_current_admin`), return structured `ErrorResponse` payloads (`401`/`404`/`409`/`422`), eager-load resolved `MediaAssetSummary` relations, and return `PaginatedResponse[T]` envelopes on collection listings.
 
-| Resource | Endpoints |
+| Resource | Implemented Endpoints |
 | --- | --- |
-| Site Settings | `GET /admin/settings`, `PUT /admin/settings/{key}` |
-| Projects | `GET /admin/projects`, `POST /admin/projects`, `GET /admin/projects/{id}`, `PATCH /admin/projects/{id}`, `DELETE /admin/projects/{id}` |
-| Services | `GET /admin/services`, `POST /admin/services`, `PATCH /admin/services/{id}`, `DELETE /admin/services/{id}` |
-| Skills | `GET /admin/skills`, `POST /admin/skills`, `PATCH /admin/skills/{id}`, `DELETE /admin/skills/{id}` |
-| Experience | `GET /admin/experience`, `POST /admin/experience`, `PATCH /admin/experience/{id}`, `DELETE /admin/experience/{id}` |
-| Education | `GET /admin/education`, `POST /admin/education`, `PATCH /admin/education/{id}`, `DELETE /admin/education/{id}` |
-| Certifications | `GET /admin/certifications`, `POST /admin/certifications`, `PATCH /admin/certifications/{id}`, `DELETE /admin/certifications/{id}` |
-| Testimonials | `GET /admin/testimonials`, `POST /admin/testimonials`, `PATCH /admin/testimonials/{id}`, `DELETE /admin/testimonials/{id}` |
-| Contact Messages | `GET /admin/messages` (filter by `status`), `GET /admin/messages/{id}`, `PATCH /admin/messages/{id}` (update `status` / `admin_notes`), `DELETE /admin/messages/{id}` |
-| Media Assets | `GET /admin/media`, `POST /admin/media`, `PATCH /admin/media/{id}`, `DELETE /admin/media/{id}` |
+| Dashboard | `GET /api/v1/admin/overview` |
+| Site Settings | `GET /api/v1/admin/settings`, `POST /api/v1/admin/settings`, `GET /api/v1/admin/settings/{key}`, `PATCH /api/v1/admin/settings/{key}` (`SiteSettingUpdate` + `validate_site_setting_value`), `PATCH /api/v1/admin/settings/{key}/visibility` (`SiteSettingVisibilityUpdate` + `ensure_public_setting_allowed`) |
+| Media Assets | `GET /api/v1/admin/media`, `POST /api/v1/admin/media`, `GET /api/v1/admin/media/{media_id}`, `PATCH /api/v1/admin/media/{media_id}`, `DELETE /api/v1/admin/media/{media_id}` (conflict-protected if referenced) |
+| Projects | `GET /api/v1/admin/projects`, `POST /api/v1/admin/projects`, `GET /api/v1/admin/projects/{project_id}`, `PATCH /api/v1/admin/projects/{project_id}`, `DELETE /api/v1/admin/projects/{project_id}`, `POST /api/v1/admin/projects/{project_id}/publish`, `POST /api/v1/admin/projects/{project_id}/unpublish` |
+| Services | `GET /api/v1/admin/services`, `POST /api/v1/admin/services`, `GET /api/v1/admin/services/{service_id}`, `PATCH /api/v1/admin/services/{service_id}`, `DELETE /api/v1/admin/services/{service_id}` |
+| Skills | `GET /api/v1/admin/skills`, `POST /api/v1/admin/skills`, `GET /api/v1/admin/skills/{skill_id}`, `PATCH /api/v1/admin/skills/{skill_id}`, `DELETE /api/v1/admin/skills/{skill_id}` |
+| Experience | `GET /api/v1/admin/experience`, `POST /api/v1/admin/experience`, `GET /api/v1/admin/experience/{experience_id}`, `PATCH /api/v1/admin/experience/{experience_id}`, `DELETE /api/v1/admin/experience/{experience_id}` |
+| Education | `GET /api/v1/admin/education`, `POST /api/v1/admin/education`, `GET /api/v1/admin/education/{education_id}`, `PATCH /api/v1/admin/education/{education_id}`, `DELETE /api/v1/admin/education/{education_id}` |
+| Certifications | `GET /api/v1/admin/certifications`, `POST /api/v1/admin/certifications`, `GET /api/v1/admin/certifications/{certification_id}`, `PATCH /api/v1/admin/certifications/{certification_id}`, `DELETE /api/v1/admin/certifications/{certification_id}` |
+| Testimonials | `GET /api/v1/admin/testimonials`, `POST /api/v1/admin/testimonials`, `GET /api/v1/admin/testimonials/{testimonial_id}`, `PATCH /api/v1/admin/testimonials/{testimonial_id}`, `DELETE /api/v1/admin/testimonials/{testimonial_id}`, `POST /api/v1/admin/testimonials/{testimonial_id}/publish`, `POST /api/v1/admin/testimonials/{testimonial_id}/unpublish` |
+| Contact Messages | `GET /api/v1/admin/messages` (filter by `status`, `inquiry_mode`), `GET /api/v1/admin/messages/{message_id}`, `PATCH /api/v1/admin/messages/{message_id}` (update `status` / `admin_notes`), `DELETE /api/v1/admin/messages/{message_id}` |

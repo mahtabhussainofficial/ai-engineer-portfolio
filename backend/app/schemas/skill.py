@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import Field
 
 from app.models.enums import PublishStatus, SkillLayer
-from app.schemas.common import AppBaseSchema, UUIDTimestampSchema
+from app.schemas.common import AppBaseSchema, AppWriteSchema, UUIDTimestampSchema
 
 
 class SkillBase(AppBaseSchema):
@@ -29,11 +29,11 @@ class SkillBase(AppBaseSchema):
     display_order: int = Field(default=0, ge=0)
 
 
-class SkillCreate(SkillBase):
+class SkillCreate(AppWriteSchema, SkillBase):
     """Schema for creating a skill group."""
 
 
-class SkillUpdate(AppBaseSchema):
+class SkillUpdate(AppWriteSchema):
     """Partial update schema for a skill group."""
 
     layer: SkillLayer | None = None
