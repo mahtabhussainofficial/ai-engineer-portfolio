@@ -14,6 +14,15 @@ from sqlalchemy.engine import URL, make_url
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 ENV_FILE_PATH = BACKEND_ROOT / ".env"
 
+_PLACEHOLDER_SECRETS = frozenset(
+    {
+        "CHANGE_ME",
+        "CHANGE_ME_BEFORE_PHASE_2",
+        "secret",
+        "changeme",
+    }
+)
+
 
 class Settings(BaseSettings):
     """Application settings sourced from environment variables and optional `.env`."""
@@ -52,6 +61,21 @@ class Settings(BaseSettings):
     db_pool_timeout: int = Field(default=30, ge=1, le=300)
     db_pool_recycle: int = Field(default=1800, ge=60, le=86400)
 
+    # Authentication & session settings
+    secret_key: str | None = None
+    jwt_algorithm: Literal["HS256"] = "HS256"
+    access_token_expire_minutes: int = Field(default=15, ge=1, le=60)
+    refresh_token_expire_days: int = Field(default=7, ge=1, le=90)
+
+    refresh_cookie_name: str = "portfolio_refresh_token"
+    csrf_cookie_name: str = "portfolio_csrf_token"
+    csrf_header_name: str = "X-CSRF-Token"
+    cookie_secure: bool | None = None
+    cookie_samesite: Literal["lax", "strict", "none"] = "lax"
+
+    auth_login_rate_limit_max_attempts: int = Field(default=5, ge=1, le=100)
+    auth_login_rate_limit_window_seconds: int = Field(default=300, ge=10, le=86400)
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: object) -> list[str]:
@@ -70,13 +94,32 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in stripped.split(",") if origin.strip()]
         raise ValueError("CORS_ORIGINS must be a list or comma-separated string")
 
-    @field_validator("database_url", "postgres_password", mode="before")
+    @field_validator("database_url", "postgres_password", "secret_key", mode="before")
     @classmethod
     def empty_string_to_none(cls, value: object) -> object:
         """Normalize empty optional strings to None."""
         if isinstance(value, str) and value.strip() == "":
             return None
         return value
+
+    @property
+    def effective_cookie_secure(self) -> bool:
+        """Resolve Secure cookie attribute based on explicit setting or environment."""
+        if self.cookie_secure is not None:
+            return self.cookie_secure
+        return self.environment in ("staging", "production")
+
+    def require_secret_key(self) -> str:
+        """Return validated signing key or raise RuntimeError if missing/weak."""
+        if (
+            not self.secret_key
+            or self.secret_key in _PLACEHOLDER_SECRETS
+            or len(self.secret_key) < 32
+        ):
+            raise RuntimeError(
+                "SECRET_KEY must be configured with at least 32 random characters."
+            )
+        return self.secret_key
 
     @property
     def sqlalchemy_database_url(self) -> str | None:

@@ -94,13 +94,30 @@ Start the development server from inside `backend/`:
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Available endpoints in Phase 1:
+Available endpoints:
 
 - `GET /health` — Root liveness/health summary
 - `GET /api/v1/health` — Versioned health check with non-fatal database status (`ok` or `degraded`)
 - `GET /api/v1/health/db` — Strict database readiness check (`200` when `SELECT 1` succeeds, `503` otherwise)
+- `POST /api/v1/auth/login` — Single-administrator login (JWT access token + `HttpOnly` refresh cookie + CSRF cookie)
+- `POST /api/v1/auth/refresh` — CSRF-protected refresh token rotation with reuse detection
+- `POST /api/v1/auth/logout` — CSRF-protected current session logout
+- `POST /api/v1/auth/logout-all` — Revoke all active sessions (Bearer token required)
+- `GET /api/v1/auth/me` — Current authenticated administrator profile
+- `GET /api/v1/auth/sessions` — List active/recent refresh sessions
+- `DELETE /api/v1/auth/sessions/{session_id}` — Revoke a specific refresh session
 - `GET /docs` — Swagger UI (OpenAPI)
 - `GET /redoc` — ReDoc documentation
+
+## Creating the Initial Administrator
+
+This CMS supports a single administrator account and has **no public registration endpoint**. Set a 32+ character `SECRET_KEY` in `backend/.env` and run the interactive CLI from inside `backend/`:
+
+```bash
+python -m app.cli.create_admin
+```
+
+The command prompts locally for email, full name, and masked password (minimum 12 characters) and refuses to create a second administrator if one already exists.
 
 ## Running Tests
 

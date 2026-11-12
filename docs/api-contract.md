@@ -57,7 +57,47 @@ Strict database readiness check executing `SELECT 1`.
 
 ---
 
-## Planned Public API (Future Phases — Not Implemented in Phase 1)
+## Implemented in Phase 2 (Single-Administrator Authentication)
+
+Protected via short-lived Bearer JWT access tokens (15 min default) + `HttpOnly` refresh token cookie (`portfolio_refresh_token`, scoped to `/api/v1/auth`) + double-submit CSRF protection (`portfolio_csrf_token` cookie + `X-CSRF-Token` header). There is **no public registration endpoint**; the sole administrator account is provisioned via `python -m app.cli.create_admin`.
+
+### `POST /api/v1/auth/login`
+Rate-limited administrator login (`email`, `password`).
+- **200 OK**: Returns `TokenResponse` (`access_token`, `token_type: "bearer"`, `expires_in`, `csrf_token`, `admin`) and sets `HttpOnly` refresh cookie + CSRF cookie.
+- **401 Unauthorized**: Generic `"Invalid authentication credentials."` on wrong password, unknown email, or inactive account.
+- **429 Too Many Requests**: Returns `Retry-After` header when login attempts exceed configured limit.
+
+### `POST /api/v1/auth/refresh`
+Requires CSRF validation (`X-CSRF-Token` matching `portfolio_csrf_token` cookie + allowed `Origin`/`Referer` when present) and `portfolio_refresh_token` cookie.
+- **200 OK**: Atomically revokes the consumed `admin_sessions` row, issues a new rotated `admin_sessions` row, and returns fresh `TokenResponse` + rotated cookies.
+- **401 Unauthorized**: Clears auth cookies; if an already-revoked refresh token is replayed (`refresh_token_reuse`), revokes **all** active sessions for that administrator.
+- **403 Forbidden**: CSRF validation failure.
+
+### `POST /api/v1/auth/logout`
+Requires CSRF validation and clears auth cookies.
+- **200 OK**: Revokes the current `admin_sessions` record (if active) and returns `{"message": "Logged out successfully.", "revoked_sessions": <int>}`.
+- **403 Forbidden**: CSRF validation failure.
+
+### `POST /api/v1/auth/logout-all`
+Requires `Authorization: Bearer <access_token>`.
+- **200 OK**: Revokes all active `admin_sessions` records for the administrator and clears auth cookies.
+
+### `GET /api/v1/auth/me`
+Requires `Authorization: Bearer <access_token>`.
+- **200 OK**: Returns `AdminUserRead` (`id`, `email`, `full_name`, `role`, `is_active`, `last_login_at`, `created_at`, `updated_at`).
+
+### `GET /api/v1/auth/sessions`
+Requires `Authorization: Bearer <access_token>`.
+- **200 OK**: Lists `AdminSessionRead` records (never exposes `refresh_token_hash`). Optional query `?include_revoked=true`.
+
+### `DELETE /api/v1/auth/sessions/{session_id}`
+Requires `Authorization: Bearer <access_token>`.
+- **200 OK**: Revokes the specified session ID.
+- **404 Not Found**: Session not found.
+
+---
+
+## Planned Public API (Future Phases — Not Implemented Yet)
 
 Public endpoints return only records where `publish_status = "published"` (or `is_public = true` for `site_settings`), ordered by `display_order ASC`.
 
@@ -88,19 +128,9 @@ Public endpoints return only records where `publish_status = "published"` (or `i
 
 ---
 
-## Planned Admin & Auth API (Future Phases — Not Implemented in Phase 1)
+## Planned Admin Content & Inbox API (Future Phases — Not Implemented Yet)
 
-Protected via JWT access tokens + HTTP-only refresh token sessions backed by `admin_users` and `admin_sessions`.
-
-### Authentication (`/api/v1/auth`)
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/v1/auth/login` | Authenticate admin user and issue access token + refresh session |
-| `POST` | `/api/v1/auth/refresh` | Rotate refresh token against `admin_sessions` |
-| `POST` | `/api/v1/auth/logout` | Revoke current `admin_sessions` record (`revoked_at`) |
-| `GET` | `/api/v1/auth/me` | Return current authenticated `AdminUserRead` |
-
-### Admin Management (`/api/v1/admin`)
+All admin endpoints require `Authorization: Bearer <access_token>` (`get_current_admin`).
 All admin list endpoints include both `draft` and `published` items and support `publish_status` filtering and display reordering.
 
 | Resource | Endpoints |

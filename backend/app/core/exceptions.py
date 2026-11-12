@@ -26,12 +26,14 @@ class AppError(Exception):
         code: str = "application_error",
         status_code: int = status.HTTP_400_BAD_REQUEST,
         details: Any = None,
+        headers: dict[str, str] | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
         self.code = code
         self.status_code = status_code
         self.details = details
+        self.headers = headers
 
 
 class DatabaseUnavailableError(AppError):
@@ -42,6 +44,51 @@ class DatabaseUnavailableError(AppError):
             message,
             code="database_unavailable",
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+
+class AuthenticationError(AppError):
+    """Raised when authentication credentials, tokens, or sessions are invalid."""
+
+    def __init__(
+        self,
+        message: str = "Invalid authentication credentials.",
+        *,
+        code: str = "authentication_failed",
+    ) -> None:
+        super().__init__(
+            message,
+            code=code,
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+class ForbiddenError(AppError):
+    """Raised when a security policy check (such as CSRF validation) fails."""
+
+    def __init__(
+        self,
+        message: str = "Forbidden.",
+        *,
+        code: str = "forbidden",
+    ) -> None:
+        super().__init__(
+            message,
+            code=code,
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+
+class RateLimitExceededError(AppError):
+    """Raised when too many requests occur within the configured window."""
+
+    def __init__(self, retry_after_seconds: int) -> None:
+        super().__init__(
+            "Too many authentication attempts. Please try again later.",
+            code="rate_limit_exceeded",
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            headers={"Retry-After": str(max(1, retry_after_seconds))},
         )
 
 
@@ -73,6 +120,7 @@ def _error_response(
     code: str,
     message: str,
     details: Any = None,
+    headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     payload: dict[str, Any] = {
         "error": {
@@ -83,7 +131,7 @@ def _error_response(
     }
     if details is not None:
         payload["error"]["details"] = details
-    return JSONResponse(status_code=status_code, content=payload)
+    return JSONResponse(status_code=status_code, content=payload, headers=headers)
 
 
 def register_exception_handlers(app: FastAPI) -> None:
@@ -100,6 +148,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             code=exc.code,
             message=exc.message,
             details=exc.details,
+            headers=exc.headers,
         )
 
     @app.exception_handler(RequestValidationError)

@@ -7,6 +7,7 @@ import time
 from collections.abc import Generator
 from dataclasses import dataclass
 
+from fastapi import Depends
 from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
@@ -114,9 +115,9 @@ def get_session_factory(settings: Settings | None = None) -> sessionmaker[Sessio
     return _session_factory
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db(settings: Settings = Depends(get_settings)) -> Generator[Session, None, None]:
     """FastAPI dependency yielding a scoped SQLAlchemy session."""
-    factory = get_session_factory()
+    factory = get_session_factory(settings)
     if factory is None:
         raise DatabaseUnavailableError(
             "Database connection is not configured. Set DATABASE_URL or POSTGRES_* variables."

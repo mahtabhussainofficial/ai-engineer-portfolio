@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from pathlib import Path
+import secrets
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,7 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.core.config import Settings, get_settings
-from app.db.session import close_db
+from app.core.rate_limit import login_rate_limiter
+from app.db.session import close_db, get_engine, get_session_factory
 from app.main import create_application
 from app.models import Base
 
@@ -43,6 +45,7 @@ def configured_settings(sqlite_db_url: str) -> Settings:
         environment="test",
         database_url=sqlite_db_url,
         cors_origins=["http://localhost:3000"],
+        secret_key=secrets.token_urlsafe(48),
     )
 
 
@@ -89,4 +92,27 @@ def client_with_db(configured_settings: Settings) -> Generator[TestClient, None,
     app.dependency_overrides[get_settings] = lambda: configured_settings
     with TestClient(app) as client:
         yield client
+    close_db()
+
+
+@pytest.fixture
+def auth_client(
+    configured_settings: Settings,
+) -> Generator[tuple[TestClient, sessionmaker[Session], Settings], None, None]:
+    """TestClient with initialized SQLite schema and reset rate limiter for auth tests."""
+    close_db()
+    login_rate_limiter.clear()
+    app = create_application(configured_settings)
+    app.dependency_overrides[get_settings] = lambda: configured_settings
+
+    with TestClient(app) as client:
+        engine = get_engine(configured_settings)
+        assert engine is not None
+        Base.metadata.create_all(bind=engine)
+        session_factory = get_session_factory(configured_settings)
+        assert session_factory is not None
+        yield client, session_factory, configured_settings
+        Base.metadata.drop_all(bind=engine)
+
+    login_rate_limiter.clear()
     close_db()

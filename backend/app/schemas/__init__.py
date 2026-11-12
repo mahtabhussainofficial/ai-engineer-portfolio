@@ -1,6 +1,7 @@
 """Pydantic v2 schema exports."""
 
 from app.schemas.admin import AdminSessionRead, AdminUserCreate, AdminUserRead, AdminUserUpdate
+from app.schemas.auth import LoginRequest, LogoutResponse, SessionListResponse, TokenResponse
 from app.schemas.career import (
     CertificationCreate,
     CertificationRead,
@@ -50,6 +51,8 @@ __all__ = [
     "ExperienceRead",
     "ExperienceUpdate",
     "HealthCheckResponse",
+    "LoginRequest",
+    "LogoutResponse",
     "MediaAssetCreate",
     "MediaAssetRead",
     "MediaAssetUpdate",
@@ -60,6 +63,7 @@ __all__ = [
     "ServiceCreate",
     "ServiceRead",
     "ServiceUpdate",
+    "SessionListResponse",
     "SiteSettingCreate",
     "SiteSettingRead",
     "SiteSettingUpdate",
@@ -69,5 +73,6 @@ __all__ = [
     "TestimonialCreate",
     "TestimonialRead",
     "TestimonialUpdate",
+    "TokenResponse",
     "UUIDTimestampSchema",
 ]
