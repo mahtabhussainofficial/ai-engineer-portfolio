@@ -14,9 +14,39 @@ import type {
   AdminOverviewResponse,
   AdminUserRead,
   ApiErrorResponse,
+  CertificationCreate,
+  CertificationRead,
+  CertificationUpdate,
+  ContactInquiryMode,
+  ContactMessageRead,
+  ContactMessageStatus,
+  ContactMessageUpdate,
+  DeleteResponse,
+  EducationCreate,
+  EducationRead,
+  EducationUpdate,
+  ExperienceCreate,
+  ExperienceRead,
+  ExperienceUpdate,
   LoginRequest,
   LogoutResponse,
+  PaginatedResponse,
+  ProjectCreate,
+  ProjectRead,
+  ProjectSummary,
+  ProjectUpdate,
+  PublishStatus,
+  ServiceCreate,
+  ServiceRead,
+  ServiceUpdate,
   SessionListResponse,
+  SkillCreate,
+  SkillLayer,
+  SkillRead,
+  SkillUpdate,
+  TestimonialCreate,
+  TestimonialRead,
+  TestimonialUpdate,
   TokenResponse,
 } from "./types";
 
@@ -490,5 +520,430 @@ export const adminApi = {
    */
   async getOverview(): Promise<AdminOverviewResponse> {
     return fetchWithAuth<AdminOverviewResponse>("/api/v1/admin/overview");
+  },
+
+  // ---------------------------------------------------------------------------
+  // Projects CMS API
+  // ---------------------------------------------------------------------------
+
+  async listProjects(params?: {
+    publish_status?: PublishStatus;
+    category?: string;
+    featured?: boolean;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<ProjectSummary>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.category) searchParams.set("category", params.category);
+      if (params.featured !== undefined) searchParams.set("featured", String(params.featured));
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<ProjectSummary>>(
+      `/api/v1/admin/projects${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getProject(projectId: string): Promise<ProjectRead> {
+    return fetchWithAuth<ProjectRead>(`/api/v1/admin/projects/${projectId}`);
+  },
+
+  async createProject(payload: ProjectCreate): Promise<ProjectRead> {
+    return fetchWithAuth<ProjectRead>("/api/v1/admin/projects", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateProject(projectId: string, payload: ProjectUpdate): Promise<ProjectRead> {
+    return fetchWithAuth<ProjectRead>(`/api/v1/admin/projects/${projectId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteProject(projectId: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/projects/${projectId}`, {
+      method: "DELETE",
+    });
+  },
+
+  async publishProject(projectId: string): Promise<ProjectRead> {
+    return fetchWithAuth<ProjectRead>(`/api/v1/admin/projects/${projectId}/publish`, {
+      method: "POST",
+    });
+  },
+
+  async unpublishProject(projectId: string): Promise<ProjectRead> {
+    return fetchWithAuth<ProjectRead>(`/api/v1/admin/projects/${projectId}/unpublish`, {
+      method: "POST",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Services CMS API
+  // ---------------------------------------------------------------------------
+
+  async listServices(params?: {
+    publish_status?: PublishStatus;
+    category?: string;
+    featured?: boolean;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<ServiceRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.category) searchParams.set("category", params.category);
+      if (params.featured !== undefined) searchParams.set("featured", String(params.featured));
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<ServiceRead>>(
+      `/api/v1/admin/services${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getService(serviceId: string): Promise<ServiceRead> {
+    return fetchWithAuth<ServiceRead>(`/api/v1/admin/services/${serviceId}`);
+  },
+
+  async createService(payload: ServiceCreate): Promise<ServiceRead> {
+    return fetchWithAuth<ServiceRead>("/api/v1/admin/services", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateService(serviceId: string, payload: ServiceUpdate): Promise<ServiceRead> {
+    return fetchWithAuth<ServiceRead>(`/api/v1/admin/services/${serviceId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteService(serviceId: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/services/${serviceId}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Skills CMS API
+  // ---------------------------------------------------------------------------
+
+  async listSkills(params?: {
+    publish_status?: PublishStatus;
+    layer?: SkillLayer;
+    featured?: boolean;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<SkillRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.layer) searchParams.set("layer", params.layer);
+      if (params.featured !== undefined) searchParams.set("featured", String(params.featured));
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<SkillRead>>(
+      `/api/v1/admin/skills${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getSkill(skillId: string): Promise<SkillRead> {
+    return fetchWithAuth<SkillRead>(`/api/v1/admin/skills/${skillId}`);
+  },
+
+  async createSkill(payload: SkillCreate): Promise<SkillRead> {
+    return fetchWithAuth<SkillRead>("/api/v1/admin/skills", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateSkill(skillId: string, payload: SkillUpdate): Promise<SkillRead> {
+    return fetchWithAuth<SkillRead>(`/api/v1/admin/skills/${skillId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteSkill(skillId: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/skills/${skillId}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Career: Experience API
+  // ---------------------------------------------------------------------------
+
+  async listExperiences(params?: {
+    publish_status?: PublishStatus;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<ExperienceRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<ExperienceRead>>(
+      `/api/v1/admin/experience${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getExperience(id: string): Promise<ExperienceRead> {
+    return fetchWithAuth<ExperienceRead>(`/api/v1/admin/experience/${id}`);
+  },
+
+  async createExperience(payload: ExperienceCreate): Promise<ExperienceRead> {
+    return fetchWithAuth<ExperienceRead>("/api/v1/admin/experience", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateExperience(id: string, payload: ExperienceUpdate): Promise<ExperienceRead> {
+    return fetchWithAuth<ExperienceRead>(`/api/v1/admin/experience/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteExperience(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/experience/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Career: Education API
+  // ---------------------------------------------------------------------------
+
+  async listEducation(params?: {
+    publish_status?: PublishStatus;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<EducationRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<EducationRead>>(
+      `/api/v1/admin/education${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getEducation(id: string): Promise<EducationRead> {
+    return fetchWithAuth<EducationRead>(`/api/v1/admin/education/${id}`);
+  },
+
+  async createEducation(payload: EducationCreate): Promise<EducationRead> {
+    return fetchWithAuth<EducationRead>("/api/v1/admin/education", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateEducation(id: string, payload: EducationUpdate): Promise<EducationRead> {
+    return fetchWithAuth<EducationRead>(`/api/v1/admin/education/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteEducation(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/education/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Career: Certifications API
+  // ---------------------------------------------------------------------------
+
+  async listCertifications(params?: {
+    publish_status?: PublishStatus;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<CertificationRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<CertificationRead>>(
+      `/api/v1/admin/certifications${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getCertification(id: string): Promise<CertificationRead> {
+    return fetchWithAuth<CertificationRead>(`/api/v1/admin/certifications/${id}`);
+  },
+
+  async createCertification(payload: CertificationCreate): Promise<CertificationRead> {
+    return fetchWithAuth<CertificationRead>("/api/v1/admin/certifications", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateCertification(id: string, payload: CertificationUpdate): Promise<CertificationRead> {
+    return fetchWithAuth<CertificationRead>(`/api/v1/admin/certifications/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteCertification(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/certifications/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Testimonials API
+  // ---------------------------------------------------------------------------
+
+  async listTestimonials(params?: {
+    publish_status?: PublishStatus;
+    featured?: boolean;
+    page?: number;
+    page_size?: number;
+    sort_by?: "display_order" | "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<TestimonialRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.publish_status) searchParams.set("publish_status", params.publish_status);
+      if (params.featured !== undefined) searchParams.set("featured", String(params.featured));
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<TestimonialRead>>(
+      `/api/v1/admin/testimonials${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getTestimonial(id: string): Promise<TestimonialRead> {
+    return fetchWithAuth<TestimonialRead>(`/api/v1/admin/testimonials/${id}`);
+  },
+
+  async createTestimonial(payload: TestimonialCreate): Promise<TestimonialRead> {
+    return fetchWithAuth<TestimonialRead>("/api/v1/admin/testimonials", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateTestimonial(id: string, payload: TestimonialUpdate): Promise<TestimonialRead> {
+    return fetchWithAuth<TestimonialRead>(`/api/v1/admin/testimonials/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteTestimonial(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/testimonials/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  async publishTestimonial(id: string): Promise<TestimonialRead> {
+    return fetchWithAuth<TestimonialRead>(`/api/v1/admin/testimonials/${id}/publish`, {
+      method: "POST",
+    });
+  },
+
+  async unpublishTestimonial(id: string): Promise<TestimonialRead> {
+    return fetchWithAuth<TestimonialRead>(`/api/v1/admin/testimonials/${id}/unpublish`, {
+      method: "POST",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Contact Messages Inbox API
+  // ---------------------------------------------------------------------------
+
+  async listMessages(params?: {
+    status?: ContactMessageStatus;
+    inquiry_mode?: ContactInquiryMode;
+    page?: number;
+    page_size?: number;
+    sort_by?: "created_at" | "updated_at" | "status";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<ContactMessageRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.status) searchParams.set("status", params.status);
+      if (params.inquiry_mode) searchParams.set("inquiry_mode", params.inquiry_mode);
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<ContactMessageRead>>(
+      `/api/v1/admin/messages${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getMessage(id: string): Promise<ContactMessageRead> {
+    return fetchWithAuth<ContactMessageRead>(`/api/v1/admin/messages/${id}`);
+  },
+
+  async updateMessage(id: string, payload: ContactMessageUpdate): Promise<ContactMessageRead> {
+    return fetchWithAuth<ContactMessageRead>(`/api/v1/admin/messages/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteMessage(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/messages/${id}`, {
+      method: "DELETE",
+    });
   },
 };
