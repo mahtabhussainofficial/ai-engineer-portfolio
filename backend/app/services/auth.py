@@ -99,6 +99,7 @@ def _issue_session_and_tokens(
     ip_address: str | None,
     user_agent: str | None,
     now: datetime,
+    family_id: uuid.UUID | None = None,
 ) -> AuthTokensBundle:
     raw_refresh_token = generate_refresh_token()
     refresh_hash = hash_refresh_token(raw_refresh_token)
@@ -106,6 +107,7 @@ def _issue_session_and_tokens(
 
     session = AdminSession(
         admin_user_id=admin.id,
+        family_id=family_id or uuid.uuid4(),
         refresh_token_hash=refresh_hash,
         user_agent=user_agent[:512] if user_agent else None,
         ip_address=ip_address[:45] if ip_address else None,
@@ -213,18 +215,58 @@ def refresh_admin_session(
     db: Session,
     settings: Settings,
     *,
-    raw_refresh_token: str | None,
+    raw_refresh_token: str | None = None,
+    raw_refresh_tokens: list[str] | None = None,
     ip_address: str | None,
     user_agent: str | None,
 ) -> AuthTokensBundle:
     """Validate, rotate, and protect against reuse of refresh tokens."""
-    if not raw_refresh_token:
+    tokens: list[str] = []
+    if raw_refresh_tokens:
+        for t in raw_refresh_tokens:
+            if t and t not in tokens:
+                tokens.append(t)
+    if raw_refresh_token and raw_refresh_token not in tokens:
+        tokens.append(raw_refresh_token)
+
+    if not tokens:
         raise AuthenticationError(
             "Invalid or expired refresh session.",
             code="invalid_refresh_session",
         )
 
-    token_hash = hash_refresh_token(raw_refresh_token)
+    # Replay of any rotated or logged-out refresh token revokes all active sessions.
+    for token in tokens:
+        token_hash = hash_refresh_token(token)
+        existing_session = db.scalar(
+            select(AdminSession).where(AdminSession.refresh_token_hash == token_hash)
+        )
+        if existing_session is not None and existing_session.revoked_at is not None:
+            revoked_count = revoke_all_admin_sessions(
+                db,
+                admin_user_id=existing_session.admin_user_id,
+            )
+            logger.warning(
+                "Refresh token reuse detected; revoked all active sessions",
+                extra={
+                    "admin_id": str(existing_session.admin_user_id),
+                    "revoked_sessions": revoked_count,
+                },
+            )
+            raise AuthenticationError(
+                "Invalid or expired refresh session.",
+                code="refresh_token_reuse",
+            )
+
+    if len(tokens) > 1:
+        # Multiple tokens presented without known revocation: reject ambiguous cookie state.
+        raise AuthenticationError(
+            "Invalid or expired refresh session.",
+            code="invalid_refresh_session",
+        )
+
+    chosen_token = tokens[0]
+    token_hash = hash_refresh_token(chosen_token)
     existing_session = db.scalar(
         select(AdminSession).where(AdminSession.refresh_token_hash == token_hash)
     )
@@ -289,6 +331,7 @@ def refresh_admin_session(
             "Invalid or expired refresh session.",
             code="refresh_token_reuse",
         )
+    existing_session.revoked_at = now
 
     bundle = _issue_session_and_tokens(
         db,
@@ -297,6 +340,7 @@ def refresh_admin_session(
         ip_address=ip_address,
         user_agent=user_agent,
         now=now,
+        family_id=existing_session.family_id,
     )
     db.commit()
     db.refresh(bundle.session)
@@ -305,22 +349,29 @@ def refresh_admin_session(
         extra={
             "previous_session_id": str(existing_session.id),
             "new_session_id": str(bundle.session.id),
+            "family_id": str(existing_session.family_id),
         },
     )
     return bundle
 
 
 def revoke_session_by_refresh_token(db: Session, *, raw_refresh_token: str | None) -> int:
-    """Revoke the session matching `raw_refresh_token` if active."""
+    """Revoke the session family matching `raw_refresh_token` to handle refresh/logout races."""
     if not raw_refresh_token:
         return 0
 
     token_hash = hash_refresh_token(raw_refresh_token)
     now = _utc_now()
+    existing_session = db.scalar(
+        select(AdminSession).where(AdminSession.refresh_token_hash == token_hash)
+    )
+    if existing_session is None:
+        return 0
+
     result = db.execute(
         update(AdminSession)
         .where(
-            AdminSession.refresh_token_hash == token_hash,
+            AdminSession.family_id == existing_session.family_id,
             AdminSession.revoked_at.is_(None),
         )
         .values(revoked_at=now)
@@ -352,8 +403,8 @@ def revoke_session_by_id(
     *,
     admin_user_id: uuid.UUID,
     session_id: uuid.UUID,
-) -> None:
-    """Revoke a specific session owned by the administrator."""
+) -> int:
+    """Revoke a specific session family owned by the administrator."""
     session = db.scalar(
         select(AdminSession).where(
             AdminSession.id == session_id,
@@ -363,6 +414,14 @@ def revoke_session_by_id(
     if session is None:
         raise NotFoundError("Admin session was not found.")
 
-    if session.revoked_at is None:
-        session.revoked_at = _utc_now()
-        db.commit()
+    now = _utc_now()
+    result = db.execute(
+        update(AdminSession)
+        .where(
+            AdminSession.family_id == session.family_id,
+            AdminSession.revoked_at.is_(None),
+        )
+        .values(revoked_at=now)
+    )
+    db.commit()
+    return int(result.rowcount or 0)

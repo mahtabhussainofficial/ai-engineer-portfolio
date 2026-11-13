@@ -68,12 +68,19 @@ class AdminSession(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "admin_sessions"
     __table_args__ = (
         Index("ix_admin_sessions_user_expires", "admin_user_id", "expires_at"),
+        Index("ix_admin_sessions_family_revoked", "family_id", "revoked_at"),
     )
 
     admin_user_id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("admin_users.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
+    )
+    family_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        nullable=False,
+        default=uuid.uuid4,
         index=True,
     )
     refresh_token_hash: Mapped[str] = mapped_column(

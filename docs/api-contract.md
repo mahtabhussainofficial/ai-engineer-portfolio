@@ -75,7 +75,7 @@ Requires CSRF validation (`X-CSRF-Token` matching `portfolio_csrf_token` cookie 
 
 ### `POST /api/v1/auth/logout`
 Requires CSRF validation and clears auth cookies.
-- **200 OK**: Revokes the current `admin_sessions` record (if active) and returns `{"message": "Logged out successfully.", "revoked_sessions": <int>}`.
+- **200 OK**: Atomically revokes the session family matching the refresh token (including any replacement session issued in a concurrent refresh/logout race on the same device) and returns `{"message": "Logged out successfully.", "revoked_sessions": <int>}`. Unrelated sessions on other devices are preserved.
 - **403 Forbidden**: CSRF validation failure.
 
 ### `POST /api/v1/auth/logout-all`

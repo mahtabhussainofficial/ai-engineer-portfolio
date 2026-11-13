@@ -128,6 +128,32 @@ def login(
     return _token_response_from_bundle(bundle)
 
 
+def _extract_refresh_tokens(request: Request, cookie_name: str) -> list[str]:
+    """Extract all refresh token values present in request Cookie headers and cookie jar."""
+    tokens: list[str] = []
+    for header in request.headers.getlist("cookie"):
+        for chunk in header.split(";"):
+            chunk = chunk.strip()
+            if not chunk:
+                continue
+            if "=" in chunk:
+                key, val = chunk.split("=", 1)
+                if key.strip() == cookie_name:
+                    cleaned = val.strip()
+                    if cleaned.startswith('"') and cleaned.endswith('"') and len(cleaned) >= 2:
+                        cleaned = cleaned[1:-1]
+                    if cleaned and cleaned not in tokens:
+                        tokens.append(cleaned)
+    single = request.cookies.get(cookie_name)
+    if single:
+        single_clean = single.strip()
+        if single_clean.startswith('"') and single_clean.endswith('"') and len(single_clean) >= 2:
+            single_clean = single_clean[1:-1]
+        if single_clean and single_clean not in tokens:
+            tokens.append(single_clean)
+    return tokens
+
+
 @router.post(
     "/refresh",
     response_model=TokenResponse,
@@ -146,12 +172,12 @@ def refresh_tokens(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> TokenResponse:
-    raw_refresh_token = request.cookies.get(settings.refresh_cookie_name)
+    raw_refresh_tokens = _extract_refresh_tokens(request, settings.refresh_cookie_name)
     try:
         bundle = refresh_admin_session(
             db,
             settings,
-            raw_refresh_token=raw_refresh_token,
+            raw_refresh_tokens=raw_refresh_tokens,
             ip_address=get_client_ip(request),
             user_agent=request.headers.get("User-Agent"),
         )
@@ -189,8 +215,14 @@ def logout(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> LogoutResponse:
-    raw_refresh_token = request.cookies.get(settings.refresh_cookie_name)
-    revoked = revoke_session_by_refresh_token(db, raw_refresh_token=raw_refresh_token)
+    raw_refresh_tokens = _extract_refresh_tokens(request, settings.refresh_cookie_name)
+    revoked = 0
+    if raw_refresh_tokens:
+        for tok in raw_refresh_tokens:
+            revoked += revoke_session_by_refresh_token(db, raw_refresh_token=tok)
+    else:
+        raw_refresh_token = request.cookies.get(settings.refresh_cookie_name)
+        revoked = revoke_session_by_refresh_token(db, raw_refresh_token=raw_refresh_token)
     _clear_auth_cookies(response, settings)
     return LogoutResponse(message="Logged out successfully.", revoked_sessions=revoked)
 
@@ -265,5 +297,5 @@ def revoke_session(
     current_admin: AdminUser = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ) -> LogoutResponse:
-    revoke_session_by_id(db, admin_user_id=current_admin.id, session_id=session_id)
-    return LogoutResponse(message="Session revoked successfully.", revoked_sessions=1)
+    revoked = revoke_session_by_id(db, admin_user_id=current_admin.id, session_id=session_id)
+    return LogoutResponse(message="Session revoked successfully.", revoked_sessions=revoked)

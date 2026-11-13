@@ -68,3 +68,12 @@ def test_request_id_and_http_error_envelope(client_without_db: TestClient) -> No
     payload = response.json()
     assert payload["error"]["code"] == "http_error"
     assert payload["error"]["request_id"] == "req-test-123"
+
+
+def test_security_headers_present_on_responses(client_without_db: TestClient) -> None:
+    """Standard security headers must be injected on HTTP responses."""
+    res = client_without_db.get("/api/v1/health")
+    assert res.headers.get("X-Content-Type-Options") == "nosniff"
+    assert res.headers.get("X-Frame-Options") == "DENY"
+    assert res.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+    assert "X-Request-ID" in res.headers

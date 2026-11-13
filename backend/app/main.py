@@ -93,6 +93,9 @@ def create_application(settings: Settings | None = None) -> FastAPI:
             request_id_ctx_var.reset(token)
 
         response.headers["X-Request-ID"] = request_id
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         logger.info(
             "HTTP request completed",
             extra={

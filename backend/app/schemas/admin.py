@@ -49,6 +49,7 @@ class AdminSessionRead(UUIDTimestampSchema):
     """Admin session metadata representation excluding refresh token hash."""
 
     admin_user_id: uuid.UUID
+    family_id: uuid.UUID | None = None
     user_agent: str | None = None
     ip_address: str | None = None
     expires_at: datetime

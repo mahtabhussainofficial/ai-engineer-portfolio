@@ -336,6 +336,94 @@ def test_refresh_rotation_and_reuse_detection_revokes_all_sessions(
         assert active_sessions == []
 
 
+def test_refresh_duplicate_cookie_ordering_and_reuse_regression(
+    auth_client: tuple[TestClient, sessionmaker[Session], Settings],
+) -> None:
+    client, session_factory, settings = auth_client
+    _seed_admin(session_factory)
+
+    login_res = client.post(
+        "/api/v1/auth/login",
+        json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD},
+    )
+    assert login_res.status_code == 200
+    token_1 = client.cookies.get(settings.refresh_cookie_name)
+    csrf_1 = login_res.json()["csrf_token"]
+
+    # Rotate to get token_2 (active) while token_1 is now revoked
+    rotate_res = client.post(
+        "/api/v1/auth/refresh",
+        headers={"X-CSRF-Token": csrf_1, "Origin": "http://localhost:3000"},
+    )
+    assert rotate_res.status_code == 200
+    token_2 = client.cookies.get(settings.refresh_cookie_name)
+    csrf_2 = rotate_res.json()["csrf_token"]
+    assert token_1 != token_2
+
+    # Case 1: Replayed/revoked cookie precedes active cookie in Cookie header.
+    # Starlette's request.cookies.get() would pick token_2 if blindly updated left-to-right.
+    client.cookies.clear()
+    res_case1 = client.post(
+        "/api/v1/auth/refresh",
+        headers={
+            "X-CSRF-Token": csrf_2,
+            "Cookie": f"{settings.csrf_cookie_name}={csrf_2}; {settings.refresh_cookie_name}={token_1}; {settings.refresh_cookie_name}={token_2}",
+        },
+    )
+    assert res_case1.status_code == 401
+    assert res_case1.json()["error"]["code"] == "refresh_token_reuse"
+
+    with session_factory() as db:
+        active_sessions = list(
+            db.scalars(select(AdminSession).where(AdminSession.revoked_at.is_(None))).all()
+        )
+        assert active_sessions == []
+
+    # Re-login and re-rotate for Case 2
+    login_res_2 = client.post(
+        "/api/v1/auth/login",
+        json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD},
+    )
+    token_3 = client.cookies.get(settings.refresh_cookie_name)
+    csrf_3 = login_res_2.json()["csrf_token"]
+    rotate_res_2 = client.post(
+        "/api/v1/auth/refresh",
+        headers={"X-CSRF-Token": csrf_3, "Origin": "http://localhost:3000"},
+    )
+    token_4 = client.cookies.get(settings.refresh_cookie_name)
+    csrf_4 = rotate_res_2.json()["csrf_token"]
+
+    # Case 2: Active cookie precedes replayed/revoked cookie in Cookie header.
+    client.cookies.clear()
+    res_case2 = client.post(
+        "/api/v1/auth/refresh",
+        headers={
+            "X-CSRF-Token": csrf_4,
+            "Cookie": f"{settings.csrf_cookie_name}={csrf_4}; {settings.refresh_cookie_name}={token_4}; {settings.refresh_cookie_name}={token_3}",
+        },
+    )
+    assert res_case2.status_code == 401
+    assert res_case2.json()["error"]["code"] == "refresh_token_reuse"
+
+    with session_factory() as db:
+        active_sessions = list(
+            db.scalars(select(AdminSession).where(AdminSession.revoked_at.is_(None))).all()
+        )
+        assert active_sessions == []
+
+    # Case 3: Multiple unknown/conflicting cookies without revoked token -> invalid_refresh_session
+    client.cookies.clear()
+    res_case3 = client.post(
+        "/api/v1/auth/refresh",
+        headers={
+            "X-CSRF-Token": csrf_4,
+            "Cookie": f"{settings.csrf_cookie_name}={csrf_4}; {settings.refresh_cookie_name}=unknown_token_a; {settings.refresh_cookie_name}=unknown_token_b",
+        },
+    )
+    assert res_case3.status_code == 401
+    assert res_case3.json()["error"]["code"] == "invalid_refresh_session"
+
+
 def test_expired_refresh_session_rejected_and_revoked(
     auth_client: tuple[TestClient, sessionmaker[Session], Settings],
 ) -> None:
@@ -531,4 +619,102 @@ def test_cli_create_admin_interactive_and_single_admin_guard(
     assert exit_code_2 == 1
     err = capsys.readouterr().err
     assert "already exists" in err
+
+
+def test_session_family_logout_race_and_multi_device_isolation(
+    auth_client: tuple[TestClient, sessionmaker[Session], Settings],
+) -> None:
+    """Verify session-family coordination during refresh/logout races preserves multi-device isolation."""
+    client, session_factory, settings = auth_client
+    _seed_admin(session_factory)
+
+    # 1. Device A logs in
+    login_a = client.post(
+        "/api/v1/auth/login",
+        json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD},
+        headers={"User-Agent": "Device-A"},
+    )
+    assert login_a.status_code == 200
+    token_a1 = login_a.json()["access_token"]
+    csrf_a1 = login_a.json()["csrf_token"]
+    refresh_a1 = client.cookies.get(settings.refresh_cookie_name)
+    assert refresh_a1 is not None
+
+    # 2. Device B logs in
+    login_b = client.post(
+        "/api/v1/auth/login",
+        json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD},
+        headers={"User-Agent": "Device-B"},
+    )
+    assert login_b.status_code == 200
+    token_b1 = login_b.json()["access_token"]
+    csrf_b1 = login_b.json()["csrf_token"]
+    refresh_b1 = client.cookies.get(settings.refresh_cookie_name)
+    assert refresh_b1 is not None
+
+    with session_factory() as db:
+        sessions = list(db.scalars(select(AdminSession).order_by(AdminSession.created_at)).all())
+        assert len(sessions) == 2
+        assert sessions[0].family_id != sessions[1].family_id
+        family_a = sessions[0].family_id
+        family_b = sessions[1].family_id
+
+    # 3. Device A rotates its refresh token (Session A1 -> Session A2)
+    client.cookies.clear()
+    client.cookies.set(settings.refresh_cookie_name, refresh_a1, domain="testserver.local", path="/api/v1/auth")
+    client.cookies.set(settings.csrf_cookie_name, csrf_a1, domain="testserver.local", path="/api/v1/auth")
+    rotate_a = client.post(
+        "/api/v1/auth/refresh",
+        headers={"X-CSRF-Token": csrf_a1, "Origin": "http://localhost:3000"},
+    )
+    assert rotate_a.status_code == 200
+    token_a2 = rotate_a.json()["access_token"]
+    refresh_a2 = rotate_a.cookies.get(settings.refresh_cookie_name)
+    assert refresh_a2 is not None
+    assert refresh_a2 != refresh_a1
+
+    with session_factory() as db:
+        sess_a2 = db.scalar(
+            select(AdminSession).where(
+                AdminSession.refresh_token_hash == hash_refresh_token(refresh_a2)
+            )
+        )
+        assert sess_a2 is not None
+        assert sess_a2.family_id == family_a
+        assert sess_a2.revoked_at is None
+
+    # 4. Refresh/logout race: Device A sends logout carrying OLD refresh_a1
+    client.cookies.clear()
+    client.cookies.set(settings.refresh_cookie_name, refresh_a1, domain="testserver.local", path="/api/v1/auth")
+    client.cookies.set(settings.csrf_cookie_name, csrf_a1, domain="testserver.local", path="/api/v1/auth")
+    logout_race_res = client.post(
+        "/api/v1/auth/logout",
+        headers={"X-CSRF-Token": csrf_a1},
+    )
+    assert logout_race_res.status_code == 200
+    # Because refresh_a1 belongs to family_a, active replacement session A2 was revoked!
+    assert logout_race_res.json()["revoked_sessions"] >= 1
+
+    # 5. Device A's new access token (token_a2) is now revoked!
+    assert (
+        client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token_a2}"}).status_code
+        == 401
+    )
+
+    # 6. Device B remains fully active and unaffected (multi-device isolation preserved)
+    me_b = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token_b1}"})
+    assert me_b.status_code == 200
+    assert me_b.json()["email"] == ADMIN_EMAIL
+
+    # Device B can still rotate its own session
+    client.cookies.clear()
+    client.cookies.set(settings.refresh_cookie_name, refresh_b1, domain="testserver.local", path="/api/v1/auth")
+    client.cookies.set(settings.csrf_cookie_name, csrf_b1, domain="testserver.local", path="/api/v1/auth")
+    rotate_b = client.post(
+        "/api/v1/auth/refresh",
+        headers={"X-CSRF-Token": csrf_b1, "Origin": "http://localhost:3000"},
+    )
+    assert rotate_b.status_code == 200
+    token_b2 = rotate_b.json()["access_token"]
+    assert token_b2 != token_b1
 
