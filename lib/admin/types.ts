@@ -89,6 +89,7 @@ export interface AdminUserRead {
 export interface AdminSessionRead {
   id: string;
   admin_user_id: string;
+  family_id?: string | null;
   user_agent?: string | null;
   ip_address?: string | null;
   expires_at: string;

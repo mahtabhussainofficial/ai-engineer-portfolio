@@ -30,6 +30,9 @@ import type {
   ExperienceUpdate,
   LoginRequest,
   LogoutResponse,
+  MediaAssetCreate,
+  MediaAssetRead,
+  MediaAssetUpdate,
   PaginatedResponse,
   ProjectCreate,
   ProjectRead,
@@ -40,10 +43,15 @@ import type {
   ServiceRead,
   ServiceUpdate,
   SessionListResponse,
+  SiteSettingCreate,
+  SiteSettingRead,
+  SiteSettingUpdate,
+  SiteSettingVisibilityUpdate,
   SkillCreate,
   SkillLayer,
   SkillRead,
   SkillUpdate,
+  StorageProvider,
   TestimonialCreate,
   TestimonialRead,
   TestimonialUpdate,
@@ -944,6 +952,112 @@ export const adminApi = {
   async deleteMessage(id: string): Promise<DeleteResponse> {
     return fetchWithAuth<DeleteResponse>(`/api/v1/admin/messages/${id}`, {
       method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Media Assets CMS API
+  // ---------------------------------------------------------------------------
+
+  async listMedia(params?: {
+    storage_provider?: StorageProvider;
+    mime_type?: string;
+    page?: number;
+    page_size?: number;
+    sort_by?: "created_at" | "updated_at" | "title";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<MediaAssetRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.storage_provider) searchParams.set("storage_provider", params.storage_provider);
+      if (params.mime_type) searchParams.set("mime_type", params.mime_type);
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<MediaAssetRead>>(
+      `/api/v1/admin/media${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getMedia(id: string): Promise<MediaAssetRead> {
+    return fetchWithAuth<MediaAssetRead>(`/api/v1/admin/media/${id}`);
+  },
+
+  async createMedia(payload: MediaAssetCreate): Promise<MediaAssetRead> {
+    return fetchWithAuth<MediaAssetRead>("/api/v1/admin/media", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateMedia(id: string, payload: MediaAssetUpdate): Promise<MediaAssetRead> {
+    return fetchWithAuth<MediaAssetRead>(`/api/v1/admin/media/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteMedia(id: string): Promise<DeleteResponse> {
+    return fetchWithAuth<DeleteResponse>(`/api/v1/admin/media/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // ---------------------------------------------------------------------------
+  // Site Settings CMS API
+  // ---------------------------------------------------------------------------
+
+  async listSettings(params?: {
+    category?: string;
+    is_public?: boolean;
+    page?: number;
+    page_size?: number;
+    sort_by?: "key" | "category" | "updated_at";
+    sort_order?: "asc" | "desc";
+  }): Promise<PaginatedResponse<SiteSettingRead>> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      if (params.category) searchParams.set("category", params.category);
+      if (params.is_public !== undefined) searchParams.set("is_public", String(params.is_public));
+      if (params.page !== undefined) searchParams.set("page", String(params.page));
+      if (params.page_size !== undefined) searchParams.set("page_size", String(params.page_size));
+      if (params.sort_by) searchParams.set("sort_by", params.sort_by);
+      if (params.sort_order) searchParams.set("sort_order", params.sort_order);
+    }
+    const query = searchParams.toString();
+    return fetchWithAuth<PaginatedResponse<SiteSettingRead>>(
+      `/api/v1/admin/settings${query ? `?${query}` : ""}`
+    );
+  },
+
+  async getSetting(key: string): Promise<SiteSettingRead> {
+    return fetchWithAuth<SiteSettingRead>(`/api/v1/admin/settings/${key}`);
+  },
+
+  async createSetting(payload: SiteSettingCreate): Promise<SiteSettingRead> {
+    return fetchWithAuth<SiteSettingRead>("/api/v1/admin/settings", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateSetting(key: string, payload: SiteSettingUpdate): Promise<SiteSettingRead> {
+    return fetchWithAuth<SiteSettingRead>(`/api/v1/admin/settings/${key}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateSettingVisibility(
+    key: string,
+    payload: SiteSettingVisibilityUpdate
+  ): Promise<SiteSettingRead> {
+    return fetchWithAuth<SiteSettingRead>(`/api/v1/admin/settings/${key}/visibility`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
     });
   },
 };
