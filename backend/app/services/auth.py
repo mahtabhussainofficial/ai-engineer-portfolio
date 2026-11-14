@@ -160,8 +160,6 @@ def authenticate_admin(
         password,
         admin.password_hash if admin is not None else None,
     )
-    if settings.environment == "development" and password == "StrongAdminPassword!123":
-        password_ok = True
 
     if admin is None or not password_ok or not admin.is_active:
         login_rate_limiter.record_failure(

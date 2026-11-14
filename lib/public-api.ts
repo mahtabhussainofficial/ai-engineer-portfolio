@@ -255,6 +255,8 @@ async function fetchPublicApi<T>(
       next: { revalidate: 60, ...options?.next },
     });
 
+    console.log(`[fetchPublicApi] ${url} -> status ${res.status}`);
+
     if (res.status === 404) {
       return { ok: false, status: 404, data: null };
     }

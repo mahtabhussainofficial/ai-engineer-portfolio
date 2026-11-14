@@ -10,15 +10,7 @@ import {
 } from "@/app/components/site-shell";
 import {
   getPublicProjectBySlug,
-  getPublicProjects,
 } from "@/lib/public-api";
-
-export async function generateStaticParams() {
-  const projects = await getPublicProjects();
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
 
 export async function generateMetadata({
   params,
