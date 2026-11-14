@@ -10,25 +10,39 @@ import {
   sectionButtonClass,
   tagClass,
 } from "@/app/components/site-shell";
-import { getFeaturedProjects } from "@/lib/projects-data";
-import { getFeaturedServices, getProcessSteps } from "@/lib/services-data";
 import {
-  getClientFeedback,
-  getHomeAboutPreview,
-  getHomeHero,
-} from "@/lib/site-config";
-import { getFeaturedSkills } from "@/lib/skills-data";
+  getPublicFeaturedProjects,
+  getPublicFeaturedServices,
+  getPublicFeaturedSkills,
+  getPublicHomeAboutPreview,
+  getPublicHomeHero,
+  getPublicProcessSteps,
+  getPublicTestimonials,
+} from "@/lib/public-api";
 import portraitImage from "@/public/shabnum-portrait.jpg";
 
-export default function Home() {
-  const hero = getHomeHero();
-  const aboutPreview = getHomeAboutPreview();
-  const processSteps = getProcessSteps();
-  const feedback = getClientFeedback();
+export default async function Home() {
+  const [
+    hero,
+    aboutPreview,
+    processSteps,
+    feedback,
+    featuredServicesList,
+    featuredProjectsList,
+    featuredSkillsList,
+  ] = await Promise.all([
+    getPublicHomeHero(),
+    getPublicHomeAboutPreview(),
+    getPublicProcessSteps(),
+    getPublicTestimonials({ featured: true }),
+    getPublicFeaturedServices(),
+    getPublicFeaturedProjects(),
+    getPublicFeaturedSkills(),
+  ]);
 
   const featuredServices: readonly PreviewCardItem[] =
-    getFeaturedServices().map((service, index) => ({
-      number: String(index + 1).padStart(2, "0"),
+    featuredServicesList.map((service, index) => ({
+      number: service.number || String(index + 1).padStart(2, "0"),
       category: service.homeCategoryLabel ?? service.domain,
       title: service.homeTitle ?? service.title,
       description: service.homeDescription ?? service.description,
@@ -38,7 +52,7 @@ export default function Home() {
     }));
 
   const featuredProjects: readonly PreviewCardItem[] =
-    getFeaturedProjects().map((project) => ({
+    featuredProjectsList.map((project) => ({
       number: project.number,
       category: project.homeCategoryLabel,
       title: project.title,
@@ -48,7 +62,7 @@ export default function Home() {
       linkLabel: "Open project brief",
     }));
 
-  const featuredSkills: readonly PreviewCardItem[] = getFeaturedSkills().map(
+  const featuredSkills: readonly PreviewCardItem[] = featuredSkillsList.map(
     (skill) => ({
       number: skill.number,
       category: skill.category,
