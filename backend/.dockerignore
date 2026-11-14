@@ -13,3 +13,5 @@ htmlcov/
 .DS_Store
 *.sqlite
 *.db
+.env*
+

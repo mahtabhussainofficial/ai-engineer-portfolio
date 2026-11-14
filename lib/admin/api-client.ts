@@ -199,16 +199,19 @@ export function clearAuthTokens(): void {
 // ---------------------------------------------------------------------------
 
 export function getApiBaseUrl(): string {
+  if (typeof window === "undefined" && process.env.INTERNAL_API_URL) {
+    return process.env.INTERNAL_API_URL.replace(/\/+$/, "");
+  }
   if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
   }
   if (typeof window !== "undefined") {
     // If accessing via 127.0.0.1, match the backend host for cookie & origin consistency
     if (window.location.hostname === "127.0.0.1") {
-      return "http://127.0.0.1:8000";
+      return "http://127.0.0.1:8001";
     }
   }
-  return "http://localhost:8000";
+  return "http://localhost:8001";
 }
 
 // ---------------------------------------------------------------------------
