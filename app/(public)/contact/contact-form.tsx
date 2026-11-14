@@ -113,7 +113,6 @@ export function ContactInquiryPanel() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<SubmissionStatus>("idle");
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
-  const [lastPreviewMode, setLastPreviewMode] = useState<InquiryMode>("project");
 
   const activeCopy = modeCopy[mode];
   const isSubmitting = status === "submitting";
@@ -172,7 +171,6 @@ export function ContactInquiryPanel() {
 
     try {
       await submitPublicContactMessage(payload);
-      setLastPreviewMode(payload.inquiryMode);
       setValues(initialFormValues);
       setStatus("success");
     } catch (err) {
@@ -425,20 +423,14 @@ export function ContactInquiryPanel() {
           {status === "success" ? (
             <div
               role="status"
-              className="rounded-xl border border-[#2b3c54] bg-[#172130]/75 p-4 text-sm leading-6 text-muted"
+              className="rounded-xl border border-emerald-500/30 bg-[#0f1f1a]/80 p-4 text-sm leading-6 text-emerald-200"
             >
-              <p className="font-medium text-foreground">
-                Inquiry preview prepared (not sent)
+              <p className="font-medium text-emerald-100">
+                Inquiry sent successfully
               </p>
               <p className="mt-1">
-                Your{" "}
-                {lastPreviewMode === "project"
-                  ? "project brief"
-                  : "advisory inquiry"}{" "}
-                passed validation in preview mode, and your message has not been
-                sent yet because automated form delivery is not active yet.
-                Please reach out via the available contact channels if you need
-                an immediate response.
+                Thank you for reaching out! Your inquiry has been received. I
+                will get back to you shortly.
               </p>
             </div>
           ) : null}
