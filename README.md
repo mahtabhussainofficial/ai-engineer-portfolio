@@ -1,150 +1,195 @@
-# Shabnum H. — AI Engineer Portfolio
+# Shabnum H. — Full-Stack AI Engineer Portfolio & CMS
 
-> A polished portfolio and service showcase for Shabnum H., an AI Engineer and Backend Developer building practical AI applications, workflow automation, RAG systems, and dependable Python backends.
+> A production-ready portfolio, interactive service platform, and content management system for Shabnum H., an AI Engineer and Backend Developer building practical AI applications, workflow automation, RAG systems, and dependable Python backends.
 
-## Overview
+---
 
-This project is a responsive, dark-themed portfolio website built to present:
+## 🌟 Overview
 
-- Professional background, experience, education, and certifications
-- AI engineering and backend development services
-- Project briefs covering RAG, agentic automation, AI platforms, and document workflows
-- A structured skills and capability map
-- A contact experience for project and advisory inquiries
+This project is a modern, high-performance full-stack application featuring:
+- **Client Portfolio**: Responsive, dark-themed presentation showcase highlighting AI/ML engineering, RAG pipelines, agentic workflows, and backend platforms.
+- **Inquiry Management**: End-to-end contact and project brief intake persisted directly to PostgreSQL.
+- **Admin CMS & Triage**: Secure management dashboard for content authoring, inquiry triage, and system audit logs.
+- **Dockerized Architecture**: Fully containerized environment with multi-stage builds, non-root users, automated migrations, seeders, and health checks.
 
-The site uses typed, centralized content records so the presentation layer can later be connected to a CMS, FastAPI service, or database without redesigning the route components.
+---
 
-## Highlights
+## 🛠️ Architecture & Tech Stack
 
-- Next.js App Router with route-level metadata
-- Responsive layout with reusable navigation, footer, section, card, and CTA components
-- Filterable project and service indexes
-- Dedicated project detail pages using dynamic routes
-- Typed content catalogs for services, projects, skills, profile information, and experience
-- Accessible form states and client-side inquiry validation
-- Optimized local portrait asset using `next/image`
-- Dark visual system built with Tailwind CSS v4
+```mermaid
+graph TD
+    Client["Browser / Visitor Client"]
+    Admin["Admin User"]
+    NextJS["Next.js 16 Frontend (Port 3001)"]
+    FastAPI["FastAPI Backend (Port 8001)"]
+    Postgres["PostgreSQL 16 Database (Port 5433)"]
 
-## Technology
-
-- **Framework:** Next.js 16
-- **UI:** React 19
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS 4
-- **Fonts:** Geist and Geist Mono via `next/font`
-- **Quality:** ESLint with the Next.js configuration
-
-## Routes
-
-| Route | Purpose |
-| --- | --- |
-| `/` | Portfolio landing page with featured services, projects, skills, process, and feedback |
-| `/about` | Biography, engineering approach, career journey, education, and certifications |
-| `/services` | Filterable catalog of AI engineering and backend services |
-| `/projects` | Filterable project and case-study index |
-| `/projects/[slug]` | Detailed project brief |
-| `/skills` | Full capability map across AI, backend, data, infrastructure, and workflow |
-| `/contact` | Project/advisory inquiry form and contact channels |
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js compatible with the installed Next.js version
-- npm
-
-### Installation
-
-```bash
-npm install
+    Client -->|HTTP Requests| NextJS
+    Admin -->|Admin Dashboard| NextJS
+    NextJS -->|Client-side API: localhost:8001| FastAPI
+    NextJS -->|SSR / Server Component: backend:8000| FastAPI
+    FastAPI -->|Async SQLAlchemy / Alembic| Postgres
 ```
 
-### Development
+### Frontend
+- **Framework:** Next.js 16 (React 19, TypeScript)
+- **Styling:** Tailwind CSS 4 with custom design tokens
+- **Routing:** App Router with Route Groups (`(public)` and `admin`)
+- **State & Data Fetching:** Server Components + Client-side fetchers with cookie-based JWT authentication
 
-```bash
-npm run dev
-```
+### Backend
+- **Framework:** FastAPI (Python 3.12)
+- **Database ORM:** SQLAlchemy 2.0 (Asyncpg / psycopg)
+- **Migrations:** Alembic
+- **Validation & Serialization:** Pydantic v2 & Pydantic Settings
+- **Security:** Argon2 / bcrypt password hashing, HTTP-only secure cookie JWT sessions, rate limiting, and CORS protection
+- **API Documentation:** Interactive Swagger UI (`/docs`) and ReDoc (`/redoc`)
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### Infrastructure & Database
+- **Database:** PostgreSQL 16 Alpine
+- **Containerization:** Multi-stage Dockerfiles for Frontend and Backend
+- **Orchestration:** Docker Compose with dedicated service networks, persistent named volumes, and automated health checks
 
-### Production
+---
 
-```bash
-npm run build
-npm run start
-```
-
-## Available Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the Next.js development server |
-| `npm run build` | Create an optimized production build |
-| `npm run start` | Serve the production build |
-| `npm run lint` | Run ESLint |
-
-## Project Structure
+## 📂 Project Structure
 
 ```text
-app/
-├── (public)/                 Public route group and page implementations
-│   ├── about/
-│   ├── contact/
-│   ├── projects/
-│   ├── services/
-│   └── skills/
-├── components/               Shared site shell and UI primitives
-├── globals.css               Global styles and design tokens
-├── layout.tsx                Root metadata, fonts, and document layout
-├── loading.tsx               Loading state
-└── not-found.tsx             Not-found state
-lib/
-├── about-data.ts             Biography and background content
-├── experience-data.ts        Career, education, and certification records
-├── projects-data.ts         Project catalog and project helpers
-├── services-data.ts         Service catalog and process steps
-├── site-config.ts            Site profile, metadata, and contact channels
-└── skills-data.ts            Skill layers, groups, and featured skills
-public/
-└── shabnum-portrait.jpg     Portfolio portrait asset
+ai-engineer-portfolio/
+├── app/
+│   ├── (public)/                 # Public portfolio pages
+│   │   ├── about/                # Bio, engineering approach, and credentials
+│   │   ├── contact/              # Interactive inquiry form & contact details
+│   │   ├── projects/             # Project showcase and filterable index
+│   │   │   └── [slug]/           # Dynamic project case study details
+│   │   ├── services/             # AI & backend services catalog
+│   │   └── skills/               # Full capability & technology map
+│   ├── admin/                    # Secure Admin CMS
+│   │   ├── inquiries/            # Inquiry inbox, status workflow, and triage
+│   │   ├── projects/             # Project catalog manager
+│   │   ├── services/             # Service catalog manager
+│   │   ├── skills/               # Skills and capability manager
+│   │   ├── experience/           # Timeline and credential manager
+│   │   ├── audit-logs/           # System activity and security audit trail
+│   │   └── login/                # Admin authentication portal
+│   ├── components/               # Shared UI primitives, navigation, and footer
+│   └── globals.css               # Design system and Tailwind CSS tokens
+├── backend/
+│   ├── alembic/                  # Database migration versions and environments
+│   ├── app/
+│   │   ├── api/v1/               # REST API endpoints (auth, inquiries, content, health)
+│   │   ├── core/                 # App configuration, security, and database session
+│   │   ├── models/               # SQLAlchemy ORM models
+│   │   ├── schemas/              # Pydantic request/response schemas
+│   │   └── services/             # Business logic and database operations
+│   ├── tests/                    # Pytest test suite covering endpoints and auth
+│   ├── Dockerfile                # Multi-stage production Python build
+│   └── docker-entrypoint.sh      # Container entrypoint with auto-migration and seeding
+├── lib/
+│   ├── admin/                    # Admin API client and cookie management
+│   ├── public-api.ts             # Public API integration (SSR and browser fallback)
+│   ├── site-config.ts            # Profile configuration and metadata
+│   └── *-data.ts                 # Default fallback and static content catalogs
+├── docker-compose.yml            # Multi-service production-like compose file
+├── Dockerfile                    # Next.js standalone multi-stage production build
+├── .env.docker.example           # Reference template for Docker Compose deployment
+└── .env.example                  # Reference template for local development
 ```
 
-## Customization
+---
 
-Most portfolio content can be updated without changing page components:
+## 🚀 Getting Started
 
-1. Update identity, metadata, contact channels, and social placeholders in [`lib/site-config.ts`](./lib/site-config.ts).
-2. Update biography and principles in [`lib/about-data.ts`](./lib/about-data.ts).
-3. Update career, education, and certification entries in [`lib/experience-data.ts`](./lib/experience-data.ts).
-4. Update service offerings and process steps in [`lib/services-data.ts`](./lib/services-data.ts).
-5. Update project briefs in [`lib/projects-data.ts`](./lib/projects-data.ts).
-6. Update the capability map in [`lib/skills-data.ts`](./lib/skills-data.ts).
-7. Adjust global colors, spacing, and typography in [`app/globals.css`](./app/globals.css).
+### Option 1: Running with Docker Compose (Recommended)
 
-Add a project `slug` to `PROJECTS` to make it available through `/projects/[slug]`. Featured records are automatically used by the homepage previews.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/mahtabhussainofficial/ai-engineer-portfolio.git
+   cd ai-engineer-portfolio
+   ```
 
-## Contact Form Status
+2. **Configure Environment Variables:**
+   Copy the example Docker environment file:
+   ```bash
+   cp .env.docker.example .env
+   ```
+   *Update `SECRET_KEY`, `POSTGRES_PASSWORD`, and admin credentials with secure values.*
 
-The contact form currently provides a polished, client-side preview flow:
+3. **Start the Containers:**
+   ```bash
+   docker compose up -d --build
+   ```
 
-- Validates required fields in the browser
-- Supports project and advisory inquiry modes
-- Shows loading, validation, success, and error states
-- Does **not** send or persist messages yet
+4. **Access the Application:**
+   - **Frontend:** [http://localhost:3001](http://localhost:3001)
+   - **Backend API:** [http://localhost:8001](http://localhost:8001)
+   - **API Docs (Swagger):** [http://localhost:8001/docs](http://localhost:8001/docs)
+   - **Admin Portal:** [http://localhost:3001/admin/login](http://localhost:3001/admin/login)
 
-The submission handler is intentionally isolated in `app/(public)/contact/contact-form.tsx`, making it straightforward to replace the preview with a real API request when an inquiry backend is available.
+---
 
-## Deployment
+### Option 2: Local Development Without Docker
 
-The application is ready for deployment on Vercel or another platform that supports Next.js:
+#### Backend Setup
+```bash
+cd backend
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
 
-1. Push the repository to a Git provider.
-2. Import the repository into the hosting platform.
-3. Use `npm run build` as the build command.
-4. Use `npm run start` for a self-hosted production process, when required.
+pip install -r requirements.txt
+cp .env.example .env
+alembic upgrade head
+python -m app.initial_data
+uvicorn app.main:app --reload --port 8000
+```
 
-No environment variables are currently required for the portfolio frontend.
+#### Frontend Setup
+```bash
+# In the project root:
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## License
+---
 
-This repository is a personal portfolio project. Contact the repository owner before reusing its branding, copy, imagery, or portfolio content.
+## 🧪 Testing & Code Quality
+
+### Frontend Checks
+```bash
+# Type check:
+npx tsc --noEmit
+
+# ESLint:
+npm run lint
+
+# Production build test:
+npm run build
+```
+
+### Backend Checks
+```bash
+# Run Pytest suite:
+docker compose exec backend pytest
+# Or in local venv:
+pytest backend/tests
+```
+
+---
+
+## 🛡️ Security & Production Considerations
+
+- **Secrets Isolation:** `.env` files and sensitive credentials are excluded from version control and Docker images via `.gitignore` and `.dockerignore`.
+- **Non-Root Execution:** Docker containers run under dedicated unprivileged users (`nextjs` and `appuser`).
+- **HTTP-Only Cookies:** Admin session tokens are managed via secure, HttpOnly, SameSite cookies to protect against XSS and CSRF.
+- **CORS Protection:** Strict origin validation restricts API access to authorized frontend origins.
+- **Port Conflict Handling:** Configured with host ports (`3001` frontend, `8001` backend, `5433` postgres) to prevent collisions with host services during local deployment.
+
+---
+
+## 📄 License
+
+This repository is a personal portfolio and platform codebase. Contact the repository owner before reusing branding, personal copy, or media assets.
