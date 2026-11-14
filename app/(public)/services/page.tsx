@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactCtaSection, Eyebrow } from "@/app/components/site-shell";
-import {
-  SERVICE_CATEGORIES,
-  getProcessSteps,
-  getServices,
-} from "@/lib/services-data";
+import { SERVICE_CATEGORIES } from "@/lib/services-data";
+import { getPublicProcessSteps, getPublicServices } from "@/lib/public-api";
 import { ServicesBrowser } from "./services-browser";
 
 export const metadata: Metadata = {
@@ -14,9 +11,11 @@ export const metadata: Metadata = {
     "AI engineering services including agentic workflows, voice AI, RAG knowledge systems, LLM integration, and Python backend development.",
 };
 
-export default function ServicesPage() {
-  const services = getServices();
-  const processSteps = getProcessSteps();
+export default async function ServicesPage() {
+  const [services, processSteps] = await Promise.all([
+    getPublicServices(),
+    getPublicProcessSteps(),
+  ]);
 
   return (
     <>

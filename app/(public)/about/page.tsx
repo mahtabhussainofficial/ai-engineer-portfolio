@@ -6,12 +6,11 @@ import {
   Eyebrow,
   primaryButtonClass,
 } from "@/app/components/site-shell";
-import { getAboutProfile, getApproachPrinciples } from "@/lib/about-data";
 import {
-  getCareerJourney,
-  getCertificationEntries,
-  getEducationEntries,
-} from "@/lib/experience-data";
+  getPublicAboutProfile,
+  getPublicApproachPrinciples,
+  getPublicBackground,
+} from "@/lib/public-api";
 import portraitImage from "@/public/shabnum-portrait.jpg";
 
 export const metadata: Metadata = {
@@ -20,12 +19,15 @@ export const metadata: Metadata = {
     "Professional biography, engineering approach, career journey, and academic foundations of Shabnum H., AI Engineer & Backend Developer.",
 };
 
-export default function AboutPage() {
-  const aboutProfile = getAboutProfile();
-  const approachPrinciples = getApproachPrinciples();
-  const careerJourney = getCareerJourney();
-  const educationEntries = getEducationEntries();
-  const certificationEntries = getCertificationEntries();
+export default async function AboutPage() {
+  const [aboutProfile, approachPrinciples, background] = await Promise.all([
+    getPublicAboutProfile(),
+    getPublicApproachPrinciples(),
+    getPublicBackground(),
+  ]);
+  const careerJourney = background.experience;
+  const educationEntries = background.education;
+  const certificationEntries = background.certifications;
 
   return (
     <>

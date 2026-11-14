@@ -5,12 +5,8 @@ import {
   Eyebrow,
   tagClass,
 } from "@/app/components/site-shell";
-import {
-  getSkillGroups,
-  getSkillLayers,
-  getTotalSkillCount,
-  type SkillLayerId,
-} from "@/lib/skills-data";
+import type { SkillLayerId } from "@/lib/skills-data";
+import { getPublicSkillGroups, getPublicSkillLayers } from "@/lib/public-api";
 
 export const metadata: Metadata = {
   title: "Skills",
@@ -24,10 +20,12 @@ const layerGridClasses: Record<SkillLayerId, string> = {
   delivery: "md:grid-cols-2 lg:grid-cols-[0.85fr_1.15fr]",
 };
 
-export default function SkillsPage() {
-  const skillGroups = getSkillGroups();
-  const skillLayers = getSkillLayers();
-  const totalSkills = getTotalSkillCount();
+export default async function SkillsPage() {
+  const [skillGroups, skillLayers] = await Promise.all([
+    getPublicSkillGroups(),
+    getPublicSkillLayers(),
+  ]);
+  const totalSkills = skillGroups.reduce((acc, g) => acc + g.items.length, 0);
 
   return (
     <>

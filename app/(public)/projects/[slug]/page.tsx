@@ -8,10 +8,14 @@ import {
   sectionButtonClass,
   tagClass,
 } from "@/app/components/site-shell";
-import { getProjectBySlug, getProjects } from "@/lib/projects-data";
+import {
+  getPublicProjectBySlug,
+  getPublicProjects,
+} from "@/lib/public-api";
 
-export function generateStaticParams() {
-  return getProjects().map((project) => ({
+export async function generateStaticParams() {
+  const projects = await getPublicProjects();
+  return projects.map((project) => ({
     slug: project.slug,
   }));
 }
@@ -22,7 +26,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getPublicProjectBySlug(slug);
 
   if (!project) {
     return {
@@ -79,7 +83,7 @@ function ProjectDetailSkeleton() {
 
 async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getPublicProjectBySlug(slug);
 
   if (!project) {
     notFound();

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactCtaSection } from "@/app/components/site-shell";
-import { PROJECT_CATEGORIES, getProjects } from "@/lib/projects-data";
+import { PROJECT_CATEGORIES } from "@/lib/projects-data";
+import { getPublicProjects } from "@/lib/public-api";
 import { ProjectsBrowser } from "./projects-browser";
 
 export const metadata: Metadata = {
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
     "Explore AI engineering, workflow automation, RAG, and Python backend project briefs by Shabnum H.",
 };
 
-export default function ProjectsPage() {
-  const projects = getProjects();
+export default async function ProjectsPage() {
+  const projects = await getPublicProjects();
 
   return (
     <>

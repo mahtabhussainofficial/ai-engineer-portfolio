@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Eyebrow } from "@/app/components/site-shell";
+import { submitPublicContactMessage } from "@/lib/public-api";
 
 type InquiryMode = "project" | "advisory";
 type SubmissionStatus = "idle" | "submitting" | "success" | "error";
@@ -105,19 +106,6 @@ function validateInquiry(values: FormValues): FieldErrors {
   return errors;
 }
 
-/**
- * Frontend-only submission preview.
- * Replace this body with a `fetch("/api/contact", { method: "POST", body: JSON.stringify(payload) })`
- * call once the FastAPI inquiry endpoint is implemented.
- */
-async function submitInquiryPreview(
-  payload: ContactInquiryPayload,
-): Promise<ContactInquiryPayload> {
-  await new Promise((resolve) => {
-    setTimeout(resolve, 350);
-  });
-  return payload;
-}
 
 export function ContactInquiryPanel() {
   const [mode, setMode] = useState<InquiryMode>("project");
@@ -183,14 +171,16 @@ export function ContactInquiryPanel() {
     setStatus("submitting");
 
     try {
-      const result = await submitInquiryPreview(payload);
-      setLastPreviewMode(result.inquiryMode);
+      await submitPublicContactMessage(payload);
+      setLastPreviewMode(payload.inquiryMode);
       setValues(initialFormValues);
       setStatus("success");
-    } catch {
+    } catch (err) {
       setStatus("error");
       setErrorBanner(
-        "Unable to prepare your inquiry preview right now. Please try again.",
+        err instanceof Error
+          ? err.message
+          : "Unable to send your inquiry right now. Please try again.",
       );
     }
   }
@@ -412,7 +402,7 @@ export function ContactInquiryPanel() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-65 sm:w-auto"
             >
               <span>
-                {isSubmitting ? "Preparing preview…" : activeCopy.submitLabel}
+                {isSubmitting ? "Sending inquiry…" : activeCopy.submitLabel}
               </span>
               {!isSubmitting ? <span aria-hidden="true">↗</span> : null}
             </button>
