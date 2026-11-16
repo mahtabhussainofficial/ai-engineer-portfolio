@@ -18,16 +18,16 @@ export const navigation = [
 ];
 
 export const mutedLink =
-  "text-sm text-[#a1acba] transition-colors duration-200 hover:text-[#f1f5f9] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]";
+  "text-sm text-zinc-400 transition-colors duration-150 hover:text-[#c4f042] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]";
 
 export const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-[#c4f042] px-7 py-3 text-sm font-bold text-zinc-950 transition-all duration-150 hover:bg-[#b2e232] hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]";
 
 export const sectionButtonClass =
-  "inline-flex shrink-0 items-center gap-2 self-start rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent lg:self-auto";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent px-7 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
 export const tagClass =
-  "max-w-full break-words rounded-md border border-[#273549] bg-[#0b0f16]/85 px-2.5 py-1 font-mono text-[11px] text-muted";
+  "inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/50 hover:text-white";
 
 export function SiteHeader({ active }: { active?: string }) {
   const siteProfile = getSiteProfile();
@@ -43,7 +43,7 @@ export function SiteHeader({ active }: { active?: string }) {
 
 export function ConnectIcon({
   name,
-  className = "h-3.5 w-3.5 shrink-0",
+  className = "h-4 w-4 shrink-0",
 }: {
   name: SocialIconName;
   className?: string;
@@ -101,6 +101,19 @@ export function ConnectIcon({
     );
   }
 
+  if (name === "twitter") {
+    return (
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className={className}
+        fill="currentColor"
+      >
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    );
+  }
+
   return (
     <svg
       aria-hidden="true"
@@ -120,135 +133,165 @@ export function ConnectIcon({
 
 export function SiteFooter() {
   const siteProfile = getSiteProfile();
-  const connectChannels = getConnectChannels();
-  const brandPrefix = siteProfile.brandName.replace(/\.$/, "");
-  const hasTrailingDot = siteProfile.brandName.endsWith(".");
+
+  const navColumn1 = [
+    { label: "Projects", href: "/projects" },
+    { label: "Services", href: "/services" },
+    { label: "About", href: "/about" },
+  ];
+
+  const navColumn2 = [
+    { label: "Skills", href: "/skills" },
+    { label: "Process", href: "/#process" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  const socialIcons = [
+    {
+      id: "github",
+      label: "GitHub",
+      href: "https://github.com",
+      icon: "github" as const,
+    },
+    {
+      id: "linkedin",
+      label: "LinkedIn",
+      href: "https://linkedin.com",
+      icon: "linkedin" as const,
+    },
+    {
+      id: "upwork",
+      label: "Upwork",
+      href: "https://upwork.com",
+      icon: "briefcase" as const,
+    },
+    {
+      id: "twitter",
+      label: "X (Twitter)",
+      href: "https://x.com",
+      icon: "twitter" as const,
+    },
+    {
+      id: "mail",
+      label: "Email",
+      href: siteProfile.directEmail ? `mailto:${siteProfile.directEmail}` : "/contact",
+      icon: "mail" as const,
+    },
+  ];
+
+  const emailDisplay = siteProfile.directEmail || "shabnumhuma@gmail.com";
 
   return (
-    <footer className="px-4 pt-2 pb-8 sm:px-6 lg:px-8">
-      <div className="section-frame mx-auto max-w-7xl rounded-2xl px-6 py-10 sm:px-10 sm:py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.75fr_1.15fr] lg:gap-12">
-          {/* Column 1: Brand & Bio */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-3 font-mono text-sm font-semibold tracking-[0.14em] text-[#f1f5f9] transition-colors duration-200 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]"
+    <footer className="mt-20 border-t border-white/[0.08] bg-[#050507] pt-8 pb-12 overflow-hidden">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Top: Massive Stroked Watermark Brand Title (CodeByUmar style - Fully visible & responsive) */}
+        <div className="w-full select-none pointer-events-none pb-8 sm:pb-12 pt-2">
+          <svg
+            viewBox="0 0 960 110"
+            className="w-full h-auto max-h-[140px]"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <text
+              x="50%"
+              y="55%"
+              dominantBaseline="central"
+              textAnchor="middle"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.18)"
+              strokeWidth="1.3"
+              className="font-extrabold text-[82px] tracking-tight"
+              style={{ fontFamily: "inherit" }}
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130] text-xs text-[#60a5fa]">
-                {siteProfile.initials}
-              </span>
-              <span>
-                {brandPrefix}
-                {hasTrailingDot ? (
-                  <span className="text-[#60a5fa]">.</span>
-                ) : null}
-              </span>
-            </Link>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-[#a1acba]">
-              {siteProfile.tagline}
+              Shabnum Huma
+            </text>
+          </svg>
+        </div>
+
+        {/* Middle: Content Grid (Brand Bio, Nav Columns, Social Icons) */}
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1fr] lg:gap-8 items-start">
+          {/* Brand Bio */}
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+              Shabnum Huma
+            </h3>
+            <p className="mt-2 text-sm text-zinc-400 leading-relaxed max-w-xs">
+              Shabnum Huma. AI Engineer &amp; Backend Developer in Pakistan.
             </p>
-          </div>
-
-          {/* Column 2: Quick Links */}
-          <div>
-            <h2 className="text-sm font-semibold text-[#f1f5f9]">
-              Quick Links
-            </h2>
-            <nav
-              aria-label="Footer navigation"
-              className="mt-4 flex flex-col gap-2.5"
+            <a
+              href={`mailto:${emailDisplay}`}
+              className="mt-2.5 inline-block text-sm text-zinc-400 hover:text-[#c4f042] transition-colors"
             >
-              {navigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`${mutedLink} w-fit`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+              {emailDisplay}
+            </a>
           </div>
 
-          {/* Column 3: Connect */}
+          {/* Navigation Column 1 */}
           <div>
-            <h2 className="text-sm font-semibold text-[#f1f5f9]">Connect</h2>
-            <div className="mt-4 flex flex-wrap gap-2.5">
-              {connectChannels.map((channel) => {
-                if (!channel.href) {
-                  return (
-                    <span
-                      key={channel.id}
-                      className="inline-flex items-center gap-2 rounded-lg border border-[#1e293b] bg-[#0b0f16]/65 px-3.5 py-2 text-xs font-medium text-subtle"
-                    >
-                      <ConnectIcon name={channel.icon} />
-                      <span>{channel.label}</span>
-                      {channel.status ? (
-                        <span className="font-mono text-[10px] text-subtle">
-                          {channel.status}
-                        </span>
-                      ) : null}
-                    </span>
-                  );
-                }
-
-                if (channel.external) {
-                  return (
-                    <a
-                      key={channel.id}
-                      href={channel.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-lg border border-[#233044] bg-[#172130]/75 px-3.5 py-2 text-xs font-medium text-[#f1f5f9] transition-colors duration-200 hover:border-[#60a5fa]/60 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
-                    >
-                      <ConnectIcon name={channel.icon} />
-                      <span>{channel.label}</span>
-                    </a>
-                  );
-                }
-
-                return (
+            <ul className="space-y-2.5">
+              {navColumn1.map((item) => (
+                <li key={item.href}>
                   <Link
-                    key={channel.id}
-                    href={channel.href}
-                    className="inline-flex items-center gap-2 rounded-lg border border-[#233044] bg-[#172130]/75 px-3.5 py-2 text-xs font-medium text-[#f1f5f9] transition-colors duration-200 hover:border-[#60a5fa]/60 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
+                    href={item.href}
+                    className="text-sm text-zinc-400 hover:text-white transition-colors"
                   >
-                    <ConnectIcon name={channel.icon} />
-                    <span>{channel.label}</span>
+                    {item.label}
                   </Link>
-                );
-              })}
-            </div>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            <p className="mt-5 text-xs text-subtle">
-              Direct:{" "}
-              {siteProfile.directEmail ? (
+          {/* Navigation Column 2 */}
+          <div>
+            <ul className="space-y-2.5">
+              {navColumn2.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-zinc-400 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social Icons (User requested icons instead of text links) */}
+          <div className="flex flex-col gap-3">
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Connect
+            </span>
+            <div className="flex flex-wrap items-center gap-2.5">
+              {socialIcons.map((channel) => (
                 <a
-                  href={`mailto:${siteProfile.directEmail}`}
-                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
+                  key={channel.id}
+                  href={channel.href}
+                  target={channel.href.startsWith("http") ? "_blank" : undefined}
+                  rel={channel.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  title={channel.label}
+                  aria-label={channel.label}
+                  className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.02] text-zinc-300 transition-all duration-200 hover:border-[#c4f042]/60 hover:bg-[#c4f042]/10 hover:text-[#c4f042] hover:scale-105"
                 >
-                  {siteProfile.directEmail}
+                  <ConnectIcon name={channel.icon} className="h-4 w-4 sm:h-5 sm:w-5" />
                 </a>
-              ) : (
-                <Link
-                  href="/contact"
-                  className="font-medium text-[#f1f5f9] transition-colors hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa]"
-                >
-                  Start an inquiry via Contact →
-                </Link>
-              )}
-            </p>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-[#1e293b] pt-6 text-xs text-subtle sm:flex-row sm:items-center sm:justify-between">
-          <span>
-            © {siteProfile.copyrightYear} {siteProfile.ownerName}{" "}
-            {siteProfile.copyrightNote}
-          </span>
-          <span className="font-mono tracking-[0.14em] text-[#a1acba]">
-            {siteProfile.techNote}
-          </span>
+        {/* Bottom Bar: Divider & Copyright */}
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/[0.08] pt-8 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {siteProfile.copyrightYear} {siteProfile.ownerName}</p>
+          <a
+            href="#main-content"
+            className="group inline-flex items-center gap-2 text-xs font-semibold text-zinc-400 transition-colors hover:text-[#c4f042]"
+          >
+            <span>Back to top</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-[10px] text-zinc-300 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-[#c4f042]/50 group-hover:bg-[#c4f042]/10 group-hover:text-[#c4f042]">
+              ↑
+            </span>
+          </a>
         </div>
       </div>
     </footer>
@@ -257,7 +300,7 @@ export function SiteFooter() {
 
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[11px] tracking-[0.18em] text-[#60a5fa]">
+    <p className="text-xs font-bold tracking-widest text-[#c4f042] uppercase">
       {children}
     </p>
   );
@@ -291,73 +334,73 @@ export function PreviewSection({
   items: readonly PreviewCardItem[];
 }) {
   return (
-    <section
-      id={id}
-      className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12"
-    >
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-2xl">
-          <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
-            {title}
-          </h2>
-          <p className="mt-3 text-base leading-7 text-muted">{description}</p>
-        </div>
-        {ctaLabel && ctaHref ? (
-          <Link href={ctaHref} className={sectionButtonClass}>
-            <span>{ctaLabel}</span>
-            <span aria-hidden="true">→</span>
-          </Link>
-        ) : null}
-      </div>
-
-      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item, index) => (
-          <article
-            key={`${item.number}-${item.title}`}
-            className={`surface-card surface-hover flex min-w-0 flex-col rounded-xl p-5 xl:p-6 ${
-              items.length === 3 && index === 2
-                ? "md:col-span-2 lg:col-span-1"
-                : ""
-            }`}
-          >
-            <div className="flex items-center justify-between gap-4 border-b border-[#233044] pb-4">
-              <span className="font-mono text-xs text-accent">
-                {item.number}
-              </span>
-              <span className="font-mono text-[11px] tracking-[0.08em] text-subtle">
-                {item.category}
-              </span>
-            </div>
-
-            <h3 className="mt-6 text-xl font-semibold leading-snug text-foreground">
-              {item.title}
-            </h3>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              {item.description}
+    <section id={id} className="section-divider py-16 sm:py-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <Eyebrow>{eyebrow}</Eyebrow>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              {title}
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-400 sm:text-base">
+              {description}
             </p>
+          </div>
+          {ctaLabel && ctaHref ? (
+            <Link href={ctaHref} className={sectionButtonClass}>
+              <span>{ctaLabel}</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          ) : null}
+        </div>
 
-            <div className="mt-auto flex flex-col gap-5 pt-6">
-              <div className="flex flex-wrap content-start gap-2 md:min-h-[3.75rem]">
-                {item.tags.map((tag) => (
-                  <span key={tag} className={tagClass}>
-                    {tag}
-                  </span>
-                ))}
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item, index) => (
+            <article
+              key={`${item.number}-${item.title}`}
+              className={`dev-card flex min-w-0 flex-col rounded-2xl p-6 ${
+                items.length === 3 && index === 2 ? "sm:col-span-2 lg:col-span-1" : ""
+              }`}
+            >
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <span className="text-xs font-bold text-[#c4f042]">
+                  {item.number}
+                </span>
+                <span className="text-[11px] font-medium tracking-wide text-zinc-400 uppercase">
+                  {item.category}
+                </span>
               </div>
 
-              <div className="border-t border-[#233044] pt-4">
-                <Link
-                  href={item.href}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors duration-200 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                >
-                  <span>{item.linkLabel}</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
+              <h3 className="mt-4 text-lg font-bold text-white">
+                {item.title}
+              </h3>
+
+              <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                {item.description}
+              </p>
+
+              <div className="mt-auto flex flex-col gap-4 pt-6">
+                <div className="flex flex-wrap gap-1.5">
+                  {item.tags.map((tag) => (
+                    <span key={tag} className={tagClass}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="border-t border-white/[0.06] pt-3">
+                  <Link
+                    href={item.href}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-300 transition-colors hover:text-[#c4f042]"
+                  >
+                    <span>{item.linkLabel}</span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -373,89 +416,107 @@ export function ProfileHighlights({
   const highlights = getProfileHighlights();
 
   return (
-    <div className="mt-10 border-t border-[#1e293b] pt-8">
-      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <Eyebrow>{PROFILE_HIGHLIGHTS_META.eyebrow}</Eyebrow>
-          <h3 className="mt-2 text-lg font-semibold tracking-[-0.02em] text-foreground sm:text-xl">
-            {title}
-          </h3>
-        </div>
-        <p className="max-w-sm text-xs leading-5 text-subtle sm:text-right">
+    <div className="mt-14 border-t border-white/[0.08] pt-10">
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+        <h3 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+          {title}
+        </h3>
+        <p className="text-xs text-zinc-400">
           {note}
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {highlights.map((item) => (
-          <div
-            key={item.id}
-            className="surface-card surface-hover rounded-xl p-5"
-          >
-            <span className="font-mono text-[10px] tracking-[0.16em] text-accent">
-              {item.index}
-            </span>
-            <span className="mt-5 block text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
-              {item.value}
-              {item.suffix ? (
-                <span className="ml-1 text-lg text-accent">{item.suffix}</span>
-              ) : null}
-            </span>
-            <span className="mt-2 block text-sm leading-5 text-muted">
-              {item.label}
-            </span>
-          </div>
-        ))}
+        {highlights.map((item) => {
+          // Clean up "01 / EXPERIENCE" to just "EXPERIENCE"
+          const cleanCategory = item.index.replace(/^\d+\s*\/\s*/, "");
+
+          return (
+            <div
+              key={item.id}
+              className="dev-card group relative overflow-hidden rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/40"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider text-[#c4f042] uppercase">
+                  {cleanCategory}
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#c4f042]/60 group-hover:bg-[#c4f042] transition-colors" />
+              </div>
+
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl sm:text-5xl font-black tracking-tight text-white">
+                  {item.value}
+                </span>
+                {item.suffix ? (
+                  <span className="text-2xl font-bold text-[#c4f042]">
+                    {item.suffix}
+                  </span>
+                ) : null}
+              </div>
+
+              <p className="mt-2 text-xs sm:text-sm font-medium leading-relaxed text-zinc-400">
+                {item.label}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 export function ContactCtaSection({
-  eyebrow,
-  title,
-  description,
+  eyebrow = "Contact",
+  title = "Let's build something reliable together.",
+  description = "Share your workflow challenge, RAG pipeline requirements, or backend scope. Let's find a practical solution.",
   primaryLabel = "Start a conversation",
   primaryHref = "/contact",
   secondaryLabel = "View services",
   secondaryHref = "/services",
 }: {
-  eyebrow: string;
-  title: string;
-  description: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
   primaryLabel?: string;
   primaryHref?: string;
   secondaryLabel?: string;
   secondaryHref?: string;
 }) {
   return (
-    <section
-      id="contact"
-      className="section-frame rounded-2xl border-[#2b3c54] p-7 sm:p-10 lg:p-14"
-    >
-      <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-14">
-        <div>
-          <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="mt-3 max-w-3xl text-[clamp(1.85rem,4.3vw,3.5rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
-            {title}
-            <span className="text-accent">.</span>
-          </h2>
-          <p className="mt-4 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-            {description}
-          </p>
-        </div>
+    <section id="contact" className="section-divider py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="dev-card relative overflow-hidden rounded-3xl p-8 sm:p-12 lg:p-16 border border-zinc-800/80 bg-[#0c0d12]">
+          {/* Subtle Ambient Accent Glow */}
+          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#c4f042]/5 blur-3xl" />
+          
+          <div className="relative z-10 max-w-3xl">
+            {/* Availability Pulse Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1 text-xs font-medium text-zinc-300 mb-5">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4f042] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#c4f042]" />
+              </span>
+              <span>Available for freelance contracts &amp; advisory</span>
+            </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-          <Link href={primaryHref} className={primaryButtonClass}>
-            <span>{primaryLabel}</span>
-            <span aria-hidden="true">↗</span>
-          </Link>
-          <Link
-            href={secondaryHref}
-            className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-5 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-          >
-            {secondaryLabel}
-          </Link>
+            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl leading-tight">
+              {title}
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-zinc-400 sm:text-lg max-w-2xl">
+              {description}
+            </p>
+
+            {/* Action Buttons Directly Below */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link href={primaryHref} className={primaryButtonClass}>
+                <span>{primaryLabel}</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link href={secondaryHref} className={sectionButtonClass}>
+                <span>{secondaryLabel}</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

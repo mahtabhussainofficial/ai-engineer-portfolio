@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Eyebrow } from "@/app/components/site-shell";
+import { Eyebrow, primaryButtonClass } from "@/app/components/site-shell";
 import { submitPublicContactMessage } from "@/lib/public-api";
 
 type InquiryMode = "project" | "advisory";
@@ -57,25 +57,25 @@ const modeCopy: Record<
     tabLabel: "Start a Project",
     heading: "Let's Build Together",
     subtitle:
-      "Share your project goals, workflow bottleneck, or backend system requirements.",
-    subjectPlaceholder: "What would you like to build?",
-    messagePlaceholder: "Tell me about your project scope, data, or timeline...",
+      "Share your project goals, workflow bottlenecks, or backend architecture requirements.",
+    subjectPlaceholder: "What system would you like to engineer?",
+    messagePlaceholder: "Describe your project scope, data source, or timeline...",
     submitLabel: "Send Inquiry",
   },
   advisory: {
     tabLabel: "Advisory & Roles",
     heading: "Technical Advisory & Roles",
     subtitle:
-      "Explore AI architecture reviews, automation consulting, or engineering collaborations.",
-    subjectPlaceholder: "Role, audit, or collaboration topic",
+      "Explore AI architecture reviews, automation audits, or full-time / contract engineering roles.",
+    subjectPlaceholder: "Role, technical audit, or collaboration topic",
     messagePlaceholder:
-      "Share context on the role, team, or architecture questions you are exploring...",
+      "Share details about the role, team, or architecture decisions you are evaluating...",
     submitLabel: "Send Message",
   },
 };
 
 const fieldClass =
-  "mt-2 w-full rounded-lg border border-[#233044] bg-[#0b0f16]/90 px-4 py-3 text-sm text-foreground transition-colors duration-200 placeholder:text-subtle focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60";
+  "mt-1.5 w-full rounded-lg border border-zinc-800 bg-[#0e1015] px-3.5 py-2.5 text-sm text-white transition-colors duration-150 placeholder:text-zinc-600 focus:border-[#c4f042] focus:outline-none disabled:cursor-not-allowed disabled:opacity-60";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -105,7 +105,6 @@ function validateInquiry(values: FormValues): FieldErrors {
 
   return errors;
 }
-
 
 export function ContactInquiryPanel() {
   const [mode, setMode] = useState<InquiryMode>("project");
@@ -189,7 +188,7 @@ export function ContactInquiryPanel() {
       <div
         role="group"
         aria-label="Inquiry type"
-        className="grid grid-cols-2 gap-1.5 rounded-xl border border-[#233044] bg-[#111823] p-1.5"
+        className="flex gap-2"
       >
         {(["project", "advisory"] as const).map((key) => {
           const isActive = mode === key;
@@ -200,10 +199,10 @@ export function ContactInquiryPanel() {
               disabled={isSubmitting}
               aria-pressed={isActive}
               onClick={() => handleModeChange(key)}
-              className={`rounded-lg px-2.5 py-2.5 text-center text-xs font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:text-sm ${
+              className={`rounded-lg px-4 py-2 text-xs font-medium transition-colors ${
                 isActive
-                  ? "bg-primary text-white hover:bg-primary-hover"
-                  : "text-muted hover:bg-[#172130]/60 hover:text-foreground"
+                  ? "bg-[#c4f042] text-zinc-950 font-bold"
+                  : "border border-white/10 bg-white/[0.03] text-zinc-400 hover:text-white"
               }`}
             >
               {modeCopy[key].tabLabel}
@@ -213,26 +212,23 @@ export function ContactInquiryPanel() {
       </div>
 
       {/* Form Card */}
-      <section
-        aria-labelledby="contact-form-heading"
-        className="section-frame rounded-2xl p-5 sm:p-8"
-      >
+      <div className="dev-card rounded-2xl p-6 sm:p-8">
         <Eyebrow>
-          {mode === "project" ? "PROJECT BRIEF" : "CONSULTATION"}
+          {mode === "project" ? "Project Brief" : "Consultation"}
         </Eyebrow>
         <h2
           id="contact-form-heading"
-          className="mt-2.5 text-2xl font-semibold tracking-[-0.02em] text-foreground"
+          className="mt-2 text-xl font-bold text-white sm:text-2xl"
         >
           {activeCopy.heading}
         </h2>
-        <p className="mt-2 text-sm leading-6 text-muted">
+        <p className="mt-1 text-sm leading-relaxed text-zinc-400">
           {activeCopy.subtitle}
         </p>
 
-        <form className="mt-7 space-y-5" noValidate onSubmit={handleSubmit}>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="block min-w-0 text-sm font-medium text-foreground">
+        <form className="mt-6 space-y-4" noValidate onSubmit={handleSubmit}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block min-w-0 text-xs font-mono uppercase tracking-wider text-zinc-400">
               Full Name
               <input
                 required
@@ -244,25 +240,19 @@ export function ContactInquiryPanel() {
                   handleFieldChange("name", event.target.value)
                 }
                 aria-invalid={Boolean(fieldErrors.name)}
-                aria-describedby={
-                  fieldErrors.name ? "contact-name-error" : undefined
-                }
                 className={`${fieldClass} ${
-                  fieldErrors.name ? "border-red-400/70" : ""
+                  fieldErrors.name ? "border-red-500" : ""
                 }`}
                 placeholder="Your full name"
               />
               {fieldErrors.name ? (
-                <span
-                  id="contact-name-error"
-                  className="mt-1.5 block text-xs font-normal text-red-300"
-                >
+                <span className="mt-1 block text-xs font-normal text-red-400">
                   {fieldErrors.name}
                 </span>
               ) : null}
             </label>
 
-            <label className="block min-w-0 text-sm font-medium text-foreground">
+            <label className="block min-w-0 text-xs font-mono uppercase tracking-wider text-zinc-400">
               Email Address
               <input
                 required
@@ -275,27 +265,21 @@ export function ContactInquiryPanel() {
                   handleFieldChange("email", event.target.value)
                 }
                 aria-invalid={Boolean(fieldErrors.email)}
-                aria-describedby={
-                  fieldErrors.email ? "contact-email-error" : undefined
-                }
                 className={`${fieldClass} ${
-                  fieldErrors.email ? "border-red-400/70" : ""
+                  fieldErrors.email ? "border-red-500" : ""
                 }`}
                 placeholder="you@company.com"
               />
               {fieldErrors.email ? (
-                <span
-                  id="contact-email-error"
-                  className="mt-1.5 block text-xs font-normal text-red-300"
-                >
+                <span className="mt-1 block text-xs font-normal text-red-400">
                   {fieldErrors.email}
                 </span>
               ) : null}
             </label>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="block min-w-0 text-sm font-medium text-foreground">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block min-w-0 text-xs font-mono uppercase tracking-wider text-zinc-400">
               Subject
               <input
                 required
@@ -306,25 +290,19 @@ export function ContactInquiryPanel() {
                   handleFieldChange("subject", event.target.value)
                 }
                 aria-invalid={Boolean(fieldErrors.subject)}
-                aria-describedby={
-                  fieldErrors.subject ? "contact-subject-error" : undefined
-                }
                 className={`${fieldClass} ${
-                  fieldErrors.subject ? "border-red-400/70" : ""
+                  fieldErrors.subject ? "border-red-500" : ""
                 }`}
                 placeholder={activeCopy.subjectPlaceholder}
               />
               {fieldErrors.subject ? (
-                <span
-                  id="contact-subject-error"
-                  className="mt-1.5 block text-xs font-normal text-red-300"
-                >
+                <span className="mt-1 block text-xs font-normal text-red-400">
                   {fieldErrors.subject}
                 </span>
               ) : null}
             </label>
 
-            <label className="block min-w-0 text-sm font-medium text-foreground">
+            <label className="block min-w-0 text-xs font-mono uppercase tracking-wider text-zinc-400">
               Project Type
               <select
                 required
@@ -335,107 +313,94 @@ export function ContactInquiryPanel() {
                   handleFieldChange("projectType", event.target.value)
                 }
                 aria-invalid={Boolean(fieldErrors.projectType)}
-                aria-describedby={
-                  fieldErrors.projectType ? "contact-type-error" : undefined
-                }
                 className={`${fieldClass} ${
-                  fieldErrors.projectType ? "border-red-400/70" : ""
+                  fieldErrors.projectType ? "border-red-500" : ""
                 }`}
               >
-                <option value="" disabled>
+                <option value="" disabled className="bg-[#111318] text-zinc-400">
                   Select a category
                 </option>
                 {projectTypes.map((type) => (
-                  <option key={type} value={type}>
+                  <option key={type} value={type} className="bg-[#111318] text-white">
                     {type}
                   </option>
                 ))}
               </select>
               {fieldErrors.projectType ? (
-                <span
-                  id="contact-type-error"
-                  className="mt-1.5 block text-xs font-normal text-red-300"
-                >
+                <span className="mt-1 block text-xs font-normal text-red-400">
                   {fieldErrors.projectType}
                 </span>
               ) : null}
             </label>
           </div>
 
-          <label className="block min-w-0 text-sm font-medium text-foreground">
+          <label className="block min-w-0 text-xs font-mono uppercase tracking-wider text-zinc-400">
             Message
             <textarea
               required
               name="message"
-              rows={5}
+              rows={4}
               disabled={isSubmitting}
               value={values.message}
               onChange={(event) =>
                 handleFieldChange("message", event.target.value)
               }
               aria-invalid={Boolean(fieldErrors.message)}
-              aria-describedby={
-                fieldErrors.message ? "contact-message-error" : undefined
-              }
               className={`${fieldClass} ${
-                fieldErrors.message ? "border-red-400/70" : ""
+                fieldErrors.message ? "border-red-500" : ""
               }`}
               placeholder={activeCopy.messagePlaceholder}
             />
             {fieldErrors.message ? (
-              <span
-                id="contact-message-error"
-                className="mt-1.5 block text-xs font-normal text-red-300"
-              >
+              <span className="mt-1 block text-xs font-normal text-red-400">
                 {fieldErrors.message}
               </span>
             ) : null}
           </label>
 
-          <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="submit"
               disabled={isSubmitting}
               aria-busy={isSubmitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-6 py-3 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-65 sm:w-auto"
+              className={primaryButtonClass}
             >
               <span>
-                {isSubmitting ? "Sending inquiry…" : activeCopy.submitLabel}
+                {isSubmitting ? "Sending…" : activeCopy.submitLabel}
               </span>
               {!isSubmitting ? <span aria-hidden="true">↗</span> : null}
             </button>
 
-            <span className="font-mono text-[11px] text-subtle">
-              Free initial consultation · Online delivery coming soon
+            <span className="font-mono text-[11px] text-zinc-400">
+              Direct inbox · Reply within 24h
             </span>
           </div>
 
           {status === "error" && errorBanner ? (
             <div
               role="alert"
-              className="rounded-xl border border-red-400/40 bg-[#1a131a]/80 p-4 text-sm leading-6 text-red-200"
+              className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-200"
             >
-              <p className="font-medium text-red-100">Check required details</p>
-              <p className="mt-1">{errorBanner}</p>
+              <p className="font-semibold text-red-100">Check required details</p>
+              <p className="mt-0.5">{errorBanner}</p>
             </div>
           ) : null}
 
           {status === "success" ? (
             <div
               role="status"
-              className="rounded-xl border border-emerald-500/30 bg-[#0f1f1a]/80 p-4 text-sm leading-6 text-emerald-200"
+              className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs text-emerald-200"
             >
-              <p className="font-medium text-emerald-100">
+              <p className="font-bold text-emerald-100">
                 Inquiry sent successfully
               </p>
-              <p className="mt-1">
-                Thank you for reaching out! Your inquiry has been received. I
-                will get back to you shortly.
+              <p className="mt-0.5 text-emerald-300">
+                Thank you! Your message has been received. I will review and reply shortly.
               </p>
             </div>
           ) : null}
         </form>
-      </section>
+      </div>
     </div>
   );
 }

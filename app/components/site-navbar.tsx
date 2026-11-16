@@ -49,7 +49,7 @@ function DesktopNavLinks({
 }) {
   return (
     <>
-      <div className="hidden items-center gap-1.5 md:flex">
+      <div className="hidden items-center gap-1 md:flex">
         {primaryItems.map((item) => {
           const isActive = currentActive === item.label;
           return (
@@ -57,10 +57,10 @@ function DesktopNavLinks({
               key={item.href}
               href={item.href}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-lg px-3.5 py-1.5 text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] ${
                 isActive
-                  ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
-                  : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
+                  ? "bg-white/[0.12] text-white font-semibold shadow-inner"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
               {item.label}
@@ -69,22 +69,25 @@ function DesktopNavLinks({
         })}
       </div>
 
-      <div className="hidden items-center md:flex">
+      <div className="hidden items-center gap-4 sm:flex">
+        {/* Availability indicator */}
+        <div className="hidden items-center gap-2 rounded-full border border-[#c4f042]/20 bg-[#c4f042]/10 px-3 py-1 text-xs text-[#c4f042] lg:inline-flex">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4f042] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#c4f042]" />
+          </span>
+          <span className="text-[11px] font-semibold tracking-wide">Available for work</span>
+        </div>
+
         <Link
           href={contactItem.href}
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
           }
-          className={`inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
-            currentActive === contactItem.label
-              ? "border-[#60a5fa] bg-[#172130] text-[#f1f5f9]"
-              : "border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover"
-          }`}
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#c4f042] px-4 py-1.5 text-xs font-bold text-zinc-950 transition-all hover:bg-[#b2e232] hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]"
         >
           <span>{contactItem.label}</span>
-          <span aria-hidden="true" className="text-xs">
-            ↗
-          </span>
+          <span aria-hidden="true">↗</span>
         </Link>
       </div>
     </>
@@ -126,7 +129,7 @@ function MobileNavLinks({
   return (
     <div
       id="mobile-nav-menu"
-      className="nav-glass mt-2 rounded-2xl p-3 md:hidden"
+      className="nav-blur mt-3 rounded-2xl p-4 md:hidden"
     >
       <div className="flex flex-col gap-1">
         {primaryItems.map((item) => {
@@ -137,10 +140,10 @@ function MobileNavLinks({
               href={item.href}
               onClick={onSelect}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-lg px-3.5 py-2.5 text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? "border border-[#2f4059] bg-[#172130] font-medium text-[#f1f5f9]"
-                  : "border border-transparent text-[#a1acba] hover:bg-[#111823] hover:text-[#f1f5f9]"
+                  ? "bg-white/[0.1] text-white font-semibold"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
               {item.label}
@@ -148,18 +151,15 @@ function MobileNavLinks({
           );
         })}
       </div>
-      <div className="mt-2.5 border-t border-[#1e293b] pt-2.5">
+
+      <div className="mt-3 border-t border-white/[0.08] pt-3">
         <Link
           href={contactItem.href}
           onClick={onSelect}
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
           }
-          className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-            currentActive === contactItem.label
-              ? "border-[#60a5fa] bg-[#172130] text-[#f1f5f9]"
-              : "border-primary bg-primary text-white hover:border-primary-hover hover:bg-primary-hover"
-          }`}
+          className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c4f042] px-4 py-2.5 text-sm font-bold text-zinc-950 transition-colors hover:bg-[#b2e232]"
         >
           <span>{contactItem.label}</span>
           <span aria-hidden="true">↗</span>
@@ -203,7 +203,6 @@ export function SiteNavbar({
   active?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const primaryItems = items.filter((item) => item.href !== "/contact");
@@ -216,16 +215,6 @@ export function SiteNavbar({
 
   const closeMenu = useCallback(() => {
     setOpen(false);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const next = window.scrollY > 12;
-      setScrolled((prev) => (prev === next ? prev : next));
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -261,7 +250,7 @@ export function SiteNavbar({
     <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 sm:px-6 lg:px-8">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-2 focus:outline-offset-2 focus:outline-accent"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-[#c4f042] focus:px-4 focus:py-2 focus:text-xs focus:font-bold focus:text-zinc-950 focus:outline-2 focus:outline-[#c4f042]"
       >
         Skip to content
       </a>
@@ -270,20 +259,24 @@ export function SiteNavbar({
         <PathnameWatcher onNavigate={closeMenu} />
       </Suspense>
 
-      <div ref={containerRef} className="mx-auto max-w-7xl">
+      <div ref={containerRef} className="mx-auto max-w-6xl">
         <nav
           aria-label="Main navigation"
-          className={`nav-glass flex items-center justify-between gap-6 rounded-2xl px-4 py-2.5 transition-colors duration-200 sm:px-6 ${
-            scrolled ? "border-[#2f3f57] bg-[#0b0f16]/94" : ""
-          }`}
+          className="nav-blur flex items-center justify-between gap-4 rounded-full px-5 py-2.5"
         >
+          {/* Brand */}
           <Link
             href="/"
             onClick={closeMenu}
-            className="shrink-0 font-mono text-sm font-semibold tracking-[0.14em] text-[#f1f5f9] transition-colors duration-200 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#60a5fa]"
+            className="group flex items-center gap-2.5 text-sm font-bold tracking-tight text-white transition-opacity hover:opacity-90"
           >
-            {brandPrefix}
-            {hasTrailingDot ? <span className="text-[#60a5fa]">.</span> : null}
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c4f042] text-xs font-black text-black transition-transform duration-200 group-hover:scale-105">
+              S
+            </span>
+            <span className="font-extrabold tracking-tight">
+              {brandPrefix}
+              {hasTrailingDot ? <span className="text-[#c4f042]">.</span> : null}
+            </span>
           </Link>
 
           <Suspense
@@ -302,13 +295,14 @@ export function SiteNavbar({
             />
           </Suspense>
 
+          {/* Mobile hamburger */}
           <button
             type="button"
             aria-expanded={open}
             aria-controls="mobile-nav-menu"
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
             onClick={() => setOpen((prev) => !prev)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#233044] bg-[#111823] text-[#f1f5f9] transition-colors duration-200 hover:border-[#3b82f6]/60 hover:text-[#60a5fa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#60a5fa] md:hidden"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-300 hover:text-white md:hidden"
           >
             {open ? (
               <svg
@@ -317,7 +311,7 @@ export function SiteNavbar({
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.8"
+                strokeWidth="2"
                 strokeLinecap="round"
               >
                 <path d="M6 6l12 12M18 6L6 18" />
@@ -329,7 +323,7 @@ export function SiteNavbar({
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.8"
+                strokeWidth="2"
                 strokeLinecap="round"
               >
                 <path d="M4 7h16M4 12h16M4 17h16" />

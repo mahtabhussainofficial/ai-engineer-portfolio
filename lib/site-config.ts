@@ -1,4 +1,4 @@
-export type SocialIconName = "mail" | "linkedin" | "github" | "briefcase";
+export type SocialIconName = "mail" | "linkedin" | "github" | "briefcase" | "twitter";
 
 export interface ConnectChannel {
   readonly id: string;
@@ -65,14 +65,14 @@ export interface FeedbackRecord {
  */
 export const SITE_PROFILE: SiteProfile = {
   initials: "SH",
-  ownerName: "Shabnum H.",
-  brandName: "SHABNUM H.",
+  ownerName: "Shabnum Huma",
+  brandName: "SHABNUM HUMA.",
   tagline:
     "AI Engineer & Backend Developer — building practical AI workflows, RAG systems, and dependable Python backends.",
-  metaTitleDefault: "Shabnum H. | AI Engineer & Backend Developer",
-  metaTitleTemplate: "%s | Shabnum H.",
+  metaTitleDefault: "Shabnum Huma | AI Engineer & Backend Developer",
+  metaTitleTemplate: "%s | Shabnum Huma",
   metaDescription:
-    "Shabnum H. builds practical AI applications, workflow automation, and reliable backend systems for growing businesses.",
+    "Shabnum Huma builds practical AI applications, workflow automation, and reliable backend systems for growing businesses.",
   directEmail: undefined,
   cvUrl: undefined,
   techNote: "AI / BACKEND / SYSTEMS",

@@ -2,23 +2,25 @@
 
 :root {
   color-scheme: dark;
-  --background: #0b0f16;
-  --surface: #111823;
-  --elevated: #172130;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --accent: #60a5fa;
-  --foreground: #f1f5f9;
-  --muted: #a1acba;
-  --subtle: #8896a8;
-  --border-frame: #1e293b;
-  --border-card: #233044;
-  --border-control: #2b3a50;
+  --background: #050507;
+  --surface: #0f1015;
+  --surface-hover: #15171f;
+  --elevated: #1a1c24;
+  --primary: #c4f042;
+  --primary-hover: #b2e232;
+  --accent: #c4f042;
+  --foreground: #ffffff;
+  --muted: #a1a1aa;
+  --subtle: #71717a;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.18);
+  --border-card: #1c1e26;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-elevated: var(--elevated);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
@@ -26,24 +28,28 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 5rem;
+  background-color: #050507;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 select option {
-  background: #172130;
-  color: #f1f5f9;
+  background: #0f1015;
+  color: #ffffff;
 }
 
 @layer base {
@@ -59,45 +65,47 @@ select option {
 }
 
 @layer components {
-  /* Subtle architectural grid without radial glow washes */
-  .bg-grid-canvas {
-    background-color: #0b0f16;
-    background-image:
-      linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
+  /* Stroked outline text as seen in Muhammad Umar design */
+  .text-stroke {
+    -webkit-text-stroke: 1.5px #ffffff;
+    color: transparent;
+  }
+  @media (min-width: 640px) {
+    .text-stroke {
+      -webkit-text-stroke: 2px #ffffff;
+    }
+  }
+  @media (min-width: 1024px) {
+    .text-stroke {
+      -webkit-text-stroke: 2.5px #ffffff;
+    }
   }
 
-  .nav-glass {
-    border: 1px solid #233044;
-    background: rgba(11, 15, 22, 0.85);
-    box-shadow: 0 10px 28px rgba(2, 6, 15, 0.36);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  /* Minimalist modern floating nav */
+  .nav-blur {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(5, 5, 7, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
   }
 
-  .section-frame {
-    border: 1px solid var(--border-frame);
-    background: rgba(17, 24, 35, 0.84);
-    box-shadow: 0 12px 32px rgba(2, 6, 15, 0.24);
-  }
-
-  .surface-card {
+  /* Clean developer card */
+  .dev-card {
     border: 1px solid var(--border-card);
-    background: rgba(23, 33, 48, 0.56);
+    background-color: var(--surface);
+    transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
   }
 
-  .surface-hover {
-    transition:
-      transform 220ms ease,
-      border-color 220ms ease,
-      background-color 220ms ease;
-  }
-
-  .surface-hover:hover {
-    border-color: rgba(96, 165, 250, 0.4);
-    background: rgba(23, 33, 48, 0.86);
+  .dev-card:hover {
+    border-color: rgba(196, 240, 66, 0.3);
+    background-color: var(--surface-hover);
     transform: translateY(-2px);
+  }
+
+  /* Subtle section divider */
+  .section-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 }
 
@@ -115,7 +123,7 @@ select option {
     transition-duration: 0.01ms !important;
   }
 
-  .surface-hover:hover {
+  .dev-card:hover {
     transform: none;
   }
 }

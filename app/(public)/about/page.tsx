@@ -5,6 +5,7 @@ import {
   ContactCtaSection,
   Eyebrow,
   primaryButtonClass,
+  sectionButtonClass,
 } from "@/app/components/site-shell";
 import {
   getPublicAboutProfile,
@@ -31,176 +32,178 @@ export default async function AboutPage() {
 
   return (
     <>
-      {/* PROFESSIONAL BIO */}
-      <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
-        <div className="grid items-center gap-10 lg:grid-cols-[19rem_minmax(0,1fr)] lg:gap-12">
-          <div className="mx-auto w-full max-w-[19rem] lg:mx-0">
-            <div className="rounded-xl border border-[#233044] bg-[#0b0f16] p-2.5">
-              <Image
-                src={portraitImage}
-                alt={aboutProfile.portraitAlt}
-                sizes="(min-width: 1024px) 284px, 304px"
-                placeholder="blur"
-                className="aspect-square w-full rounded-lg object-cover object-top"
-                preload
-              />
-            </div>
-            <p className="mt-3 text-center font-mono text-[11px] tracking-[0.12em] text-subtle lg:text-left">
-              {aboutProfile.portraitCaption}
-            </p>
-          </div>
-
-          <div>
-            <Eyebrow>{aboutProfile.eyebrow}</Eyebrow>
-            <h1 className="mt-4 max-w-3xl text-[clamp(1.95rem,4vw,3.35rem)] font-semibold leading-[1.08] tracking-[-0.035em] text-foreground">
-              {aboutProfile.headlinePrimary}
-              <br />
-              <span className="text-muted">
-                {aboutProfile.headlineSecondary}
-              </span>
-            </h1>
-
-            <div className="mt-6 max-w-2xl space-y-4 text-base leading-7 text-muted sm:text-[17px] sm:leading-8">
-              {aboutProfile.bioParagraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link href="/contact" className={primaryButtonClass}>
-                <span>Get in touch</span>
-                <span aria-hidden="true">↗</span>
-              </Link>
-              <Link
-                href="/projects"
-                className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 px-6 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-              >
-                View projects
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 01 / ENGINEERING APPROACH */}
-      <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
-        <div className="max-w-2xl">
-          <Eyebrow>01 / ENGINEERING APPROACH</Eyebrow>
-          <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
-            Simple architecture, reliable outcomes.
-          </h2>
-        </div>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {approachPrinciples.map((item, index) => (
-            <article
-              key={item.id}
-              className={`surface-card surface-hover rounded-xl p-6 ${
-                index === 2 ? "md:col-span-2 lg:col-span-1" : ""
-              }`}
-            >
-              <span className="font-mono text-xs text-accent">
-                {item.number}
-              </span>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">
-                {item.title}
-              </h3>
-              <p className="mt-2.5 text-sm leading-6 text-muted">
-                {item.description}
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* 02 / CAREER JOURNEY, EDUCATION & CERTIFICATIONS */}
-      <section className="section-frame rounded-2xl p-6 sm:p-10 lg:p-12">
-        <div>
-          <Eyebrow>02 / BACKGROUND</Eyebrow>
-          <h2 className="mt-3 text-2xl font-semibold leading-[1.15] tracking-[-0.03em] text-foreground sm:text-3xl lg:text-[2.25rem]">
-            Career journey &amp; credentials.
-          </h2>
-        </div>
-
-        <div className="mt-8 divide-y divide-[#1e293b] rounded-xl border border-[#233044] bg-[#172130]/45">
-          {careerJourney.map((entry) => (
-            <article
-              key={entry.id}
-              className="grid gap-3 p-5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:gap-8 sm:p-6"
-            >
-              <p className="shrink-0 whitespace-nowrap font-mono text-xs text-accent">
-                {entry.period}
-              </p>
-              <div className="min-w-0">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                  <h3 className="text-base font-semibold text-foreground sm:text-lg">
-                    {entry.role}
-                  </h3>
-                  <span className="text-sm text-subtle">
-                    {entry.organization}
-                  </span>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  {entry.summary}
-                </p>
+      {/* BIO HEADER - Open Canvas */}
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-[18rem_minmax(0,1fr)]">
+            <div className="mx-auto w-full max-w-[18rem] lg:mx-0">
+              <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-[#12141a] p-2">
+                <Image
+                  src={portraitImage}
+                  alt={aboutProfile.portraitAlt}
+                  sizes="(min-width: 1024px) 270px, 300px"
+                  placeholder="blur"
+                  className="aspect-square w-full rounded-xl object-cover object-top"
+                  priority
+                />
               </div>
-            </article>
-          ))}
-        </div>
+              <p className="mt-3 text-center font-mono text-[11px] text-zinc-400 lg:text-left">
+                {aboutProfile.portraitCaption}
+              </p>
+            </div>
 
-        <div className="mt-8 grid gap-6 border-t border-[#1e293b] pt-8 md:grid-cols-2">
-          <div>
-            <h3 className="mb-3 font-mono text-xs tracking-[0.16em] text-accent">
-              EDUCATION
-            </h3>
-            <div className="space-y-3">
-              {educationEntries.map((edu) => (
-                <div key={edu.id} className="surface-card rounded-xl p-5">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h4 className="min-w-0 font-semibold text-foreground">
-                      {edu.degree}
-                    </h4>
-                    <span className="shrink-0 whitespace-nowrap font-mono text-xs text-subtle">
-                      {edu.period}
+            <div>
+              <Eyebrow>{aboutProfile.eyebrow}</Eyebrow>
+              <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                {aboutProfile.headlinePrimary}
+                <span className="mt-1 block text-zinc-400">
+                  {aboutProfile.headlineSecondary}
+                </span>
+              </h1>
+
+              <div className="mt-5 max-w-2xl space-y-4 text-base leading-relaxed text-zinc-400">
+                {aboutProfile.bioParagraphs.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link href="/contact" className={primaryButtonClass}>
+                  <span>Get in touch</span>
+                  <span aria-hidden="true">↗</span>
+                </Link>
+                <Link href="/projects" className={sectionButtonClass}>
+                  <span>View projects</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* APPROACH PRINCIPLES */}
+      <section className="section-divider py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <Eyebrow>Philosophy</Eyebrow>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              Simple architecture, reliable outcomes.
+            </h2>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {approachPrinciples.map((item) => (
+              <article
+                key={item.id}
+                className="dev-card rounded-xl p-6 sm:p-7"
+              >
+                <span className="font-mono text-xs font-semibold text-blue-400">
+                  {item.number}
+                </span>
+                <h3 className="mt-3 text-base font-bold text-white">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                  {item.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CAREER TIMELINE & CREDENTIALS */}
+      <section className="section-divider py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <Eyebrow>Career Record</Eyebrow>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              Experience &amp; credentials.
+            </h2>
+          </div>
+
+          {/* Connected timeline */}
+          <div className="mt-8 divide-y divide-white/[0.06] rounded-xl border border-zinc-800 bg-[#111318]">
+            {careerJourney.map((entry) => (
+              <article
+                key={entry.id}
+                className="grid gap-3 p-6 sm:grid-cols-[11rem_minmax(0,1fr)] sm:gap-8"
+              >
+                <p className="shrink-0 font-mono text-xs font-semibold text-blue-400">
+                  {entry.period}
+                </p>
+                <div className="min-w-0">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                    <h3 className="text-base font-bold text-white">
+                      {entry.role}
+                    </h3>
+                    <span className="font-mono text-xs text-zinc-400">
+                      {entry.organization}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-muted">{edu.institution}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                    {entry.summary}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </article>
+            ))}
           </div>
 
-          <div>
-            <h3 className="mb-3 font-mono text-xs tracking-[0.16em] text-accent">
-              CERTIFICATIONS
-            </h3>
-            <div className="space-y-3">
-              {certificationEntries.map((cert) => (
-                <div
-                  key={cert.id}
-                  className="surface-card flex items-baseline justify-between gap-4 rounded-xl p-5"
-                >
-                  <div className="min-w-0">
-                    <h4 className="font-semibold text-foreground">
-                      {cert.title}
-                    </h4>
-                    <p className="mt-1 text-sm text-muted">{cert.issuer}</p>
+          {/* Education & Certifications */}
+          <div className="mt-10 grid gap-8 border-t border-white/[0.06] pt-10 md:grid-cols-2">
+            <div>
+              <h3 className="mb-4 font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                Education
+              </h3>
+              <div className="space-y-3">
+                {educationEntries.map((edu) => (
+                  <div key={edu.id} className="dev-card rounded-xl p-5">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h4 className="font-bold text-white">
+                        {edu.degree}
+                      </h4>
+                      <span className="shrink-0 font-mono text-xs text-zinc-400">
+                        {edu.period}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-zinc-400">{edu.institution}</p>
                   </div>
-                  <span className="shrink-0 whitespace-nowrap font-mono text-xs text-subtle">
-                    {cert.year}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-4 font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                Certifications
+              </h3>
+              <div className="space-y-3">
+                {certificationEntries.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="dev-card flex items-baseline justify-between gap-4 rounded-xl p-5"
+                  >
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-white">
+                        {cert.title}
+                      </h4>
+                      <p className="mt-1 text-sm text-zinc-400">{cert.issuer}</p>
+                    </div>
+                    <span className="shrink-0 font-mono text-xs text-zinc-400">
+                      {cert.year}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 03 / CONTACT CTA */}
+      {/* CONTACT CTA */}
       <ContactCtaSection
-        eyebrow="03 / CONTACT"
-        title="Have a problem worth exploring"
-        description="Free consultation before starting. Share what you're working on, and let's find a practical path forward."
+        eyebrow="Get In Touch"
+        title="Have an engineering problem worth exploring?"
+        description="Share what you are building. Let's find a practical architecture together."
         primaryLabel="Get in touch"
         primaryHref="/contact"
         secondaryLabel="View services"

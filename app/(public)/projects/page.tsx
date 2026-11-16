@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ContactCtaSection } from "@/app/components/site-shell";
+import {
+  ContactCtaSection,
+  Eyebrow,
+  primaryButtonClass,
+  sectionButtonClass,
+} from "@/app/components/site-shell";
 import { PROJECT_CATEGORIES } from "@/lib/projects-data";
 import { getPublicProjects } from "@/lib/public-api";
 import { ProjectsBrowser } from "./projects-browser";
@@ -16,55 +21,45 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      {/* OPEN EDITORIAL SHOWCASE HEADER */}
-      <section className="px-1 pt-4 pb-1 sm:pt-6">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center rounded-full border border-[#2b3a50] bg-[#172130]/90 px-3.5 py-1 font-mono text-[11px] tracking-[0.16em] text-accent">
-              PROJECTS / WORK INDEX
-            </span>
-            <h1 className="mt-5 text-[clamp(2rem,4.7vw,3.9rem)] font-semibold leading-[1.06] tracking-[-0.04em] text-foreground">
-              Projects &amp;{" "}
-              <span className="text-muted">case studies.</span>
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-              A curated index of AI-powered applications, agentic workflow
-              automations, and dependable backend architectures.
-            </p>
-          </div>
+      {/* SHOWCASE HEADER */}
+      <section className="py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <Eyebrow>Work Archive</Eyebrow>
+              <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                Projects &amp; Case Studies.
+              </h1>
+              <p className="mt-3 text-base leading-relaxed text-zinc-400">
+                A curated catalog of production AI applications, agentic
+                automations, and dependable backend architectures.
+              </p>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              <span>Discuss a project</span>
-              <span aria-hidden="true">↗</span>
-            </Link>
-            <Link
-              href="/services"
-              className="inline-flex items-center justify-center rounded-lg border border-[#2b3a50] bg-[#111823] px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/60 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              View services
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/contact" className={primaryButtonClass}>
+                <span>Discuss a project</span>
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link href="/services" className={sectionButtonClass}>
+                <span>View services</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FILTERABLE PROJECT INDEX */}
-      <ProjectsBrowser
-        projects={projects}
-        categories={PROJECT_CATEGORIES}
-      />
+      {/* FILTERABLE BROWSER */}
+      <ProjectsBrowser projects={projects} categories={PROJECT_CATEGORIES} />
 
       {/* CONTACT CTA */}
       <ContactCtaSection
-        eyebrow="NEXT STEP"
-        title="Have a project in mind"
-        description="Free consultation before starting. Share what you want to build, and let's shape a practical technical direction."
-        primaryLabel="Discuss a project"
+        eyebrow="Initiate A Project"
+        title="Ready to engineer your next AI system?"
+        description="Whether you need a custom RAG pipeline, automated agents, or a dependable Python backend, let's talk through your architecture."
+        primaryLabel="Start a conversation"
         primaryHref="/contact"
-        secondaryLabel="View services"
+        secondaryLabel="Explore services"
         secondaryHref="/services"
       />
     </>
