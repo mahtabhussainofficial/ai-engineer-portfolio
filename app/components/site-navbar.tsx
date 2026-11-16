@@ -49,7 +49,8 @@ function DesktopNavLinks({
 }) {
   return (
     <>
-      <div className="hidden items-center gap-1 md:flex">
+      {/* Center Nav Links - Clearer, larger typography with modern pill states */}
+      <div className="hidden items-center gap-1.5 md:flex">
         {primaryItems.map((item) => {
           const isActive = currentActive === item.label;
           return (
@@ -57,10 +58,10 @@ function DesktopNavLinks({
               key={item.href}
               href={item.href}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] ${
                 isActive
-                  ? "bg-white/[0.12] text-white font-semibold shadow-inner"
-                  : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
+                  ? "border border-white/15 bg-white/10 text-white shadow-sm"
+                  : "text-zinc-400 hover:text-white hover:bg-white/[0.06]"
               }`}
             >
               {item.label}
@@ -69,25 +70,27 @@ function DesktopNavLinks({
         })}
       </div>
 
-      <div className="hidden items-center gap-4 sm:flex">
-        {/* Availability indicator */}
-        <div className="hidden items-center gap-2 rounded-full border border-[#c4f042]/20 bg-[#c4f042]/10 px-3 py-1 text-xs text-[#c4f042] lg:inline-flex">
+      {/* Right Controls - Status badge + Vibrant CTA */}
+      <div className="hidden items-center gap-3.5 sm:flex">
+        {/* Availability Badge */}
+        <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs text-zinc-300 lg:inline-flex">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4f042] opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#c4f042]" />
           </span>
-          <span className="text-[11px] font-semibold tracking-wide">Available for work</span>
+          <span className="font-semibold tracking-wide">Available for work</span>
         </div>
 
+        {/* Contact CTA */}
         <Link
           href={contactItem.href}
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
           }
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#c4f042] px-4 py-1.5 text-xs font-bold text-zinc-950 transition-all hover:bg-[#b2e232] hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#c4f042] px-5 py-2 text-sm font-bold text-zinc-950 transition-all duration-200 hover:bg-[#b2e232] hover:scale-105 active:scale-95 shadow-md shadow-[#c4f042]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]"
         >
           <span>{contactItem.label}</span>
-          <span aria-hidden="true">↗</span>
+          <span aria-hidden="true" className="text-xs">↗</span>
         </Link>
       </div>
     </>
@@ -129,9 +132,9 @@ function MobileNavLinks({
   return (
     <div
       id="mobile-nav-menu"
-      className="nav-blur mt-3 rounded-2xl p-4 md:hidden"
+      className="nav-blur mt-3 rounded-3xl border border-white/10 bg-[#07080c]/95 p-4 shadow-2xl backdrop-blur-2xl md:hidden"
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         {primaryItems.map((item) => {
           const isActive = currentActive === item.label;
           return (
@@ -140,9 +143,9 @@ function MobileNavLinks({
               href={item.href}
               onClick={onSelect}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+              className={`rounded-2xl px-4 py-3 text-base font-semibold transition-all ${
                 isActive
-                  ? "bg-white/[0.1] text-white font-semibold"
+                  ? "bg-white/10 text-white border border-white/10"
                   : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
               }`}
             >
@@ -159,7 +162,7 @@ function MobileNavLinks({
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
           }
-          className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c4f042] px-4 py-2.5 text-sm font-bold text-zinc-950 transition-colors hover:bg-[#b2e232]"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#c4f042] px-5 py-3 text-sm font-bold text-zinc-950 transition-all hover:bg-[#b2e232]"
         >
           <span>{contactItem.label}</span>
           <span aria-hidden="true">↗</span>
@@ -195,7 +198,7 @@ function MobileNavLinksResolved({
 
 export function SiteNavbar({
   items,
-  brandName = "SHABNUM H.",
+  brandName = "SHABNUM HUMA.",
   active,
 }: {
   items: readonly NavItem[];
@@ -247,7 +250,7 @@ export function SiteNavbar({
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full px-4 pt-3.5 pb-2 sm:px-6 lg:px-8">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-[#c4f042] focus:px-4 focus:py-2 focus:text-xs focus:font-bold focus:text-zinc-950 focus:outline-2 focus:outline-[#c4f042]"
@@ -262,23 +265,24 @@ export function SiteNavbar({
       <div ref={containerRef} className="mx-auto max-w-6xl">
         <nav
           aria-label="Main navigation"
-          className="nav-blur flex items-center justify-between gap-4 rounded-full px-5 py-2.5"
+          className="nav-blur flex items-center justify-between gap-4 rounded-full px-6 py-3 border border-white/10 bg-[#07080c]/85 shadow-2xl backdrop-blur-xl"
         >
-          {/* Brand */}
+          {/* Brand - Modern, bold, with vibrant monogram */}
           <Link
             href="/"
             onClick={closeMenu}
-            className="group flex items-center gap-2.5 text-sm font-bold tracking-tight text-white transition-opacity hover:opacity-90"
+            className="group flex items-center gap-2.5 text-sm sm:text-base font-extrabold tracking-tight text-white transition-opacity hover:opacity-90 shrink-0"
           >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c4f042] text-xs font-black text-black transition-transform duration-200 group-hover:scale-105">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c4f042] text-xs font-black text-zinc-950 transition-transform duration-200 group-hover:scale-105 shadow-sm">
               S
             </span>
-            <span className="font-extrabold tracking-tight">
+            <span className="tracking-tight">
               {brandPrefix}
               {hasTrailingDot ? <span className="text-[#c4f042]">.</span> : null}
             </span>
           </Link>
 
+          {/* Desktop Nav Items */}
           <Suspense
             fallback={
               <DesktopNavLinks
@@ -302,7 +306,7 @@ export function SiteNavbar({
             aria-controls="mobile-nav-menu"
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
             onClick={() => setOpen((prev) => !prev)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-300 hover:text-white md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-300 hover:text-white md:hidden"
           >
             {open ? (
               <svg

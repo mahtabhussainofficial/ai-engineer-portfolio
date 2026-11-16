@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   PROFILE_HIGHLIGHTS_META,
-  getConnectChannels,
   getProfileHighlights,
   getSiteProfile,
   type SocialIconName,
@@ -408,7 +407,7 @@ export function PreviewSection({
 
 export function ProfileHighlights({
   title = PROFILE_HIGHLIGHTS_META.title,
-  note = PROFILE_HIGHLIGHTS_META.note,
+  note,
 }: {
   title?: string;
   note?: string;
@@ -421,9 +420,11 @@ export function ProfileHighlights({
         <h3 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
           {title}
         </h3>
-        <p className="text-xs text-zinc-400">
-          {note}
-        </p>
+        {note ? (
+          <p className="text-xs text-zinc-400">
+            {note}
+          </p>
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -496,7 +497,7 @@ export function ContactCtaSection({
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4f042] opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#c4f042]" />
               </span>
-              <span>Available for freelance contracts &amp; advisory</span>
+              <span>{eyebrow === "Contact" ? "Available for freelance contracts & advisory" : eyebrow}</span>
             </div>
 
             <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl leading-tight">

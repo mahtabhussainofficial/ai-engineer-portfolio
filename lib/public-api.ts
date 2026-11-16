@@ -50,7 +50,11 @@ import {
 
 export function getApiBaseUrl(): string {
   if (typeof window === "undefined" && process.env.INTERNAL_API_URL) {
-    return process.env.INTERNAL_API_URL.replace(/\/+$/, "");
+    const internal = process.env.INTERNAL_API_URL.replace(/\/+$/, "");
+    // If running directly on host, 'backend:8000' causes long DNS timeouts. Skip when not in Docker.
+    if (!internal.includes("backend:") || process.env.DOCKER_CONTAINER) {
+      return internal;
+    }
   }
   if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
@@ -242,25 +246,42 @@ interface FetchResult<T> {
   data: T | null;
 }
 
+let isBackendAvailable: boolean | null = null;
+let lastCheckTime = 0;
+const OFFLINE_RECHECK_MS = 30_000;
+
 async function fetchPublicApi<T>(
   path: string,
   options?: RequestInit,
 ): Promise<FetchResult<T>> {
+  // Ultra-fast circuit breaker: if backend was offline within the last 30s, return immediately (0ms latency)
+  const now = Date.now();
+  if (isBackendAvailable === false && now - lastCheckTime < OFFLINE_RECHECK_MS) {
+    return { ok: false, status: 0, data: null };
+  }
+
   const baseUrl = getApiBaseUrl();
   const url = `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  
   try {
+    // 250ms timeout so offline backend doesn't block SSR
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 250);
+
     const res = await fetch(url, {
       ...options,
       headers: {
         Accept: "application/json",
         ...options?.headers,
       },
+      signal: controller.signal,
       next: { revalidate: 60, ...options?.next },
     });
 
-    console.log(`[fetchPublicApi] ${url} -> status ${res.status}`);
+    clearTimeout(timeoutId);
 
     if (res.status === 404) {
+      isBackendAvailable = true;
       return { ok: false, status: 404, data: null };
     }
 
@@ -269,9 +290,12 @@ async function fetchPublicApi<T>(
     }
 
     const data = (await res.json()) as T;
+    isBackendAvailable = true;
     return { ok: true, status: res.status, data };
   } catch {
-    // API is offline or network unreachable
+    // API is offline or network timed out -> mark offline so remaining calls in this request resolve in 0ms!
+    isBackendAvailable = false;
+    lastCheckTime = now;
     return { ok: false, status: 0, data: null };
   }
 }

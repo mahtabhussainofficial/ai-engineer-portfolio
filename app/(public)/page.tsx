@@ -3,14 +3,10 @@ import Link from "next/link";
 import {
   ContactCtaSection,
   Eyebrow,
-  primaryButtonClass,
-  sectionButtonClass,
-  tagClass,
 } from "@/app/components/site-shell";
 import {
   getPublicFeaturedProjects,
   getPublicFeaturedServices,
-  getPublicFeaturedSkills,
   getPublicHomeAboutPreview,
   getPublicHomeHero,
   getPublicProcessSteps,
@@ -27,7 +23,6 @@ export default async function Home() {
     feedback,
     featuredServicesList,
     featuredProjectsList,
-    featuredSkillsList,
     profileHighlights,
   ] = await Promise.all([
     getPublicHomeHero(),
@@ -36,7 +31,6 @@ export default async function Home() {
     getPublicTestimonials({ featured: true }),
     getPublicFeaturedServices(),
     getPublicFeaturedProjects(),
-    getPublicFeaturedSkills(),
     getPublicProfileHighlights(),
   ]);
 
