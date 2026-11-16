@@ -44,7 +44,7 @@ export const PROJECTS: readonly ProjectRecord[] = [
     number: "01",
     title: "Knowledge Assistant",
     category: "AI & Machine Learning",
-    homeCategoryLabel: "RAG / KNOWLEDGE AI",
+    homeCategoryLabel: "RAG / KNOWLEDGE",
     status: "Concept Brief",
     featured: true,
     summary:

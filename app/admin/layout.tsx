@@ -28,14 +28,14 @@ function AdminRouteGuard({ children }: { children: ReactNode }) {
       <div
         role="status"
         aria-live="polite"
-        className="bg-grid-canvas flex min-h-screen flex-col items-center justify-center px-4 text-foreground"
+        className="flex min-h-screen flex-col items-center justify-center px-4 bg-[#07080a] text-white"
       >
-        <div className="section-frame flex max-w-sm flex-col items-center gap-4 rounded-2xl p-8 text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="font-mono text-xs tracking-[0.16em] text-accent">
+        <div className="section-frame flex max-w-sm flex-col items-center gap-4 rounded-2xl p-8 text-center border-[#1e2029] bg-[#0c0d12]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#c4f042] border-t-transparent" />
+          <p className="font-mono text-xs tracking-[0.16em] text-[#c4f042] font-semibold">
             AUTHENTICATING
           </p>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-zinc-400">
             Checking portfolio administrator session...
           </p>
         </div>

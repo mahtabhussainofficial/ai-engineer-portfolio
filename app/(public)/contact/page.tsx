@@ -46,7 +46,7 @@ export default function ContactPage() {
           <DirectEmailCard email={directEmail} />
 
           {/* Social Profiles Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-800/80 bg-[#0c0d12] px-6 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-800/80 bg-[#0c0d12] px-4 py-3.5 sm:px-6 sm:py-4">
             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Verified Profiles
             </span>

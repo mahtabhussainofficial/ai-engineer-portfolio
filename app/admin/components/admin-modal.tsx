@@ -57,29 +57,29 @@ export function AdminModal({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#0b0f16]/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Modal Dialog Card */}
       <div
-        className={`relative flex max-h-[90vh] w-full ${widthClasses} flex-col rounded-2xl border border-[#233044] bg-[#0e141f] shadow-2xl shadow-black/80 text-foreground`}
+        className={`relative flex max-h-[90vh] w-full ${widthClasses} flex-col rounded-2xl border border-[#1e2029] bg-[#0c0d12] shadow-2xl shadow-black/90 text-zinc-100`}
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-[#1e293b] px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-[#181a20] px-6 py-4">
           <div>
-            <h2 id="admin-modal-title" className="text-base font-semibold text-foreground">
+            <h2 id="admin-modal-title" className="text-base font-semibold text-white">
               {title}
             </h2>
-            {subtitle && <p className="mt-0.5 text-xs text-muted">{subtitle}</p>}
+            {subtitle && <p className="mt-0.5 text-xs text-zinc-400">{subtitle}</p>}
           </div>
 
           <button
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#172130]/60 text-muted transition-colors hover:border-accent/40 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#12141c] text-zinc-400 transition-colors hover:border-[#c4f042]/40 hover:text-white"
           >
             <IconClose className="h-4 w-4" />
           </button>

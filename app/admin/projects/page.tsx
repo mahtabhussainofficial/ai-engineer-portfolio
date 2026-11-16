@@ -360,17 +360,17 @@ export default function AdminProjectsPage() {
               type="button"
               disabled={isLoading || isRefreshing}
               onClick={() => loadProjects(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-[#2b3a50] bg-[#172130]/80 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-accent/40 hover:text-accent focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#222530] bg-[#12141c] px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/40 hover:text-white disabled:opacity-50"
               title="Refresh projects list"
             >
-              <IconRefresh className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-accent" : ""}`} />
+              <IconRefresh className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-[#c4f042]" : ""}`} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
 
             <button
               type="button"
               onClick={openCreateForm}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-primary/60 bg-primary px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#c4f042] bg-[#c4f042] px-3.5 py-2 text-xs font-semibold text-black transition-colors hover:bg-[#d4f55e]"
             >
               <IconPlus className="h-4 w-4" />
               <span>New Project</span>
@@ -397,20 +397,20 @@ export default function AdminProjectsPage() {
       )}
 
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-[#233044] bg-[#0e141f] p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-xl border border-[#1e2029] bg-[#0c0d12] p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 sm:max-w-xs">
-          <IconSearch className="absolute left-3 top-2.5 h-4 w-4 text-subtle" />
+          <IconSearch className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search projects..."
-            className="w-full rounded-lg border border-[#233044] bg-[#0b0f16] py-1.5 pl-9 pr-3 text-xs text-foreground placeholder:text-subtle focus:border-accent focus:outline-none"
+            className="w-full rounded-lg border border-[#222530] bg-[#08090d] py-1.5 pl-9 pr-3 text-xs text-white placeholder:text-zinc-500 focus:border-[#c4f042] focus:outline-none"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <label htmlFor="project-status-filter" className="text-xs text-muted">
+          <label htmlFor="project-status-filter" className="text-xs text-zinc-400">
             Status:
           </label>
           <select
@@ -420,7 +420,7 @@ export default function AdminProjectsPage() {
               setStatusFilter(e.target.value as PublishStatus | "all");
               setPage(1);
             }}
-            className="rounded-lg border border-[#233044] bg-[#0b0f16] px-2.5 py-1.5 text-xs text-foreground focus:border-accent focus:outline-none"
+            className="rounded-lg border border-[#222530] bg-[#08090d] px-2.5 py-1.5 text-xs text-white focus:border-[#c4f042] focus:outline-none"
           >
             <option value="all">All ({data?.total || 0})</option>
             <option value="published">Published</option>
@@ -439,15 +439,15 @@ export default function AdminProjectsPage() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center">
-            <p className="text-sm font-medium text-foreground">No projects found</p>
-            <p className="mt-1 text-xs text-muted">
+            <p className="text-sm font-medium text-white">No projects found</p>
+            <p className="mt-1 text-xs text-zinc-400">
               {searchQuery ? "No projects match your search query." : "Get started by adding your first project case study."}
             </p>
             {!searchQuery && (
               <button
                 type="button"
                 onClick={openCreateForm}
-                className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-primary/50 bg-primary/20 px-3 py-1.5 text-xs font-medium text-accent hover:bg-primary/30"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[#c4f042]/50 bg-[#c4f042]/10 px-3 py-1.5 text-xs font-medium text-[#c4f042] hover:bg-[#c4f042]/20"
               >
                 <IconPlus className="h-3.5 w-3.5" />
                 <span>Create Project</span>
@@ -455,37 +455,37 @@ export default function AdminProjectsPage() {
             )}
           </div>
         ) : (
-          <div className="divide-y divide-[#1e293b]">
+          <div className="divide-y divide-[#181a20]">
             {filteredItems.map((project) => (
               <div
                 key={project.id}
-                className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-[#111823]/40 rounded-lg px-2"
+                className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between transition-colors hover:bg-white/[0.02] rounded-lg px-2"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-semibold text-sm text-foreground truncate">
+                    <span className="font-semibold text-sm text-white truncate">
                       {project.title}
                     </span>
                     <AdminStatusBadge status={project.publish_status} />
                     <AdminFeaturedBadge featured={project.featured} />
-                    <span className="rounded border border-[#2b3a50] bg-[#172130] px-1.5 py-0.5 font-mono text-[10px] text-muted">
+                    <span className="rounded border border-[#222530] bg-[#101218] px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
                       {project.category}
                     </span>
-                    <span className="font-mono text-[10px] text-subtle">
+                    <span className="font-mono text-[10px] text-zinc-500">
                       Order: {project.display_order}
                     </span>
                   </div>
 
-                  <p className="mt-1 line-clamp-1 text-xs text-muted">
+                  <p className="mt-1 line-clamp-1 text-xs text-zinc-400">
                     {project.summary}
                   </p>
 
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                    <span className="font-mono text-[10px] text-subtle">
+                    <span className="font-mono text-[10px] text-zinc-500">
                       /{project.slug}
                     </span>
                     {project.tags.slice(0, 4).map((tag) => (
-                      <span key={tag} className="rounded bg-[#111823] px-1.5 py-0.2 font-mono text-[9px] text-muted">
+                      <span key={tag} className="rounded border border-[#222530] bg-[#101218] px-1.5 py-0.5 font-mono text-[9px] text-zinc-400">
                         #{tag}
                       </span>
                     ))}
@@ -499,7 +499,7 @@ export default function AdminProjectsPage() {
                     onClick={() => handleTogglePublish(project)}
                     className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
                       project.publish_status === "published"
-                        ? "border-[#2b3a50] bg-[#172130]/60 text-muted hover:border-amber-500/40 hover:text-amber-300"
+                        ? "border-[#222530] bg-[#101218] text-zinc-400 hover:border-amber-500/40 hover:text-amber-300"
                         : "border-emerald-500/40 bg-emerald-950/20 text-emerald-300 hover:bg-emerald-900/30"
                     }`}
                   >
@@ -510,7 +510,7 @@ export default function AdminProjectsPage() {
                     type="button"
                     onClick={() => openDetailModal(project.id)}
                     title="View details"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#172130]/60 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#101218] text-zinc-400 transition-colors hover:border-[#c4f042]/40 hover:text-white"
                   >
                     <IconEye className="h-4 w-4" />
                   </button>
@@ -519,7 +519,7 @@ export default function AdminProjectsPage() {
                     type="button"
                     onClick={() => openEditForm(project)}
                     title="Edit project"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#172130]/60 text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#101218] text-zinc-400 transition-colors hover:border-[#c4f042]/40 hover:text-white"
                   >
                     <IconEdit className="h-4 w-4" />
                   </button>
@@ -528,7 +528,7 @@ export default function AdminProjectsPage() {
                     type="button"
                     onClick={() => setDeleteTarget(project)}
                     title="Delete project"
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#172130]/60 text-muted transition-colors hover:border-red-500/40 hover:text-red-400"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#101218] text-zinc-400 transition-colors hover:border-red-500/40 hover:text-red-400"
                   >
                     <IconTrash className="h-4 w-4" />
                   </button>

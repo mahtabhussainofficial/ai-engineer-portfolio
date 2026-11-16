@@ -22,11 +22,11 @@ export function AdminPagination({
   }
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-[#1e293b] pt-4 text-xs text-muted">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-[#181a20] pt-4 text-xs text-zinc-400">
       <div>
-        Showing <span className="font-mono text-foreground">{startItem}</span> to{" "}
-        <span className="font-mono text-foreground">{endItem}</span> of{" "}
-        <span className="font-mono text-foreground">{total}</span> records
+        Showing <span className="font-mono text-white font-medium">{startItem}</span> to{" "}
+        <span className="font-mono text-white font-medium">{endItem}</span> of{" "}
+        <span className="font-mono text-white font-medium">{total}</span> records
       </div>
 
       <div className="flex items-center gap-2">
@@ -34,12 +34,12 @@ export function AdminPagination({
           type="button"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="rounded-lg border border-[#233044] bg-[#111823] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-accent/40 disabled:opacity-40"
+          className="rounded-lg border border-[#222530] bg-[#101218] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/40 hover:text-white disabled:opacity-40"
         >
           Previous
         </button>
 
-        <span className="font-mono text-xs text-muted">
+        <span className="font-mono text-xs text-zinc-400">
           Page {page} of {totalPages}
         </span>
 
@@ -47,7 +47,7 @@ export function AdminPagination({
           type="button"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="rounded-lg border border-[#233044] bg-[#111823] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-accent/40 disabled:opacity-40"
+          className="rounded-lg border border-[#222530] bg-[#101218] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/40 hover:text-white disabled:opacity-40"
         >
           Next
         </button>

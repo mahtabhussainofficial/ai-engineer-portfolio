@@ -33,12 +33,12 @@ export default async function AboutPage() {
 
   return (
     <>
-      {/* 01 / HERO & BIOGRAPHY - Perfectly aligned without image overflowing */}
-      <section className="py-12 sm:py-16 lg:py-20">
+      {/* 01 / HERO & BIOGRAPHY - Lifted up snugly to fit well above the fold */}
+      <section className="relative pt-2 pb-10 sm:pt-4 sm:pb-14 lg:pt-5 lg:pb-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-10 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-14">
             
-            {/* Left Column: Portrait Card - Fitted and contained */}
+            {/* Left Column: Portrait Card */}
             <div className="mx-auto w-full max-w-[19rem] lg:max-w-[20rem]">
               <div className="relative overflow-hidden rounded-3xl border border-zinc-800/80 bg-[#0a0a0c]">
                 <Image
@@ -59,20 +59,20 @@ export default async function AboutPage() {
                 <Eyebrow>{aboutProfile.eyebrow}</Eyebrow>
               </div>
 
-              <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+              <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
                 {aboutProfile.headlinePrimary}
-                <span className="block mt-2 text-[#c4f042]">
+                <span className="block mt-1 text-[#c4f042]">
                   {aboutProfile.headlineSecondary}
                 </span>
               </h1>
 
-              <div className="mt-6 space-y-4 text-base leading-relaxed text-zinc-400">
+              <div className="mt-5 space-y-3.5 text-base leading-relaxed text-zinc-400">
                 {aboutProfile.bioParagraphs.map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="mt-7 flex flex-wrap items-center gap-4">
                 <Link href="/contact" className={primaryButtonClass}>
                   <span>Get in touch</span>
                   <span aria-hidden="true">→</span>
@@ -179,7 +179,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* 04 / EDUCATION & CERTIFICATIONS */}
+      {/* 04 / EDUCATION & CERTIFICATIONS - High-End Aesthetic Matching Website Cards */}
       <section className="section-divider py-14 sm:py-18 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-2 lg:gap-14">
@@ -198,19 +198,25 @@ export default async function AboutPage() {
                 {educationEntries.map((edu) => (
                   <div
                     key={edu.id}
-                    className="dev-card rounded-2xl p-5 sm:p-6 transition-all duration-200"
+                    className="dev-card rounded-2xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50"
                   >
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
-                      <span className="font-semibold text-white">
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs">
+                      <span className="font-bold tracking-wider text-[#c4f042]">
                         {edu.period}
                       </span>
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#c4f042]" />
                     </div>
-                    <h3 className="mt-2 text-base font-bold text-white">
+                    <h3 className="mt-4 text-lg font-bold text-white">
                       {edu.degree}
                     </h3>
-                    <p className="mt-1 text-xs text-[#c4f042] font-semibold">
+                    <p className="mt-1 text-sm font-medium text-zinc-300">
                       {edu.institution}
                     </p>
+                    <div className="mt-4 pt-3 border-t border-white/[0.06]">
+                      <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-300">
+                        {edu.tag || "Accredited CS Degree"}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -230,20 +236,25 @@ export default async function AboutPage() {
                 {certificationEntries.map((cert) => (
                   <div
                     key={cert.id}
-                    className="dev-card rounded-2xl p-5 sm:p-6 transition-all duration-200"
+                    className="dev-card rounded-2xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50"
                   >
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
-                      <span className="font-semibold text-white">
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs">
+                      <span className="font-bold tracking-wider text-[#c4f042]">
                         {cert.year}
                       </span>
                       <span className="h-1.5 w-1.5 rounded-full bg-[#c4f042]" />
                     </div>
-                    <h3 className="mt-2 text-base font-bold text-white">
+                    <h3 className="mt-4 text-lg font-bold text-white">
                       {cert.title}
                     </h3>
-                    <p className="mt-1 text-xs text-zinc-400">
+                    <p className="mt-1 text-sm font-medium text-zinc-300">
                       Issued by {cert.issuer}
                     </p>
+                    <div className="mt-4 pt-3 border-t border-white/[0.06]">
+                      <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-300">
+                        {cert.tag || "Verified Credential"}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>

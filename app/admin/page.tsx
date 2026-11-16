@@ -194,30 +194,30 @@ export default function AdminOverviewPage() {
               {/* Projects Card */}
               <Link
                 href="/admin/projects"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Projects
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconProjects className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.projects.total}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded border border-emerald-500/30 bg-emerald-950/30 px-1.5 py-0.5 font-mono text-[11px] text-emerald-300">
+                    <span className="rounded border border-emerald-500/30 bg-emerald-950/40 px-1.5 py-0.5 font-mono text-[11px] text-emerald-400">
                       {data.projects.published} pub
                     </span>
-                    <span className="rounded border border-[#273549] bg-[#0b0f16] px-1.5 py-0.5 font-mono text-[11px] text-muted">
+                    <span className="rounded border border-[#222530] bg-[#08090d] px-1.5 py-0.5 font-mono text-[11px] text-zinc-400">
                       {data.projects.draft} draft
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Manage Projects</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -226,30 +226,30 @@ export default function AdminOverviewPage() {
               {/* Services Card */}
               <Link
                 href="/admin/services"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Services
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconServices className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.services.total}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded border border-emerald-500/30 bg-emerald-950/30 px-1.5 py-0.5 font-mono text-[11px] text-emerald-300">
+                    <span className="rounded border border-emerald-500/30 bg-emerald-950/40 px-1.5 py-0.5 font-mono text-[11px] text-emerald-400">
                       {data.services.published} pub
                     </span>
-                    <span className="rounded border border-[#273549] bg-[#0b0f16] px-1.5 py-0.5 font-mono text-[11px] text-muted">
+                    <span className="rounded border border-[#222530] bg-[#08090d] px-1.5 py-0.5 font-mono text-[11px] text-zinc-400">
                       {data.services.draft} draft
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Manage Services</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -258,30 +258,30 @@ export default function AdminOverviewPage() {
               {/* Skills Card */}
               <Link
                 href="/admin/skills"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Skills
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconSkills className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.skills.total}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded border border-emerald-500/30 bg-emerald-950/30 px-1.5 py-0.5 font-mono text-[11px] text-emerald-300">
+                    <span className="rounded border border-emerald-500/30 bg-emerald-950/40 px-1.5 py-0.5 font-mono text-[11px] text-emerald-400">
                       {data.skills.published} pub
                     </span>
-                    <span className="rounded border border-[#273549] bg-[#0b0f16] px-1.5 py-0.5 font-mono text-[11px] text-muted">
+                    <span className="rounded border border-[#222530] bg-[#08090d] px-1.5 py-0.5 font-mono text-[11px] text-zinc-400">
                       {data.skills.draft} draft
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Manage Skills</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -290,30 +290,30 @@ export default function AdminOverviewPage() {
               {/* Testimonials Card */}
               <Link
                 href="/admin/testimonials"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Testimonials
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconTestimonials className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.testimonials.total}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded border border-emerald-500/30 bg-emerald-950/30 px-1.5 py-0.5 font-mono text-[11px] text-emerald-300">
+                    <span className="rounded border border-emerald-500/30 bg-emerald-950/40 px-1.5 py-0.5 font-mono text-[11px] text-emerald-400">
                       {data.testimonials.published} pub
                     </span>
-                    <span className="rounded border border-[#273549] bg-[#0b0f16] px-1.5 py-0.5 font-mono text-[11px] text-muted">
+                    <span className="rounded border border-[#222530] bg-[#08090d] px-1.5 py-0.5 font-mono text-[11px] text-zinc-400">
                       {data.testimonials.draft} draft
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Manage Testimonials</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -330,31 +330,31 @@ export default function AdminOverviewPage() {
               {/* Career Summary Card */}
               <Link
                 href="/admin/career"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Career Timeline
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconCareer className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted">Experience</span>
-                    <span className="font-mono text-foreground">{data.experience.total} items ({data.experience.published} pub)</span>
+                    <span className="text-zinc-400">Experience</span>
+                    <span className="font-mono text-white font-medium">{data.experience.total} items ({data.experience.published} pub)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted">Education</span>
-                    <span className="font-mono text-foreground">{data.education.total} items ({data.education.published} pub)</span>
+                    <span className="text-zinc-400">Education</span>
+                    <span className="font-mono text-white font-medium">{data.education.total} items ({data.education.published} pub)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted">Certifications</span>
-                    <span className="font-mono text-foreground">{data.certifications.total} items ({data.certifications.published} pub)</span>
+                    <span className="text-zinc-400">Certifications</span>
+                    <span className="font-mono text-white font-medium">{data.certifications.total} items ({data.certifications.published} pub)</span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Manage Career</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -363,25 +363,25 @@ export default function AdminOverviewPage() {
               {/* Media Library Card */}
               <Link
                 href="/admin/media"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Media Assets
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconMedia className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.media_assets}
                   </span>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="mt-1 text-xs text-zinc-400">
                     Registered CDN media items & alt descriptions
                   </p>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Asset Library</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -390,27 +390,27 @@ export default function AdminOverviewPage() {
               {/* Site Settings Card */}
               <Link
                 href="/admin/settings"
-                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-accent/40 hover:bg-[#172130]/80 sm:col-span-2 lg:col-span-1"
+                className="group surface-card flex flex-col justify-between rounded-xl p-5 transition-all hover:border-[#c4f042]/40 hover:bg-[#11131a] sm:col-span-2 lg:col-span-1"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                     Site Settings
                   </span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#233044] bg-[#0b0f16] text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#222530] bg-[#08090d] text-zinc-400 transition-colors group-hover:border-[#c4f042]/40 group-hover:text-[#c4f042]">
                     <IconSettings className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="mt-3">
-                  <span className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  <span className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                     {data.site_settings}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded border border-primary/40 bg-primary/20 px-1.5 py-0.5 font-mono text-[11px] text-accent">
+                    <span className="rounded border border-[#c4f042]/40 bg-[#c4f042]/10 px-1.5 py-0.5 font-mono text-[11px] text-[#c4f042]">
                       {data.public_site_settings} public config keys
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-accent">
+                <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[#c4f042]">
                   <span>Configure Settings</span>
                   <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
                 </div>
@@ -420,16 +420,16 @@ export default function AdminOverviewPage() {
 
           {/* Section: Contact Messages Statistics */}
           <section className="section-frame rounded-2xl p-6 sm:p-8" aria-labelledby="messages-summary-heading">
-            <div className="flex flex-col gap-4 border-b border-[#233044] pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 border-b border-[#181a20] pb-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-accent/40 bg-accent/10 text-accent">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#c4f042]/40 bg-[#c4f042]/10 text-[#c4f042]">
                   <IconMessages className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 id="messages-summary-heading" className="text-base font-semibold text-foreground">
+                  <h2 id="messages-summary-heading" className="text-base font-semibold text-white">
                     Inbound Inquiries & Messages
                   </h2>
-                  <p className="text-xs text-muted">
+                  <p className="text-xs text-zinc-400">
                     Contact form submissions and prospective client inquiries
                   </p>
                 </div>
@@ -437,7 +437,7 @@ export default function AdminOverviewPage() {
 
               <Link
                 href="/admin/messages"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[#2b3a50] bg-[#172130]/80 px-3.5 py-2 text-xs font-medium text-accent transition-colors hover:border-accent/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#222530] bg-[#12141c] px-3.5 py-2 text-xs font-medium text-[#c4f042] transition-colors hover:border-[#c4f042]/40 hover:text-white"
               >
                 <span>Open Messages Inbox</span>
                 <span aria-hidden="true">→</span>
@@ -447,42 +447,42 @@ export default function AdminOverviewPage() {
             {/* Counts Breakdown */}
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <div className="surface-card rounded-xl p-4">
-                <span className="font-mono text-[10px] tracking-wider text-subtle uppercase">
+                <span className="font-mono text-[10px] tracking-wider text-zinc-500 uppercase">
                   Total Received
                 </span>
-                <p className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                <p className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
                   {data.messages.total}
                 </p>
               </div>
 
               <div className="surface-card rounded-xl p-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] tracking-wider text-subtle uppercase">
+                  <span className="font-mono text-[10px] tracking-wider text-zinc-500 uppercase">
                     Unread Triage
                   </span>
                   {data.messages.unread > 0 && (
                     <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
                   )}
                 </div>
-                <p className={`mt-1 text-xl font-bold tracking-tight sm:text-2xl ${data.messages.unread > 0 ? "text-amber-300" : "text-foreground"}`}>
+                <p className={`mt-1 text-xl font-bold tracking-tight sm:text-2xl ${data.messages.unread > 0 ? "text-amber-300" : "text-white"}`}>
                   {data.messages.unread}
                 </p>
               </div>
 
               <div className="surface-card rounded-xl p-4">
-                <span className="font-mono text-[10px] tracking-wider text-subtle uppercase">
+                <span className="font-mono text-[10px] tracking-wider text-zinc-500 uppercase">
                   Read / Processed
                 </span>
-                <p className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                <p className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
                   {data.messages.read}
                 </p>
               </div>
 
               <div className="surface-card rounded-xl p-4">
-                <span className="font-mono text-[10px] tracking-wider text-subtle uppercase">
+                <span className="font-mono text-[10px] tracking-wider text-zinc-500 uppercase">
                   Archived
                 </span>
-                <p className="mt-1 text-xl font-bold tracking-tight text-muted sm:text-2xl">
+                <p className="mt-1 text-xl font-bold tracking-tight text-zinc-400 sm:text-2xl">
                   {data.messages.archived}
                 </p>
               </div>
@@ -490,32 +490,32 @@ export default function AdminOverviewPage() {
 
             {/* Recent Messages List */}
             <div className="mt-6">
-              <h3 className="mb-3 font-mono text-[11px] tracking-wider text-subtle uppercase">
+              <h3 className="mb-3 font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
                 Recent Inbound Inquiries
               </h3>
 
               {data.recent_messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[#233044] bg-[#0b0f16]/40 p-8 text-center">
-                  <p className="text-xs font-medium text-foreground">
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-[#222530] bg-[#08090d]/60 p-8 text-center">
+                  <p className="text-xs font-medium text-white">
                     No contact inquiries received yet
                   </p>
-                  <p className="mt-1 text-[11px] text-muted">
+                  <p className="mt-1 text-[11px] text-zinc-500">
                     Inbound submissions from the public contact form will appear here.
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#1e293b] rounded-xl border border-[#233044] bg-[#0b0f16]/60">
+                <div className="divide-y divide-[#181a20] rounded-xl border border-[#222530] bg-[#0c0d12]">
                   {data.recent_messages.map((msg) => (
                     <div
                       key={msg.id}
-                      className="flex flex-col gap-2 p-4 transition-colors hover:bg-[#111823]/60 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex flex-col gap-2 p-4 transition-colors hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="truncate text-xs font-semibold text-foreground">
+                          <span className="truncate text-xs font-semibold text-white">
                             {msg.sender_name}
                           </span>
-                          <span className="rounded border border-[#2b3a50] bg-[#172130] px-1.5 py-0.5 font-mono text-[10px] text-muted">
+                          <span className="rounded border border-[#222530] bg-[#101218] px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
                             {msg.project_type || msg.inquiry_mode}
                           </span>
                           <span
@@ -523,20 +523,20 @@ export default function AdminOverviewPage() {
                               msg.status === "unread"
                                 ? "border border-amber-500/30 bg-amber-950/40 text-amber-300"
                                 : msg.status === "read"
-                                ? "border border-[#2b3a50] bg-[#172130] text-muted"
+                                ? "border border-[#222530] bg-[#101218] text-zinc-400"
                                 : "border border-zinc-800 bg-zinc-900/60 text-zinc-400"
                             }`}
                           >
                             {msg.status.toUpperCase()}
                           </span>
                         </div>
-                        <p className="mt-1 truncate text-xs text-muted">
+                        <p className="mt-1 truncate text-xs text-zinc-400">
                           {msg.subject}
                         </p>
                       </div>
 
                       <div className="flex shrink-0 items-center justify-between gap-4 sm:flex-col sm:items-end sm:gap-1">
-                        <span className="font-mono text-[11px] text-subtle">
+                        <span className="font-mono text-[11px] text-zinc-500">
                           {new Date(msg.created_at).toLocaleDateString(undefined, {
                             month: "short",
                             day: "numeric",
@@ -545,7 +545,7 @@ export default function AdminOverviewPage() {
                         </span>
                         <Link
                           href="/admin/messages"
-                          className="text-xs font-medium text-accent hover:underline"
+                          className="text-xs font-medium text-[#c4f042] hover:underline"
                         >
                           View Inquiry →
                         </Link>
@@ -559,9 +559,9 @@ export default function AdminOverviewPage() {
 
           {/* Section: Session Security Card */}
           <section className="section-frame rounded-2xl p-6 sm:p-8">
-            <div className="flex flex-col gap-4 border-b border-[#233044] pb-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 border-b border-[#181a20] pb-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-accent/40 bg-accent/10 font-mono text-sm font-semibold text-accent">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#c4f042]/40 bg-[#c4f042]/10 font-mono text-sm font-semibold text-[#c4f042]">
                   {user.full_name
                     .split(" ")
                     .map((n) => n[0])
@@ -570,10 +570,10 @@ export default function AdminOverviewPage() {
                     .toUpperCase()}
                 </span>
                 <div>
-                  <h2 className="text-base font-semibold text-foreground">
+                  <h2 className="text-base font-semibold text-white">
                     {user.full_name}
                   </h2>
-                  <p className="font-mono text-xs text-muted">{user.email}</p>
+                  <p className="font-mono text-xs text-zinc-400">{user.email}</p>
                 </div>
               </div>
 
@@ -582,20 +582,20 @@ export default function AdminOverviewPage() {
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   Session Active
                 </span>
-                <span className="rounded-md border border-[#273549] bg-[#0b0f16] px-2.5 py-1 font-mono text-xs text-muted">
+                <span className="rounded-md border border-[#222530] bg-[#0c0d12] px-2.5 py-1 font-mono text-xs text-zinc-400">
                   Role: {user.role === "super_admin" ? "Super Admin" : "Admin"}
                 </span>
               </div>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-400">
               <div className="flex items-center gap-2">
-                <IconShield className="h-4 w-4 text-accent" />
+                <IconShield className="h-4 w-4 text-[#c4f042]" />
                 <span>Double-submit CSRF and in-memory JWT protection active.</span>
               </div>
               <Link
                 href="/admin/sessions"
-                className="inline-flex items-center gap-1.5 font-medium text-accent hover:underline"
+                className="inline-flex items-center gap-1.5 font-medium text-[#c4f042] hover:underline"
               >
                 <IconSessions className="h-3.5 w-3.5" />
                 <span>Manage Connected Sessions & Revocation →</span>

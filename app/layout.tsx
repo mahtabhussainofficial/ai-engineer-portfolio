@@ -1,27 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { getSiteProfile } from "@/lib/site-config";
 import "./globals.css";
 
 const siteProfile = getSiteProfile();
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
-});
-
 export const viewport: Viewport = {
   themeColor: "#050507",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export const metadata: Metadata = {
@@ -47,11 +35,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-[#050507] text-white">{children}</body>
+    <html lang="en" className="h-full antialiased dark">
+      <body className="min-h-full flex flex-col bg-[#050507] text-white selection:bg-[#c4f042] selection:text-black">
+        {children}
+      </body>
     </html>
   );
 }

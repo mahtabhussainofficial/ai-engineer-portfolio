@@ -27,15 +27,18 @@ export default async function ServicesPage() {
       {/* SHOWCASE HEADER - Single column with buttons directly underneath */}
       <section className="py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[#c4f042]" />
               <Eyebrow>Capabilities</Eyebrow>
             </div>
 
             <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-              AI Engineering Services.
-              <span className="block mt-2 text-[#c4f042]">
+              <span className="block">AI Engineering Services.</span>
+              <span className="block mt-1 text-white">
+                Systems &amp; Automation,
+              </span>
+              <span className="block mt-1 text-[#c4f042]">
                 Built for practical progress.
               </span>
             </h1>

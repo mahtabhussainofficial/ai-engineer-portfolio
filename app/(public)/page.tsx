@@ -3,6 +3,8 @@ import Link from "next/link";
 import {
   ContactCtaSection,
   Eyebrow,
+  primaryButtonClass,
+  sectionButtonClass,
 } from "@/app/components/site-shell";
 import {
   getPublicFeaturedProjects,
@@ -64,18 +66,12 @@ export default async function Home() {
               </p>
 
               {/* Action Buttons: Lime Green Primary + Transparent Outline Secondary */}
-              <div className="mt-8 flex flex-wrap items-center gap-3.5">
-                <a
-                  href="#projects"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#c4f042] px-7 py-3.5 text-sm font-bold text-zinc-950 transition-all duration-150 hover:bg-[#b2e232] hover:scale-[1.02]"
-                >
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <a href="#projects" className={primaryButtonClass}>
                   <span>View My Work</span>
                   <span aria-hidden="true">→</span>
                 </a>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent px-7 py-3.5 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04]"
-                >
+                <Link href="/contact" className={sectionButtonClass}>
                   <span>Work With Me</span>
                 </Link>
               </div>
@@ -187,7 +183,7 @@ export default async function Home() {
             </div>
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit whitespace-nowrap shrink-0"
             >
               <span>All services</span>
               <span aria-hidden="true">→</span>
@@ -209,17 +205,17 @@ export default async function Home() {
                   {/* Top Content */}
                   <div>
                     {/* Unified Top Line (01 · NAME + Green Dot) */}
-                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                      <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 h-11">
+                      <span className="text-[11px] xl:text-xs font-bold tracking-wider text-[#c4f042] uppercase whitespace-nowrap">
                         {displayNum} · {displayDomain}
                       </span>
-                      <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+                      <span className="h-2 w-2 rounded-full bg-[#c4f042] shrink-0" />
                     </div>
 
                     <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors">
                       {service.title}
                     </h3>
-                    <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[3rem]">
+                    <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[3.5rem]">
                       {displayDesc}
                     </p>
                   </div>
@@ -229,7 +225,7 @@ export default async function Home() {
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
                       Core Tooling
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 min-h-[4.75rem] content-start">
                       {displayTools.map((tool) => (
                         <span
                           key={tool}
@@ -275,7 +271,7 @@ export default async function Home() {
             </div>
             <Link
               href="/projects"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit whitespace-nowrap shrink-0"
             >
               <span>All projects</span>
               <span aria-hidden="true">→</span>
@@ -292,26 +288,26 @@ export default async function Home() {
                   key={project.id}
                   className="dev-card group relative flex flex-col justify-between h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50"
                 >
-                  <div>
+                  <div className="flex-1 flex flex-col">
                     {/* Unified Top Line (01 · NAME + Green Dot) */}
-                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                      <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
+                    <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 h-11">
+                      <span className="text-[11px] xl:text-xs font-bold tracking-wider text-[#c4f042] uppercase whitespace-nowrap">
                         {displayNum} · {displayCategory}
                       </span>
-                      <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+                      <span className="h-2 w-2 rounded-full bg-[#c4f042] shrink-0" />
                     </div>
 
                     {/* Title & Summary */}
-                    <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors">
+                    <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors min-h-[3.25rem] flex items-center">
                       {project.title}
                     </h3>
-                    <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[3rem]">
+                    <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[3.5rem]">
                       {project.summary}
                     </p>
 
                     {/* Key Deliverables */}
                     {project.deliverables && project.deliverables.length > 0 ? (
-                      <div className="mt-5 space-y-2">
+                      <div className="mt-5 space-y-2 min-h-[4.75rem]">
                         {project.deliverables.slice(0, 2).map((item) => (
                           <div key={item} className="flex items-start gap-2 text-xs text-zinc-400 leading-relaxed">
                             <span className="text-[#c4f042] font-bold">✓</span>
@@ -319,7 +315,9 @@ export default async function Home() {
                           </div>
                         ))}
                       </div>
-                    ) : null}
+                    ) : (
+                      <div className="mt-5 min-h-[4.75rem]" />
+                    )}
                   </div>
 
                   {/* Bottom: Tags & Action with Unified Hover Effect */}
@@ -327,7 +325,7 @@ export default async function Home() {
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
                       Core Tooling
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-5">
+                    <div className="flex flex-wrap gap-2 mb-5 min-h-[4.75rem] content-start">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
@@ -340,6 +338,7 @@ export default async function Home() {
 
                     <Link
                       href={`/projects/${project.slug}`}
+                      prefetch={true}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent py-2.5 text-xs font-semibold text-white transition-all duration-150 hover:border-[#c4f042] hover:bg-[#c4f042]/10 hover:text-[#c4f042]"
                     >
                       <span>View Case Study</span>
@@ -371,7 +370,7 @@ export default async function Home() {
             </div>
             <Link
               href="/skills"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit"
+              className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] w-fit whitespace-nowrap shrink-0"
             >
               <span>View full stack</span>
               <span aria-hidden="true">→</span>
@@ -382,30 +381,30 @@ export default async function Home() {
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             
             {/* Pillar 1: AI & LLM Systems */}
-            <div className="dev-card group relative flex flex-col h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
-              <div className="h-[150px]">
+            <div className="dev-card group relative flex flex-col justify-between h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
+              <div className="flex-1 flex flex-col">
                 {/* Unified Top Line (01 · NAME + Green Dot) */}
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                  <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 h-11">
+                  <span className="text-[11px] xl:text-xs font-bold tracking-wider text-[#c4f042] uppercase whitespace-nowrap">
                     01 · AI &amp; Intelligence
                   </span>
-                  <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+                  <span className="h-2 w-2 rounded-full bg-[#c4f042] shrink-0" />
                 </div>
 
-                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors">
+                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors min-h-[1.75rem] flex items-center">
                   Intelligent Systems
                 </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400">
+                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[4.5rem]">
                   Retrieval architectures, autonomous agents, and grounded multi-model pipelines.
                 </p>
               </div>
 
               {/* Bottom: Strictly Aligned Tooling with Unified Hover Effect */}
-              <div className="border-t border-white/[0.06] pt-5 mt-4">
+              <div className="border-t border-white/[0.06] pt-5 mt-6">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
                   Core Tooling
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 min-h-[9.5rem] content-start">
                   {[
                     "LangChain",
                     "LangGraph",
@@ -428,30 +427,30 @@ export default async function Home() {
             </div>
 
             {/* Pillar 2: Backend Engineering */}
-            <div className="dev-card group relative flex flex-col h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
-              <div className="h-[150px]">
+            <div className="dev-card group relative flex flex-col justify-between h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
+              <div className="flex-1 flex flex-col">
                 {/* Unified Top Line (01 · NAME + Green Dot) */}
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                  <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
-                    02 · Backend &amp; Persistence
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 h-11">
+                  <span className="text-[11px] xl:text-xs font-bold tracking-wider text-[#c4f042] uppercase whitespace-nowrap">
+                    02 · Backend &amp; Architecture
                   </span>
-                  <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+                  <span className="h-2 w-2 rounded-full bg-[#c4f042] shrink-0" />
                 </div>
 
-                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors">
+                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors min-h-[1.75rem] flex items-center">
                   APIs &amp; Architecture
                 </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400">
+                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[4.5rem]">
                   High-uptime asynchronous APIs, typed schemas, and reliable database architectures.
                 </p>
               </div>
 
               {/* Bottom: Strictly Aligned Tooling with Unified Hover Effect */}
-              <div className="border-t border-white/[0.06] pt-5 mt-4">
+              <div className="border-t border-white/[0.06] pt-5 mt-6">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
                   Core Tooling
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 min-h-[9.5rem] content-start">
                   {[
                     "Python",
                     "FastAPI",
@@ -474,30 +473,30 @@ export default async function Home() {
             </div>
 
             {/* Pillar 3: Infrastructure & DevOps */}
-            <div className="dev-card group relative flex flex-col h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
-              <div className="h-[150px]">
+            <div className="dev-card group relative flex flex-col justify-between h-full rounded-2xl p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#c4f042]/50">
+              <div className="flex-1 flex flex-col">
                 {/* Unified Top Line (01 · NAME + Green Dot) */}
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                  <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 h-11">
+                  <span className="text-[11px] xl:text-xs font-bold tracking-wider text-[#c4f042] uppercase whitespace-nowrap">
                     03 · DevOps &amp; Delivery
                   </span>
-                  <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+                  <span className="h-2 w-2 rounded-full bg-[#c4f042] shrink-0" />
                 </div>
 
-                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors">
+                <h3 className="mt-5 text-xl font-bold tracking-tight text-white group-hover:text-[#c4f042] transition-colors min-h-[1.75rem] flex items-center">
                   Cloud &amp; Runtime
                 </h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400">
+                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400 min-h-[4.5rem]">
                   Reproducible containers, CI/CD pipelines, and robust Linux runtime environments.
                 </p>
               </div>
 
               {/* Bottom: Strictly Aligned Tooling with Unified Hover Effect */}
-              <div className="border-t border-white/[0.06] pt-5 mt-4">
+              <div className="border-t border-white/[0.06] pt-5 mt-6">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-3">
                   Core Tooling
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 min-h-[9.5rem] content-start">
                   {[
                     "Docker",
                     "Docker Compose",
@@ -605,14 +604,14 @@ export default async function Home() {
             </div>
             
             {/* 5.0 Star Verified Rating Pill */}
-            <div className="inline-flex items-center gap-3 rounded-full border border-[#c4f042]/20 bg-[#c4f042]/5 px-4 py-2 w-fit">
-              <div className="flex text-xs text-[#c4f042]">
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-[#c4f042]/20 bg-[#c4f042]/5 px-4 py-2 w-fit whitespace-nowrap shrink-0">
+              <div className="flex text-xs text-[#c4f042] tracking-tighter shrink-0">
                 ★★★★★
               </div>
-              <span className="text-xs font-bold text-white">
+              <span className="text-xs font-bold text-white whitespace-nowrap">
                 5.0 Rating
               </span>
-              <span className="text-[11px] text-zinc-400">
+              <span className="text-[11px] text-zinc-400 whitespace-nowrap">
                 · 100% Job Success
               </span>
             </div>

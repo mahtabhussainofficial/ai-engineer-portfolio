@@ -49,16 +49,17 @@ function DesktopNavLinks({
 }) {
   return (
     <>
-      {/* Center Nav Links - Clearer, larger typography with modern pill states */}
-      <div className="hidden items-center gap-1.5 md:flex">
+      {/* Center Nav Links - Clear typography with modern pill states */}
+      <div className="hidden items-center gap-1 xl:gap-1.5 md:flex">
         {primaryItems.map((item) => {
           const isActive = currentActive === item.label;
           return (
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] ${
+              className={`rounded-full px-3 py-1.5 text-xs xl:px-4 xl:py-2 xl:text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] shrink-0 ${
                 isActive
                   ? "border border-white/15 bg-white/10 text-white shadow-sm"
                   : "text-zinc-400 hover:text-white hover:bg-white/[0.06]"
@@ -71,9 +72,9 @@ function DesktopNavLinks({
       </div>
 
       {/* Right Controls - Status badge + Vibrant CTA */}
-      <div className="hidden items-center gap-3.5 sm:flex">
+      <div className="hidden items-center gap-2.5 xl:gap-3.5 sm:flex shrink-0">
         {/* Availability Badge */}
-        <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs text-zinc-300 lg:inline-flex">
+        <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs text-zinc-300 xl:inline-flex shrink-0">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4f042] opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#c4f042]" />
@@ -84,10 +85,11 @@ function DesktopNavLinks({
         {/* Contact CTA */}
         <Link
           href={contactItem.href}
+          prefetch={true}
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
           }
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#c4f042] px-5 py-2 text-sm font-bold text-zinc-950 transition-all duration-200 hover:bg-[#b2e232] hover:scale-105 active:scale-95 shadow-md shadow-[#c4f042]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]"
+          className="inline-flex items-center gap-1.5 rounded-full bg-[#c4f042] px-4 py-1.5 xl:px-5 xl:py-2 text-xs xl:text-sm font-bold text-zinc-950 transition-all duration-200 hover:bg-[#b2e232] hover:scale-105 active:scale-95 shadow-md shadow-[#c4f042]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] shrink-0"
         >
           <span>{contactItem.label}</span>
           <span aria-hidden="true" className="text-xs">↗</span>
@@ -141,6 +143,7 @@ function MobileNavLinks({
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               onClick={onSelect}
               aria-current={isActive ? "page" : undefined}
               className={`rounded-2xl px-4 py-3 text-base font-semibold transition-all ${
@@ -158,6 +161,7 @@ function MobileNavLinks({
       <div className="mt-3 border-t border-white/[0.08] pt-3">
         <Link
           href={contactItem.href}
+          prefetch={true}
           onClick={onSelect}
           aria-current={
             currentActive === contactItem.label ? "page" : undefined
@@ -265,7 +269,7 @@ export function SiteNavbar({
       <div ref={containerRef} className="mx-auto max-w-6xl">
         <nav
           aria-label="Main navigation"
-          className="nav-blur flex items-center justify-between gap-4 rounded-full px-6 py-3 border border-white/10 bg-[#07080c]/85 shadow-2xl backdrop-blur-xl"
+          className="nav-blur flex items-center justify-between gap-3 sm:gap-4 rounded-full px-4 py-2.5 sm:px-6 sm:py-3 border border-white/10 bg-[#07080c]/85 shadow-2xl backdrop-blur-xl"
         >
           {/* Brand - Modern, bold, with vibrant monogram */}
           <Link

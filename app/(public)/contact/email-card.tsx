@@ -21,7 +21,7 @@ export function DirectEmailCard({ email }: { email: string }) {
         </span>
         <a
           href={`mailto:${email}`}
-          className="mt-1 block text-xl sm:text-2xl font-bold text-white hover:text-[#c4f042] transition-colors"
+          className="mt-1 block text-lg sm:text-2xl font-bold text-white hover:text-[#c4f042] transition-colors break-all sm:break-normal"
         >
           {email}
         </a>
@@ -30,7 +30,7 @@ export function DirectEmailCard({ email }: { email: string }) {
         </p>
       </div>
 
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
         <button
           type="button"
           onClick={handleCopy}

@@ -45,32 +45,32 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
 
   return (
     <aside
-      className={`flex h-full flex-col border-r border-[#1e293b] bg-[#0e141f] text-foreground ${className}`}
+      className={`flex h-full flex-col border-r border-[#181a20] bg-[#0a0b0e] text-zinc-200 ${className}`}
       aria-label="Admin Navigation Sidebar"
     >
       {/* Brand Header */}
-      <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#1e293b] px-5">
+      <div className="flex h-16 shrink-0 items-center justify-between border-b border-[#181a20] px-5">
         <Link
           href="/admin"
           onClick={onNavigate}
           className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-accent/40 bg-accent/10 text-accent">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#c4f042]/40 bg-[#c4f042]/10 text-[#c4f042]">
             <IconShield className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold tracking-[-0.02em] text-foreground">
+              <span className="text-sm font-semibold tracking-[-0.02em] text-white">
                 Control Center
               </span>
             </div>
-            <p className="font-mono text-[10px] tracking-widest text-accent uppercase">
+            <p className="font-mono text-[10px] tracking-widest text-[#c4f042] uppercase">
               Admin CMS
             </p>
           </div>
         </Link>
 
-        <span className="rounded border border-emerald-500/30 bg-emerald-950/40 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">
+        <span className="rounded-full border border-emerald-500/30 bg-emerald-950/40 px-2 py-0.5 font-mono text-[10px] text-emerald-400">
           LIVE
         </span>
       </div>
@@ -79,7 +79,7 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {/* Core Section */}
         <div>
-          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-subtle uppercase">
+          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-zinc-500 uppercase">
             Platform
           </p>
           <ul className="space-y-1">
@@ -97,7 +97,7 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
 
         {/* Content CMS Section */}
         <div>
-          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-subtle uppercase">
+          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-zinc-500 uppercase">
             Content Management
           </p>
           <ul className="space-y-1">
@@ -115,7 +115,7 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
 
         {/* Administration Section */}
         <div>
-          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-subtle uppercase">
+          <p className="px-3 pb-2 font-mono text-[10px] tracking-[0.16em] text-zinc-500 uppercase">
             Administration
           </p>
           <ul className="space-y-1">
@@ -133,10 +133,10 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
       </nav>
 
       {/* User Card & Actions Footer */}
-      <div className="shrink-0 border-t border-[#1e293b] bg-[#0b0f16]/80 p-3">
+      <div className="shrink-0 border-t border-[#181a20] bg-[#07080a] p-3">
         {user && (
-          <div className="mb-2.5 flex items-center gap-3 rounded-lg border border-[#233044] bg-[#111823] p-2.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-accent/40 bg-accent/10 font-mono text-xs font-semibold text-accent">
+          <div className="mb-2.5 flex items-center gap-3 rounded-lg border border-[#1e2029] bg-[#0d0e14] p-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#c4f042]/40 bg-[#c4f042]/10 font-mono text-xs font-semibold text-[#c4f042]">
               {user.full_name
                 .split(" ")
                 .map((n) => n[0])
@@ -145,14 +145,14 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
                 .toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-foreground">
+              <p className="truncate text-xs font-medium text-white">
                 {user.full_name}
               </p>
-              <p className="truncate font-mono text-[11px] text-muted">
+              <p className="truncate font-mono text-[11px] text-zinc-400">
                 {user.email}
               </p>
             </div>
-            <span className="shrink-0 rounded border border-[#2b3a50] bg-[#172130] px-1.5 py-0.5 font-mono text-[10px] text-muted">
+            <span className="shrink-0 rounded border border-[#232630] bg-[#14161f] px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
               {user.role === "super_admin" ? "SUPER" : "ADMIN"}
             </span>
           </div>
@@ -163,7 +163,7 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#233044] bg-[#172130]/50 px-2.5 py-2 text-xs font-medium text-muted transition-colors hover:border-accent/40 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#1e2029] bg-[#101218] px-2.5 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/40 hover:text-white"
           >
             <span>Public Site</span>
             <IconExternalLink className="h-3.5 w-3.5" />
@@ -174,7 +174,7 @@ export function AdminSidebar({ onNavigate, className = "" }: AdminSidebarProps) 
             disabled={isLoggingOut}
             onClick={handleLogout}
             title="Sign out of admin session"
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-[#233044] bg-[#172130]/50 px-3 py-2 text-xs font-medium text-muted transition-colors hover:border-red-500/40 hover:text-red-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 rounded-lg border border-[#1e2029] bg-[#101218] px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:border-red-500/40 hover:text-red-300 disabled:opacity-50"
           >
             <IconSignOut className="h-3.5 w-3.5" />
             <span>{isLoggingOut ? "..." : "Sign Out"}</span>
@@ -200,15 +200,15 @@ function SidebarNavLink({
       onClick={onNavigate}
       className={`group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150 ${
         isActive
-          ? "border border-accent/40 bg-accent/10 text-accent font-semibold shadow-sm shadow-accent/5"
-          : "border border-transparent text-muted hover:border-[#233044] hover:bg-[#172130]/60 hover:text-foreground"
+          ? "border border-[#c4f042]/40 bg-[#c4f042]/10 text-[#c4f042] font-semibold shadow-sm shadow-[#c4f042]/5"
+          : "border border-transparent text-zinc-400 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
       }`}
       aria-current={isActive ? "page" : undefined}
     >
       <div className="flex items-center gap-2.5 truncate">
         <span
           className={`shrink-0 transition-colors ${
-            isActive ? "text-accent" : "text-subtle group-hover:text-muted"
+            isActive ? "text-[#c4f042]" : "text-zinc-500 group-hover:text-zinc-300"
           }`}
         >
           {renderNavIcon(item.id, "h-4 w-4")}
@@ -217,7 +217,7 @@ function SidebarNavLink({
       </div>
 
       {item.badge && (
-        <span className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[9px] text-accent">
+        <span className="shrink-0 rounded-full border border-[#c4f042]/30 bg-[#c4f042]/10 px-1.5 py-0.5 font-mono text-[9px] text-[#c4f042]">
           {item.badge}
         </span>
       )}

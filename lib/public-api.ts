@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   CAREER_JOURNEY,
   EDUCATION_ENTRIES,
@@ -57,14 +58,15 @@ export function getApiBaseUrl(): string {
     }
   }
   if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+    const publicUrl = process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+    return publicUrl.replace("://localhost:", "://127.0.0.1:");
   }
   if (typeof window !== "undefined") {
-    if (window.location.hostname === "127.0.0.1") {
+    if (window.location.hostname === "localhost") {
       return "http://127.0.0.1:8001";
     }
   }
-  return "http://localhost:8001";
+  return "http://127.0.0.1:8001";
 }
 
 // ---------------------------------------------------------------------------
@@ -248,13 +250,13 @@ interface FetchResult<T> {
 
 let isBackendAvailable: boolean | null = null;
 let lastCheckTime = 0;
-const OFFLINE_RECHECK_MS = 30_000;
+const OFFLINE_RECHECK_MS = 60_000;
 
 async function fetchPublicApi<T>(
   path: string,
   options?: RequestInit,
 ): Promise<FetchResult<T>> {
-  // Ultra-fast circuit breaker: if backend was offline within the last 30s, return immediately (0ms latency)
+  // Ultra-fast circuit breaker: if backend was offline within the last 60s, return immediately (0ms latency)
   const now = Date.now();
   if (isBackendAvailable === false && now - lastCheckTime < OFFLINE_RECHECK_MS) {
     return { ok: false, status: 0, data: null };
@@ -264,9 +266,9 @@ async function fetchPublicApi<T>(
   const url = `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
   
   try {
-    // 250ms timeout so offline backend doesn't block SSR
+    // 120ms probe timeout: local service responds in <5ms; if down/unreachable, fail fast!
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 250);
+    const timeoutId = setTimeout(() => controller.abort(), 120);
 
     const res = await fetch(url, {
       ...options,
@@ -460,62 +462,59 @@ function mapTestimonialToFeedbackRecord(
  * Returns authoritative published database items if the API responds successfully (even if empty).
  * Falls back to static data only if the API is offline or returns a server error.
  */
-export async function getPublicProjects(options?: {
-  category?: string;
-  featured?: boolean;
-}): Promise<readonly ProjectRecord[]> {
-  const searchParams = new URLSearchParams({ page_size: "100" });
-  if (options?.category && options.category !== "All Projects") {
-    searchParams.set("category", options.category);
-  }
-  if (typeof options?.featured === "boolean") {
-    searchParams.set("featured", String(options.featured));
-  }
+export const getPublicProjects = cache(
+  async (options?: {
+    category?: string;
+    featured?: boolean;
+  }): Promise<readonly ProjectRecord[]> => {
+    const searchParams = new URLSearchParams({ page_size: "100" });
+    if (options?.category && options.category !== "All Projects") {
+      searchParams.set("category", options.category);
+    }
+    if (typeof options?.featured === "boolean") {
+      searchParams.set("featured", String(options.featured));
+    }
 
-  const res = await fetchPublicApi<BackendPaginated<BackendProjectSummary>>(
-    `/api/v1/public/projects?${searchParams.toString()}`,
-  );
+    const res = await fetchPublicApi<BackendPaginated<BackendProjectSummary>>(
+      `/api/v1/public/projects?${searchParams.toString()}`,
+    );
 
-  if (res.ok && res.data) {
-    return res.data.items.map(mapProjectSummaryToRecord);
-  }
+    if (res.ok && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
+      return res.data.items.map(mapProjectSummaryToRecord);
+    }
 
-  // Fallback to static data when API is unreachable
-  let staticItems = PROJECTS;
-  if (options?.category && options.category !== "All Projects") {
-    staticItems = staticItems.filter((p) => p.category === options.category);
-  }
-  if (typeof options?.featured === "boolean") {
-    staticItems = staticItems.filter((p) => p.featured === options.featured);
-  }
-  return staticItems;
-}
+    // Fallback to static data when API is unreachable
+    let staticItems = PROJECTS;
+    if (options?.category && options.category !== "All Projects") {
+      staticItems = staticItems.filter((p) => p.category === options.category);
+    }
+    if (typeof options?.featured === "boolean") {
+      staticItems = staticItems.filter((p) => p.featured === options.featured);
+    }
+    return staticItems;
+  },
+);
 
 /**
  * Fetch a single published project by slug.
  * Returns `null` if the project is unpublished or not found (HTTP 404 from backend).
  * Falls back to static data only if the backend is offline.
  */
-export async function getPublicProjectBySlug(
-  slug: string,
-): Promise<ProjectRecord | null> {
-  const res = await fetchPublicApi<BackendProjectRead>(
-    `/api/v1/public/projects/${encodeURIComponent(slug)}`,
-  );
+export const getPublicProjectBySlug = cache(
+  async (slug: string): Promise<ProjectRecord | null> => {
+    const res = await fetchPublicApi<BackendProjectRead>(
+      `/api/v1/public/projects/${encodeURIComponent(slug)}`,
+    );
 
-  // Authoritative 404: project not found or not published
-  if (res.status === 404) {
-    return null;
-  }
+    if (res.ok && res.data && res.data.id) {
+      return mapProjectReadToRecord(res.data);
+    }
 
-  if (res.ok && res.data) {
-    return mapProjectReadToRecord(res.data);
-  }
-
-  // Fallback to static data when API is unreachable
-  const staticFound = PROJECTS.find((p) => p.slug === slug);
-  return staticFound ?? null;
-}
+    // Fallback to static data when API is unreachable or item not in DB yet
+    const staticFound = PROJECTS.find((p) => p.slug === slug);
+    return staticFound ?? null;
+  },
+);
 
 /**
  * Fetch featured projects for homepage preview.
@@ -543,7 +542,7 @@ export async function getPublicServices(options?: {
     `/api/v1/public/services?${searchParams.toString()}`,
   );
 
-  if (res.ok && res.data) {
+  if (res.ok && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
     return res.data.items.map(mapServiceToRecord);
   }
 
@@ -591,7 +590,7 @@ export async function getPublicSkillGroups(options?: {
     `/api/v1/public/skills?${searchParams.toString()}`,
   );
 
-  if (res.ok && res.data) {
+  if (res.ok && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
     return res.data.items.map(mapSkillToGroupRecord);
   }
 
@@ -617,7 +616,7 @@ export async function getPublicFeaturedSkills(): Promise<readonly FeaturedSkillR
     "/api/v1/public/skills?page_size=100&featured=true",
   );
 
-  if (res.ok && res.data) {
+  if (res.ok && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
     return res.data.items.map(mapSkillToFeaturedRecord);
   }
 
@@ -666,7 +665,7 @@ export async function getPublicTestimonials(options?: {
     `/api/v1/public/testimonials?${searchParams.toString()}`,
   );
 
-  if (res.ok && res.data) {
+  if (res.ok && res.data && Array.isArray(res.data.items) && res.data.items.length > 0) {
     return res.data.items.map(mapTestimonialToFeedbackRecord);
   }
 

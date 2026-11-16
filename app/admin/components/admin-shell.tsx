@@ -9,7 +9,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0b0f16] text-foreground">
+    <div className="min-h-screen bg-[#07080a] text-zinc-100 selection:bg-[#c4f042] selection:text-black">
       {/* Mobile Drawer (small screens) */}
       <AdminMobileNav
         isOpen={mobileNavOpen}
@@ -27,7 +27,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <AdminTopbar onOpenMobileNav={() => setMobileNavOpen(true)} />
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="flex-1 px-4 py-8 sm:px-6 lg:px-8 max-w-7xl w-full mx-auto">{children}</main>
       </div>
     </div>
   );

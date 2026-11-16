@@ -29,7 +29,7 @@ const INQUIRY_OPTIONS = [
 ];
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-zinc-800 bg-[#07080b] px-4 py-3 text-sm text-white placeholder:text-zinc-600 transition-colors duration-150 focus:border-[#c4f042] focus:outline-none focus:ring-1 focus:ring-[#c4f042] disabled:opacity-50";
+  "mt-2 w-full rounded-xl border border-zinc-800 bg-[#07080b] px-4 py-3 text-base sm:text-sm text-white placeholder:text-zinc-600 transition-colors duration-150 focus:border-[#c4f042] focus:outline-none focus:ring-1 focus:ring-[#c4f042] disabled:opacity-50";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -186,7 +186,7 @@ export function ContactMessageForm() {
               setValues((prev) => ({ ...prev, message: e.target.value }));
               if (status === "error") setStatus("idle");
             }}
-            className="mt-2 w-full rounded-2xl border border-zinc-800 bg-[#07080b] p-4 text-sm text-white placeholder:text-zinc-600 transition-colors duration-150 focus:border-[#c4f042] focus:outline-none focus:ring-1 focus:ring-[#c4f042] disabled:opacity-50 resize-none"
+            className="mt-2 w-full rounded-2xl border border-zinc-800 bg-[#07080b] p-4 text-base sm:text-sm text-white placeholder:text-zinc-600 transition-colors duration-150 focus:border-[#c4f042] focus:outline-none focus:ring-1 focus:ring-[#c4f042] disabled:opacity-50 resize-none"
           />
         </div>
 
@@ -205,7 +205,7 @@ export function ContactMessageForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center justify-center rounded-full bg-[#c4f042] px-8 py-3 text-sm font-bold text-zinc-950 transition-all hover:bg-[#b2e232] hover:scale-[1.02] active:scale-95 disabled:opacity-60"
+            className="inline-flex w-full sm:w-auto items-center justify-center rounded-full bg-[#c4f042] px-8 py-3.5 sm:py-3 text-sm font-bold text-zinc-950 transition-all hover:bg-[#b2e232] hover:scale-[1.02] active:scale-95 disabled:opacity-60"
           >
             <span>{isSubmitting ? "Sending message…" : "Send message"}</span>
           </button>

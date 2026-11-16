@@ -20,10 +20,10 @@ export const mutedLink =
   "text-sm text-zinc-400 transition-colors duration-150 hover:text-[#c4f042] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]";
 
 export const primaryButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-[#c4f042] px-7 py-3 text-sm font-bold text-zinc-950 transition-all duration-150 hover:bg-[#b2e232] hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042]";
+  "inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#c4f042] px-7 py-3 text-sm font-bold text-zinc-950 transition-all duration-150 hover:bg-[#b2e232] hover:scale-[1.02] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] whitespace-nowrap text-center shrink-0";
 
 export const sectionButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent px-7 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent px-7 py-3 text-sm font-medium text-white transition-all duration-150 hover:border-zinc-400 hover:bg-white/[0.04] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white whitespace-nowrap text-center shrink-0";
 
 export const tagClass =
   "inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/50 hover:text-white";
@@ -207,7 +207,7 @@ export function SiteFooter() {
         </div>
 
         {/* Middle: Content Grid (Brand Bio, Nav Columns, Social Icons) */}
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1fr] lg:gap-8 items-start">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-[1.4fr_1.6fr_1fr] lg:gap-10 items-start">
           {/* Brand Bio */}
           <div>
             <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
@@ -224,36 +224,37 @@ export function SiteFooter() {
             </a>
           </div>
 
-          {/* Navigation Column 1 */}
-          <div>
-            <ul className="space-y-2.5">
-              {navColumn1.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-zinc-400 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Navigation Links - 2 Columns Side-by-Side on all screens without awkward gaps */}
+          <div className="grid grid-cols-2 gap-6 sm:gap-10 max-w-xs sm:max-w-none">
+            <div>
+              <ul className="space-y-2.5">
+                {navColumn1.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-zinc-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Navigation Column 2 */}
-          <div>
-            <ul className="space-y-2.5">
-              {navColumn2.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-zinc-400 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <ul className="space-y-2.5">
+                {navColumn2.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-zinc-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Social Icons (User requested icons instead of text links) */}

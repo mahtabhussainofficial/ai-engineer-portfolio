@@ -81,23 +81,23 @@ export function AdminLoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-[#07080a]">
       <div className="w-full max-w-md">
         {/* Brand header */}
         <div className="mb-6 text-center">
-          <p className="font-mono text-xs tracking-[0.2em] text-accent">
+          <p className="font-mono text-xs tracking-[0.2em] text-[#c4f042]">
             ADMINISTRATION / PORTFOLIO CMS
           </p>
-          <h1 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl">
+          <h1 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-white sm:text-3xl">
             Control Center Sign In
           </h1>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-zinc-400">
             Authenticated access for the portfolio owner.
           </p>
         </div>
 
         {/* Card Frame */}
-        <section className="section-frame rounded-2xl p-6 sm:p-8">
+        <section className="section-frame rounded-2xl p-6 sm:p-8 border-[#1e2029] bg-[#0c0d12]">
           {errorBanner && (
             <div
               role="alert"
@@ -123,7 +123,7 @@ export function AdminLoginForm() {
             <div>
               <label
                 htmlFor="admin-email"
-                className="block text-xs font-medium text-foreground"
+                className="block text-xs font-medium text-zinc-200"
               >
                 Administrator Email
               </label>
@@ -136,7 +136,7 @@ export function AdminLoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
-                className="mt-2 w-full rounded-lg border border-[#233044] bg-[#0b0f16]/90 px-4 py-2.5 text-sm text-foreground placeholder:text-subtle focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 w-full rounded-lg border border-[#222530] bg-[#08090d] px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-[#c4f042] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
@@ -144,7 +144,7 @@ export function AdminLoginForm() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="admin-password"
-                  className="block text-xs font-medium text-foreground"
+                  className="block text-xs font-medium text-zinc-200"
                 >
                   Password
                 </label>
@@ -152,7 +152,7 @@ export function AdminLoginForm() {
                   type="button"
                   tabIndex={-1}
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="text-xs text-accent hover:text-foreground"
+                  className="text-xs text-[#c4f042] hover:text-white"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
@@ -165,19 +165,19 @@ export function AdminLoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="mt-2 w-full rounded-lg border border-[#233044] bg-[#0b0f16]/90 px-4 py-2.5 text-sm text-foreground placeholder:text-subtle focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 w-full rounded-lg border border-[#222530] bg-[#08090d] px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-[#c4f042] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting || countdown !== null}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary bg-primary px-5 py-3 text-sm font-medium text-white transition-colors duration-200 hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#c4f042] bg-[#c4f042] px-5 py-3 text-sm font-semibold text-black transition-colors duration-200 hover:bg-[#d4f55e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c4f042] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? (
                 <>
                   <span
-                    className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"
                     aria-hidden="true"
                   />
                   <span>Signing in...</span>

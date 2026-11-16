@@ -34,14 +34,14 @@ export function AdminTopbar({ onOpenMobileNav }: AdminTopbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-[#1e293b] bg-[#0b0f16]/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-[#181a20] bg-[#07080a]/90 px-4 backdrop-blur-md sm:px-6 lg:px-8">
       {/* Left: Mobile menu button & breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={onOpenMobileNav}
           aria-label="Open navigation menu"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#2b3a50] bg-[#172130]/75 text-muted transition-colors hover:border-accent/40 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#222530] bg-[#101218] text-zinc-400 transition-colors hover:border-[#c4f042]/40 hover:text-white lg:hidden"
         >
           <IconMenu className="h-5 w-5" />
         </button>
@@ -49,12 +49,12 @@ export function AdminTopbar({ onOpenMobileNav }: AdminTopbarProps) {
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs">
           <Link
             href="/admin"
-            className="hidden font-mono tracking-wider text-subtle transition-colors hover:text-accent sm:inline"
+            className="hidden font-mono tracking-wider text-zinc-500 transition-colors hover:text-[#c4f042] sm:inline"
           >
             ADMIN
           </Link>
-          <span className="hidden text-subtle/60 sm:inline">/</span>
-          <span className="font-semibold tracking-[-0.01em] text-foreground sm:text-sm">
+          <span className="hidden text-zinc-600 sm:inline">/</span>
+          <span className="font-semibold tracking-[-0.01em] text-white sm:text-sm">
             {currentNav.label}
           </span>
         </nav>
@@ -66,15 +66,15 @@ export function AdminTopbar({ onOpenMobileNav }: AdminTopbarProps) {
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden items-center gap-1.5 rounded-lg border border-[#233044] bg-[#172130]/60 px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-accent/40 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:inline-flex"
+          className="hidden items-center gap-1.5 rounded-lg border border-[#222530] bg-[#101218] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-[#c4f042]/40 hover:text-white sm:inline-flex"
         >
           <span>Public Site</span>
           <IconExternalLink className="h-3 w-3" />
         </Link>
 
         {user && (
-          <div className="flex items-center gap-2.5 rounded-lg border border-[#233044] bg-[#111823]/80 px-2.5 py-1.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-accent/40 bg-accent/10 font-mono text-xs font-semibold text-accent">
+          <div className="flex items-center gap-2.5 rounded-lg border border-[#1e2029] bg-[#0d0e14] px-2.5 py-1.5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[#c4f042]/40 bg-[#c4f042]/10 font-mono text-xs font-semibold text-[#c4f042]">
               {user.full_name
                 .split(" ")
                 .map((n) => n[0])
@@ -83,10 +83,10 @@ export function AdminTopbar({ onOpenMobileNav }: AdminTopbarProps) {
                 .toUpperCase()}
             </span>
             <div className="hidden text-left sm:block">
-              <p className="max-w-[140px] truncate text-xs font-medium text-foreground">
+              <p className="max-w-[140px] truncate text-xs font-medium text-white">
                 {user.full_name}
               </p>
-              <p className="max-w-[140px] truncate font-mono text-[10px] text-muted">
+              <p className="max-w-[140px] truncate font-mono text-[10px] text-zinc-400">
                 {user.role}
               </p>
             </div>
@@ -98,12 +98,10 @@ export function AdminTopbar({ onOpenMobileNav }: AdminTopbarProps) {
           disabled={isLoggingOut}
           onClick={handleLogout}
           title="Sign out of current admin session"
-          className="flex h-9 items-center gap-1.5 rounded-lg border border-[#2b3a50] bg-[#172130]/80 px-3 text-xs font-medium text-muted transition-colors hover:border-red-500/40 hover:text-red-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-[#222530] bg-[#101218] px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-red-500/40 hover:text-red-300 disabled:opacity-50"
         >
           <IconSignOut className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">
-            {isLoggingOut ? "Signing out..." : "Sign Out"}
-          </span>
+          <span className="hidden sm:inline">{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
         </button>
       </div>
     </header>

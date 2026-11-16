@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import {
   ContactCtaSection,
   Eyebrow,
   primaryButtonClass,
   sectionButtonClass,
 } from "@/app/components/site-shell";
-import { getPublicProjectBySlug } from "@/lib/public-api";
+import { getPublicProjectBySlug, getPublicProjects } from "@/lib/public-api";
+
+export async function generateStaticParams() {
+  const projects = await getPublicProjects();
+  return projects.map((project) => ({
+    slug: project.slug,
+  }));
+}
 
 export async function generateMetadata({
   params,
@@ -35,21 +41,11 @@ export async function generateMetadata({
   };
 }
 
-function ProjectDetailSkeleton() {
-  return (
-    <div
-      role="status"
-      aria-label="Loading project case study"
-      className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8"
-    >
-      <div className="h-4 w-32 rounded bg-zinc-800" />
-      <div className="mt-4 h-10 w-2/3 rounded bg-zinc-800" />
-      <div className="mt-4 h-6 w-1/2 rounded bg-zinc-800" />
-    </div>
-  );
-}
-
-async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const project = await getPublicProjectBySlug(slug);
 
@@ -62,23 +58,23 @@ async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
   return (
     <>
       {/* 01 / CASE STUDY HEADER */}
-      <section className="py-12 sm:py-16 lg:py-20">
+      <section className="pt-4 pb-12 sm:pt-6 sm:pb-16 lg:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           {/* Top Breadcrumb Bar */}
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-white/[0.08] pb-4 sm:pb-6">
             <Link
               href="/projects"
-              className="group inline-flex items-center gap-2 text-xs font-semibold text-zinc-400 transition-colors hover:text-[#c4f042]"
+              className="group inline-flex items-center gap-2 text-xs font-semibold text-zinc-400 transition-colors hover:text-[#c4f042] w-fit"
             >
               <span aria-hidden="true" className="transition-transform duration-150 group-hover:-translate-x-1">←</span>
               <span>Back to all projects</span>
             </Link>
 
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-[#c4f042] uppercase tracking-wider">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xs font-bold tracking-wider text-[#c4f042] uppercase">
                 {project.number} · {displayCategory}
               </span>
-              <span className="h-2 w-2 rounded-full bg-[#c4f042]" />
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[#c4f042]" />
             </div>
           </div>
 
@@ -273,17 +269,5 @@ async function CaseStudy({ params }: { params: Promise<{ slug: string }> }) {
         secondaryHref="/projects"
       />
     </>
-  );
-}
-
-export default function ProjectPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  return (
-    <Suspense fallback={<ProjectDetailSkeleton />}>
-      <CaseStudy params={params} />
-    </Suspense>
   );
 }

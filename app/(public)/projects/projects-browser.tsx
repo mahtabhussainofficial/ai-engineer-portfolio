@@ -136,6 +136,7 @@ export function ProjectsBrowser({
                     {/* Full-width pill button matching Home Page */}
                     <Link
                       href={`/projects/${project.slug}`}
+                      prefetch={true}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-zinc-700 bg-transparent py-2.5 text-xs font-semibold text-white transition-all duration-150 hover:border-[#c4f042] hover:bg-[#c4f042]/10 hover:text-[#c4f042]"
                     >
                       <span>View Case Study</span>
